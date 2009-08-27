@@ -118,6 +118,6 @@ class QEStructure():
  #           return self.structure.lattice
 
 if __name__ == '__main__':
-    myStruct = QEStructure('scf.in')
+    myStruct = QEStructure('nio.scf.in')
     myStruct.saveStructureToPWSCF('qwe.in')
-#    print myStruct.structure
+    print myStruct.structure

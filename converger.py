@@ -74,7 +74,7 @@ class EcutConverger(Converger):
         self.ecutConverger()
 
     def ecutConverger(self):
-        from parser.writetopwscf import varnameValue
+        #from parser.writetopwscf import varnameValue
 
         if self.isNormConserving:
             ecutrhoMult = 4.
@@ -84,8 +84,10 @@ class EcutConverger(Converger):
         runHistory = []
         for iStep in range(self.nMaxSteps):
             ecutrho = ecutrhoMult*ecutwfc
-            varnameValue(self.pwscfInput,"ecutwfc", ecutwfc)
-            varnameValue(self.pwscfInput,"ecutrho", ecutrho)
+            self.qeConfig.namelist('system').addParam('ecutwfc', ecutwfc)
+            self.qeConfig.namelist('system').addParam('ecutrho', ecutrho)
+#            varnameValue(self.pwscfInput,"ecutwfc", ecutwfc)
+#            varnameValue(self.pwscfInput,"ecutrho", ecutrho)
             self.getLauncher()
             runHistory.append( self.getEstimator() )
             if iStep >= 2:

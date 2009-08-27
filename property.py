@@ -1,5 +1,6 @@
 import string
 from parser.qe_io_dict import *
+import numpy
 
 from setting import Setting
 
@@ -32,25 +33,27 @@ class Property(Setting):
         
     def getLatticeParameters(self):
         'Extract lattice parameters after pwscf geometry optimization'
-        def vectorLength(v):
-            from math import sqrt
-            s = 0.0
-            for val in v: s = s + val**2
-            return sqrt( s )
+        from qelattice import QELattice
+        # obtain lattice from PWSCF input file:
+        lat = QELattice(fname = self.pwscfInput)
         pwscfOut = read_file(self.pwscfOutput)
         key_a_0 = find_key_from_string(pwscfOut, 'lattice parameter (a_0)')
         a_0 = float( string.split( pwscfOut[key_a_0] )[4] )
+        if lat.type == 'traditional': a_0 = a_0*0.529177249 # convert back to angstrom
         keyEnd = max( find_all_keys_from_marker_string(pwscfOut, '!', 'total energy') )
         keyCellPar = find_key_from_string_afterkey(pwscfOut, keyEnd, \
                                                   'CELL_PARAMETERS (alat)') + 1
-        a =  vectorLength( [ float(valstr) for valstr in string.split( pwscfOut[keyCellPar] ) ] )
-        b =  vectorLength( [ float(valstr) for valstr in string.split( pwscfOut[keyCellPar+1] ) ] )
-        c =  vectorLength( [ float(valstr) for valstr in string.split( pwscfOut[keyCellPar+2] ) ] )                
-        return [a*a_0, b*a_0, c*a_0]
+        latticeVectors = [[float(valstr)*a_0 for valstr in string.split( pwscfOut[keyCellPar] ) ],
+                         [ float(valstr)*a_0 for valstr in string.split( pwscfOut[keyCellPar+1] ) ],
+                         [ float(valstr)*a_0 for valstr in string.split( pwscfOut[keyCellPar+2] ) ]]
+        lat.setLatticeFromQEVectors(lat.ibrav, latticeVectors)
+        return [lat.a, lat.b, lat.c, lat.cBC ,lat.cAC , lat.cAB]
         
-    def getMultiPhonon(self):        
+    def getMultiPhonon(self, fname = None):
         ''' Obtain a list of phonon modes and eigen vectors from output generated \
              by matdyn.x'''
         from parser.matdyn import matdyn
-        return matdyn( matdynModes )
+        if fname == None: return matdyn( matdynModes )
+        else: return matdyn( fname )
+        
      
