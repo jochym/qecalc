@@ -9,7 +9,7 @@ class Launcher(Setting):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Quantum Espresso crashed: check your settings")
+            raise Exception("Quantum Espresso crashed: check your settings and/or clean your 'outdir' directory")
 
     def pwscfLauncher(self):
         import os
