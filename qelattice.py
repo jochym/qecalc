@@ -29,6 +29,7 @@ class QELattice(object):
         self.__primitiveLattice = Lattice()
         self.__standardLattice = Lattice()
         self.__base = None
+        self.__a0 = None
         if self.filename != None:
             self.setLatticeFromPWSCF(self.filename)
         else:
@@ -114,8 +115,7 @@ class QELattice(object):
             cAB = v[1,0]/b
             c = sqrt( dot(v[2,:],v[2,:]))
             cAC = v[2,0]/c
-            cBC = v[2,1]*sqrt(1.0 - cAB**2)/c + cAC*cAB
-
+            cBC = v[2,1]*sqrt(1.0 - cAB**2)/c + cAC*cAB        
         self.setLattice(ibrav, a, b, c, cBC, cAC, cAB)
 
 
@@ -145,13 +145,14 @@ class QELattice(object):
         if ibrav == None:
             raise NonImplementedError('ibrav should be specified')
         self.__ibrav = ibrav
+        self.__a0 = a
         if self.__ibrav == 0:
-            print 'Found "generic" cell:'
+#            print 'Found "generic" cell:'
             if base == None:
                 raise NonImplementedError('base must be specified')
             if a == None: a = 1.0
             qeBase = numpy.array(base, dtype = float)*a
-            print qeBase
+#            print qeBase
             self.__a = 1.0
             self.__primitiveLattice.setLatBase(qeBase)
             self.__standardLattice.setLatBase(qeBase)
@@ -165,9 +166,9 @@ class QELattice(object):
             qeBaseTuple = self.__getQEBaseFromParCos(self.__ibrav, self.__a, self.__b,
                                                self.__c, self.__cBC, self.__cAC, self.__cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]            
-            print 'Found "' + qeBaseTuple[2] + '" cell'
-            print 'Setting the base vectors according to QE conventions:'
-            print qeBase
+#            print 'Found "' + qeBaseTuple[2] + '" cell'
+#            print 'Setting the base vectors according to QE conventions:'
+#            print qeBase
             self.__primitiveLattice.setLatBase(qeBase)
             alpha = degrees(acos(self.__cBC))
             beta = degrees(acos(self.__cAC))
@@ -177,6 +178,15 @@ class QELattice(object):
 #            print self.__standardLattice.base
         self.__base = qeBase
 
+    def printBase(self):
+        if self.__ibrav == 0:
+            print '"generic" cell:'
+        else:
+            qeBaseTuple = self.__getQEBaseFromParCos(self.__ibrav, self.__a, self.__b,
+                                               self.__c, self.__cBC, self.__cAC, self.__cAB)
+            qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]
+            print '"' + qeBaseTuple[2] + '" cell:'
+        print qeBase
 
     def latticeParams(self):
         return [self.__a, self.__b,self.__c, self.__cBC, self.__cAC, self.__cAB]
@@ -184,7 +194,8 @@ class QELattice(object):
 
     def diffpy(self):
         '''Returns diffpy.Lattice object. Do not use it for reading  QE
-        (standard cell) lattice parameters. Use latticeParams instead'''
+        (standard cell) lattice parameters. Use latticeParams, or a, b, c , ...
+        instead'''
         return self.__primitiveLattice
 
 
@@ -214,7 +225,7 @@ class QELattice(object):
                     if '!' not in line:
                         words = line.split()
                         base.append([float(w) for w in words])
-                return 1.0, None, None, None, None, None, base
+                return a, None, None, None, None, None, numpy.array(base)
             if ibrav > 0 and ibrav < 4:
                 return a, a, a, cBC, cAC, cAB, None
             if ibrav == 4:
@@ -433,6 +444,14 @@ class QELattice(object):
 
     # lattice parameters
 
+
+    def _get_a0(self):
+        if self.__a0 != None:
+            return self.__a0
+        else:
+            return self.__a
+    a0 = property(_get_a0, doc ="old lattice parameter a0")
+
     def _get_a(self):
         return self.__a
 
@@ -498,15 +517,20 @@ class QELattice(object):
 
     def _set_ibrav(self, value):
         if value < 0: value = 0
+        ibravOld = self.__ibrav
         self.__ibrav = value
         if value == 0:
             base = self.__base/self.__a
-            self.__type = 'generic cubic'
+            if ibravOld != 4:
+                self.__type = 'generic cubic'
+            else:
+                self.__type = 'generic hexagonal'
             self.setLattice(ibrav = self.__ibrav, a = self.__a, base = base)
         else:
             if 'generic' in self.__type:
                 self.__type = 'celldm'
-            self.setLattice(ibrav = self.__ibrav)
+            self.setLatticeFromQEVectors(self.__ibrav, self.diffpy().base)
+#            self.setLattice(self.__ibrav)
 
     ibrav = property(_get_ibrav, _set_ibrav, doc ="""Lattice symmetry parameter
                     ibrav""")

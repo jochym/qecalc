@@ -86,6 +86,7 @@ class EcutConverger(Converger):
             ecutrho = ecutrhoMult*ecutwfc
             self.qeConfig.namelist('system').addParam('ecutwfc', ecutwfc)
             self.qeConfig.namelist('system').addParam('ecutrho', ecutrho)
+            self.qeConfig.save()
 #            varnameValue(self.pwscfInput,"ecutwfc", ecutwfc)
 #            varnameValue(self.pwscfInput,"ecutrho", ecutrho)
             self.getLauncher()
@@ -110,12 +111,13 @@ class KConverger(Converger):
         self.kConverger()
 
     def kConverger(self):
-        import parser.writetopwscf
+#        import parser.writetopwscf
 
         k_points = self.kInit
         runHistory = []
         for iK in range(self.nMaxSteps):
-            writetopwscf.k_points(self.pwscfInput,k_points)
+            self.setkPointsAutomatic(k_points)
+#            writetopwscf.k_points(self.pwscfInput,k_points)
             self.getLauncher()
             runHistory.append( self.getEstimator() )
             if iK >= 2:

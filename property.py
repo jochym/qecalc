@@ -25,14 +25,15 @@ class Property(Setting):
         words = string.split(dynmatOut[key])
         modes = []
         while words[0]	 == str(modeNum):
-            modes.append( float(words[1]) )
+            modes.append( float(words[1])*0.1239 )
             key = key + 1
             modeNum = modeNum + 1
             words = string.split(dynmatOut[key])
         return modes
         
     def getLatticeParameters(self):
-        'Extract lattice parameters after pwscf geometry optimization'
+        """Extract lattice parameters after pwscf geometry optimization
+           Returns a list of 6 parameters: A, B, C, cos(BC), cos(AC), cos(AB)"""
         from qelattice import QELattice
         # obtain lattice from PWSCF input file:
         lat = QELattice(fname = self.pwscfInput)
@@ -53,7 +54,25 @@ class Property(Setting):
         ''' Obtain a list of phonon modes and eigen vectors from output generated \
              by matdyn.x'''
         from parser.matdyn import matdyn
-        if fname == None: return matdyn( matdynModes )
+        if fname == None: return matdyn( self.matdynModes )
         else: return matdyn( fname )
+
+    def getStress(self):
+        '''Extract total stress in kbar after pwscf launch or geometry optimization'''
+        pwscfOut = read_file(self.pwscfOutput)
+        key = find_last_key_from_string(pwscfOut, 'total   stress  (Ry/bohr**3)') + 1
+        stress = [[float(val) for val in string.split( pwscfOut[key] )[3:] ],
+                  [float(val) for val in string.split( pwscfOut[key+1] )[3:] ],
+                  [float(val) for val in string.split( pwscfOut[key+2] )[3:] ]]
+        return stress
+
+    def getForces(self):
+        pwscfOut = read_file(self.pwscfOutput)
+        key = find_last_key_from_string(pwscfOut, 'Forces acting on atoms (Ry/au):') + 2
+        forces = []
+        while 'atom' in pwscfOut[key]:
+            forces.append([float(val) for val in string.split( pwscfOut[key] )[6:]])
+            key = key + 1
+        return forces
+
         
-     

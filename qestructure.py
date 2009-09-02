@@ -53,7 +53,7 @@ class QEStructure():
                 self.optConstraints.append(numpy.array(constraint, dtype = int))
                 atomSymbol = words[0]
                 if self.atomicPositionsType == 'alat':
-                    coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a)
+                    coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a0)
                 if self.atomicPositionsType == 'crystal':
                     coords = numpy.array(coords[0:3])
                 self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
@@ -112,12 +112,18 @@ class QEStructure():
             
         qeConf.save(filename)
 
+    def diffpy(self):
+        return self.structure
+
  #       def placeInLattice(self, new_lattice):
 
 #        def getLattice(self):
  #           return self.structure.lattice
 
 if __name__ == '__main__':
-    myStruct = QEStructure('nio.scf.in')
+    myStruct = QEStructure('scf2.in')
+    myStruct.lattice.ibrav = 4
+    print myStruct.lattice.a
+    print myStruct.lattice.c
     myStruct.saveStructureToPWSCF('qwe.in')
     print myStruct.structure

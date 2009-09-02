@@ -1,0 +1,39 @@
+ &control
+    calculation='scf',
+    restart_mode='from_scratch',
+    prefix='zro2'
+    pseudo_dir = '/home/chen/pp/pp',
+    outdir='.'
+ /
+ &system
+    ibrav=12,
+    A=5.1451, 
+    B=5.2023, 
+    C=5.3219, 
+    cosAB=-0.1590,  
+    nat=  12, 
+    ntyp= 2,
+    ecutwfc = 18.0
+ /
+ &electrons
+    mixing_beta = 0.7
+    conv_thr =  1.0d-8
+ /
+ATOMIC_SPECIES
+ O  15.9994 o.fhi.UPF  
+ Zr 91.224  zr.fhi.UPF 
+ATOMIC_POSITIONS crystal
+ Zr  0.276000  0.040100  0.209100   
+ Zr  0.724000  0.540100  0.290900  
+ Zr  0.724000  0.959900  0.790900  
+ Zr  0.276000  0.459900  0.709100 
+ O   0.072000  0.333000  0.347000 
+ O   0.928000  0.833000  0.153000
+ O   0.928000  0.667000  0.653000
+ O   0.072000  0.167000  0.847000
+ O   0.449000  0.758000  0.476000  
+ O   0.551000  0.258000  0.024000 
+ O   0.551000  0.242000  0.524000  
+ O   0.449000  0.742000  0.976000
+K_POINTS automatic
+ 3 3 3 0 0 0

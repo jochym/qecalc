@@ -1,0 +1,47 @@
+&CONTROL
+    wf_collect = .true.
+    calculation = 'scf'
+    verbosity = 'high'
+    pseudo_dir = '/home/markovsk/projects/pslib/espresso/mgb2/'
+    tprnfor = .true.
+    prefix = 'mgb2'
+    lkpoint_dir = .false.
+    !    restart_mode = 'from_scratch'
+    outdir = '/scratch/mgb2'
+    tstress = .true.
+/
+&ELECTRONS
+    diago_full_acc = .TRUE.
+    conv_thr = 1.0d-12
+/
+&SYSTEM
+    nbnd = 12
+    nspin = 1
+    ecutwfc = 44
+    occupations = 'smearing'
+    !    celldm(1) = 5.8260
+    celldm(1) = 5.7858
+    ibrav = 4
+    !    celldm(3) = 1.1420
+    degauss = 0.025
+    smearing = 'methfessel-paxton'
+    la2f = .false.
+    nat = 3
+    !    celldm(2) = 5.8260
+    celldm(3) = 1.1356
+    ecutrho = 256.0
+    ntyp = 2
+    !   degauss = 0.025
+    celldm(2) = 5.7858
+/
+ATOMIC_POSITIONS ALAT
+ Mg       0.000000000   0.0000000000000000   0.000000000
+ B        0.500000000   0.2886751345948129   0.567800000
+ B        0.000000000   0.5773502691896257   0.567800000
+ATOMIC_SPECIES
+ Mg  24.305 mg_6.ncpp
+ B   11.000 B.pbe-n-van_ak.UPF
+ !b_rc_1.4_pcc.ncpp
+ !  B   10.811 B.pbe-tmnc.UPF
+K_POINTS AUTOMATIC
+ 17 33 12 0 0 0 

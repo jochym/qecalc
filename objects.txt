@@ -1,0 +1,4 @@
+QELattice - properly initialize lattice for QE. Either from file or from data/lattice
+
+ToDo:
+Initialize Lattice/Structure from Output

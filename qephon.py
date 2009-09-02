@@ -2,20 +2,20 @@ from qecalc import QECalc
 import numpy
 
 class QEPhon(QECalc):
-    def __init(self, fname)__:
-        QECalc.__init__(fname)
+    def __init__(self, fname):
+        QECalc.__init__(self, fname)
         self.__freqs = None
         self.__modes = None
         self.__qpts = None
 
-    def launch(self):
-        self.multiPhononLauncher()
-        self.load()
+#    def calculatePhonons(self):
+#        self.multiPhononTaskLauncher()
+#        self.loadPhonons()
         
-    def load(self, fname = None):
+    def loadPhonons(self, fname = None):
         self.__modes, self.__freqs, self.__qpts = self.getMultiPhonon(fname)
 
-    def getall(self):
+    def getPhonons(self):
         return self.__modes, self.__freqs, self.__qpts
 
     def qpoints(self):
@@ -41,7 +41,8 @@ class QEPhon(QECalc):
     def DOS(self, minOmega = None, maxOmega = None, deltaOmega = None):
         minOmega, maxOmega, deltaOmega =  \
                                 self.setRange(minOmega, maxOmega, deltaOmega)
-        histOmega = numpy.zeros(int((maxOmega-minOmega)/deltaOmega))
+        nPoints = int((maxOmega - minOmega)/deltaOmega)
+        histOmega = numpy.zeros(nPoints)
         norm = 0.0
         for cell_freqs in self.__freqs:
             for omega in cell_freqs:
@@ -49,20 +50,27 @@ class QEPhon(QECalc):
                 if idx < len(histOmega):
                     histOmega[idx] = histOmega[idx] + 1.0
                     norm = norm + 1.0
-        return histOmega/norm
 
-    def partDOS(iAtom, minOmega = None, maxOmega = None, deltaOmega = None):
-        minOmega, maxOmega, deltaOmega =  \
+        axis = numpy.linspace(minOmega, maxOmega, nPoints)
+        return histOmega/norm, axis
+
+    def partDOS(self, atomSymbol, minOmega = None, maxOmega = None, deltaOmega = None):
+        from numpy import real
+        minOmega, maxOmega, deltaOmega   =      \
                                 self.setRange(minOmega, maxOmega, deltaOmega)
-        histPartOmega = numpy.zeros(int((maxOmega-minOmega)/deltaOmega))
+        nPoints = int((maxOmega - minOmega)/deltaOmega)
+        histPartOmega = numpy.zeros(nPoints)
         norm = 0.0
-        for cell_freqs, vectors in zip(self.__freqs, self.__modes):
-            for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
-                idx = int( (abs(omega) - minOmega)/deltaOmega )
-                if idx < len(histPartOmega):
-                    weight = (real(vector*vector.conjugate())).sum()
-                    histPartOmega[idx] = histPartOmega[idx] + weight
-                    norm = norm + weight
-        return histPartOmega/norm
+        for iAtom, atom in enumerate(self.structure.diffpy()):
+            if atomSymbol == atom.element:
+                for cell_freqs, vectors in zip(self.__freqs, self.__modes):
+                    for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
+                        idx = int( (abs(omega) - minOmega)/deltaOmega )
+                        if idx < len(histPartOmega):
+                            weight = (real(vector*vector.conjugate())).sum()
+                            histPartOmega[idx] = histPartOmega[idx] + weight
+                            norm = norm + weight
+        axis = numpy.linspace(minOmega, maxOmega, nPoints)
+        return histPartOmega/norm, axis
 
 

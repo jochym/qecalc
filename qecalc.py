@@ -14,7 +14,6 @@ class QECalc(Launcher, Property):
         Launcher.__init__(self, fname)
         Property.__init__(self, fname)
 
-        print self.pwscfInput
         self.qeConfig = QEConfig(self.pwscfInput)
         self.qeConfig.parse()
 
@@ -22,7 +21,6 @@ class QECalc(Launcher, Property):
 
 #        self._kpts = self.getkPoints()
         self._ekincutoff = self.getEkincutoff()
-        print self._ekincutoff
 
 #    def getNamelistParameter(self, namelist, parameter):
 #        self.__qeConfig.parse()
@@ -35,6 +33,29 @@ class QECalc(Launcher, Property):
 #    def getCard(self, name):
 #        self.__qeConfig.parse()
 #        return self.__qeConfig.cards[name].getLines()
+
+    def _kMesh(self, nkx, nky, nkz):
+        """Will generate k-point mesh in crystal coordinates in [0,1] box
+        Mesh is uniform. I.e. lattice symmetry is not taken into account."""
+        j = numpy.complex(0,1)
+        data = numpy.mgrid[0.0:1.0:nkx*j,0:1.0:nky*j,0:1.0:nkz*j]
+        data = numpy.transpose(data.reshape(3,nkx*nky*nkz))
+        return data
+
+    def kMeshCart(self, nq1, nq2, nq3):
+        """Will generate k-point mesh in cartesian coordinates
+        Lattice symmetry is not taken into account."""
+        kpts = self._kMesh(nq1, nq2, nq3)
+        kpts_cart = numpy.zeros(kpts.shape)
+        for k in range(kpts.shape[0]):
+            kpt = kpts[k,:]\
+            # convert into cartesian coordinates in units of lattice vector a
+            kpts_cart[k,:] = self.structure.lattice.diffpy().cartesian(kpt)/ \
+                        self.structure.lattice.a
+#        test:
+#        print self.structure.lattice.diffpy().cartesian(numpy.array([0.33333, 0.666666, 0.5]))/  \
+#                        self.structure.lattice.a
+        return kpts_cart
 
     def getkPointsFromPWSCF(self):
         """ Returns array of points. Does not have to be AUTOMATIC """
@@ -55,6 +76,7 @@ class QECalc(Launcher, Property):
     def getEkincutoff(self):
         self.qeConfig.parse()
         return float(self.qeConfig.namelist('system').param('ecutwfc'))
+
 
 if __name__ == '__main__':
     qe = QECalc('config.ini')

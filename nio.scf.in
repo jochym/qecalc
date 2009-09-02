@@ -1,0 +1,37 @@
+ &control
+    calculation='scf'
+    restart_mode='from_scratch',
+    tprnfor = .true.
+    prefix='ni',
+    pseudo_dir = './',
+    outdir='temp/'
+ /
+ &system    
+    ibrav=5, 
+    celldm(1) =9.64748375,
+    celldm(4) = 0.83333333, 
+    nat=  4, 
+    ntyp= 3,
+    nspin=2,
+    starting_magnetization(1)=0.5,
+    degauss=0.02,
+    smearing='gauss',
+    occupations='smearing',
+    ecutwfc =27.0
+    ecutrho =300.0
+ /
+ &electrons
+    conv_thr =  1.0d-8
+    mixing_beta = 0.7
+ /
+ATOMIC_SPECIES
+Ni1 26.98 Ni.UPF
+Ni2 26.98 Ni.UPF
+O   1. O.UPF
+ATOMIC_POSITIONS
+Ni1 0.0 0.0 0.0
+Ni2 0.5 0.5 0.5
+O 0.25 0.25 0.25
+O 0.75 0.75 0.75
+K_POINTS AUTOMATIC
+4 4 4 1 1 1

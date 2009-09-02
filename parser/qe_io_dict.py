@@ -47,3 +47,7 @@ def find_all_keys_from_string_afterkey(dic, key0, val):
     return [ ikey for ikey in range(key0, nmaxKey+1) if val in dic[ikey] ]
     assert True, "find_key_from_string_afterkey: The value is not in the dictionaty"
   
+def find_last_key_from_string(dic, val):
+    """Will find last key with string mentioning 'val' after '!' """
+    keyEnd = max( find_all_keys_from_marker_string(dic, '!', 'total energy') )
+    return find_key_from_string_afterkey(dic, keyEnd, val)
