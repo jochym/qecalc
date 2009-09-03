@@ -1,4 +1,5 @@
 from setting import Setting
+import os
 
 class Launcher(Setting):
     def __init__(self, fname=None):
@@ -11,22 +12,28 @@ class Launcher(Setting):
         if exitcode != 0:
             raise Exception("Quantum Espresso crashed: check your settings and/or clean your 'outdir' directory")
 
+    def cleanOutDir(self):
+        from parser.configParser import QEConfig
+        import shutil
+        qeConf = QEConfig(self.pwscfInput)
+        qeConf.parse()
+        outDir = qeConf.namelist('control').param('outdir')[1:-1]
+        shutil.rmtree(outDir)
+        os.mkdir(outDir)
+
     def pwscfLauncher(self):
-        import os
         cmdstr = self.paraPrefix + " pw.x " +  self.paraPostfix + " -inp " + \
                  self.pwscfInput + " > " + self.pwscfOutput + "< /dev/null"
         print cmdstr         
         self.__check(os.system(cmdstr))
 
     def phLauncher(self):
-        import os
         cmdstr_ph = self.paraPrefix + " ph.x " +  self.paraPostfix + " -inp " + \
                  self.phInput + " > " + self.phOutput + "< /dev/null"
         print cmdstr_ph        
         self.__check(os.system(cmdstr_ph))
 
     def singlePhononLauncher(self):
-        import os
         self.pwscfLauncher()
         self.phLauncher()
 
@@ -36,7 +43,6 @@ class Launcher(Setting):
 
     def matdynLauncher(self):
         """Execute matdyn.x after successful run of pw.x + ph.x + q2r.x"""
-        import os
         cmdstr_matdyn = "matdyn.x -inp " + self.matdynInput + " > " + self.matdynOutput
         print cmdstr_matdyn
         self.__check(os.system(cmdstr_matdyn))
@@ -45,7 +51,6 @@ class Launcher(Setting):
         """Runs complete sequence of programms needed to extract phonons except
         the last step: matdyn.x. Usecase: One then can regenerate matdyn.in
         for dispersions along different directions, phonon DOS etc"""
-        import os
         self.pwscfLauncher()
         self.phLauncher()
         cmdstr_q2r = "q2r.x < " + self.q2rInput + " > " + self.q2rOutput
@@ -55,7 +60,6 @@ class Launcher(Setting):
 
     def multiPhononTaskLauncher(self):
         """Runs complete sequence of programms needed to extract phonons"""
-        import os
         self.pwscfLauncher()
         self.phLauncher()
         cmdstr_q2r = "q2r.x < " + self.q2rInput + " > " + self.q2rOutput

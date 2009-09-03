@@ -37,7 +37,7 @@ class Setting:
         self.numProc = self.config.getint('Setting','numProc')
         self.paraPrefix = self.config.get('Setting', 'paraPrefix')
         self.paraPostfix = self.config.get('Setting', 'paraPostfix')
-        
+
         self.pwscfInput = self.config.get('Setting', 'pwscfInput')
         # pwscf output file relevant to 'total energy' as well as 'geometry' tasks           
         self.pwscfOutput = self.config.get('Setting', 'pwscfOutput')
