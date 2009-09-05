@@ -2,6 +2,7 @@ from launcher import Launcher
 from property import Property
 from parser.configParser import *
 from qestructure import QEStructure
+import dispersion
 
 import numpy
 from diffpy.Structure.structure import Structure
@@ -18,6 +19,8 @@ class QECalc(Launcher, Property):
         self.qeConfig.parse()
 
         self.structure = QEStructure(self.pwscfInput)
+
+        self.dispersion = dispersion.Dispersion(self)
 
 #        self._kpts = self.getkPoints()
         self._ekincutoff = self.getEkincutoff()
@@ -48,13 +51,11 @@ class QECalc(Launcher, Property):
         kpts = self._kMesh(nq1, nq2, nq3)
         kpts_cart = numpy.zeros(kpts.shape)
         for k in range(kpts.shape[0]):
-            kpt = kpts[k,:]\
-            # convert into cartesian coordinates in units of lattice vector a
-            kpts_cart[k,:] = self.structure.lattice.diffpy().cartesian(kpt)/ \
-                        self.structure.lattice.a
-#        test:
-#        print self.structure.lattice.diffpy().cartesian(numpy.array([0.33333, 0.666666, 0.5]))/  \
+            # convert into cartesian coordinates in units of inv lattice vector a
+            kpts_cart[k,:] = self.structure.lattice.recipCartesian(kpts[k,:])
+#            self.structure.lattice.diffpy().cartesian(kpt)/ \
 #                        self.structure.lattice.a
+
         return kpts_cart
 
     def getkPointsFromPWSCF(self):

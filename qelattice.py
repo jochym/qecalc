@@ -357,6 +357,13 @@ class QELattice(object):
         qeConf.save(filename)
 
 
+    def recipCartesian(self, kPoint):
+        """Conversts vector on fractional coordinates in reciprocal space into
+           a vector in cartesian coordinates"""
+        recip_base = self.diffpy().reciprocal().base*self.__a
+        return numpy.dot( kPoint, recip_base)
+
+
     def __getQEBaseFromParCos( self, ibrav = 1, a = 1, b = 1, c = 1,
                                     cBC = 0.,cAC = 0. ,cAB = 0.):
         c_a = float(c)/a
