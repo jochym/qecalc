@@ -158,7 +158,7 @@ class Dispersion():
         import pylab
         import matplotlib
         legStr = []
-        markerStyle = ['b.', 'g.', 'r.', 'c.', 'm.', 'y.', 'k.', 'b,', 'g,', 'r,', 'c,', 'm,', 'y,', 'k,']
+        markerStyle = ['b.', 'g.', 'r.', 'c.', 'm.', 'y.', 'k.', 'b,', 'g,', 'r,', 'c,', 'm,', 'y,', 'k,', 'bo', 'go', 'ro', 'co', 'mo', 'yo', 'ko']
 #        cmap = matplotlib.colors.ListedColormap(colors, name = 'myPlotCollors', N = self.__dispersion.shape[1])
         for i in range(self.__dispersion.shape[1]):
             pylab.plot(self.__axis, self.__dispersion[:,i], markerStyle[i])#, color = colors[i])

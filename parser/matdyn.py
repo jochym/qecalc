@@ -37,8 +37,9 @@ def matdyn(fname):
         Omega = []
         for iOmega in range( i + qShift, nDim*nAtom*(nAtom + omegaShift) +  i + qShift, nAtom+omegaShift):
 	    # get omegas in THz:
-#            print matdynDict[ iOmega].split()[3]
-            Omega.append( float( matdynDict[ iOmega].split()[3] ) )
+
+#            print float( matdynDict[ iOmega].split('=')[1].split()[0] )
+            Omega.append( float( matdynDict[ iOmega].split('=')[1].split()[0] ) )
 #	    Atom = [ [ ] ]
             Atom = []
             for iAtom in range( iOmega + omegaShift, iOmega + omegaShift + nAtom ):
