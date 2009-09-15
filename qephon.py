@@ -154,4 +154,4 @@ class QEPhonQHA(QECalc):
                 # also convert to eV
                 pdos.append([float(w)*0.1239 for w in line.split()])
             line = file.readline()
-    return numpy.array(pdos)
+        return numpy.array(pdos)

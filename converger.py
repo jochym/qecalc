@@ -1,24 +1,38 @@
 from qecalc import QECalc
+import numpy
 
 class Converger(QECalc):
-    def __init__(self, fname=None):
+# value to converge with respect to k-points or different parameters in 'system'
+# namelist
+# currently can be 'total energy', 'single phonon', or 'geometry':
+    def __init__(self, fname=None, taskName = 'total energy', tolerance = 1, nMaxSteps = 10):
+        """taskName - currently can be 'total energy', 'single phonon',
+           or 'geometry'
+           tolerance -  task convergence criteria in percents
+           nMaxSteps =  maximum number of optimization steps for
+           the optimization routines"""
+
         # Default values, see explanations below:
-        convergerDic = {
-        'taskName': 'total energy',
-        'tolerance': '1',
-        'nMaxSteps': '10'
-        }
+#        convergerDic = {
+#        'taskName': 'total energy',
+#        'tolerance': '1',
+#        'nMaxSteps': '10'
+#        }
         QECalc.__init__(self,fname)
         # value to converge with respect to k-points or energy cutoffs
         # currently can be 'total energy', 'single phonon', or 'geometry':
-        self.taskName = self.config.get('Converger', 'taskName')
+#        self.taskName = self.config.get('Converger', 'taskName')
 
         # convergence criteria in percents:
-        self.tolerance = self.config.getfloat('Converger','tolerance')
+#        self.tolerance = self.config.getfloat('Converger','tolerance')
 
         # maximum number of optimization steps:
-        self.nMaxSteps = self.config.getint('Converger','nMaxSteps')
+#        self.nMaxSteps = self.config.getint('Converger','nMaxSteps')
 
+        self.taskName = taskName
+        self.tolerance = tolerance
+        self.nMaxSteps = nMaxSteps
+        
         self.lookupTable = {
         'total energy' : (self.pwscfLauncher, self.getTotalEnergy),
         'single phonon': (self.singlePhononLauncher, self.getSinglePhonon),
@@ -27,6 +41,47 @@ class Converger(QECalc):
         }
         assert self.lookupTable.has_key(self.taskName), "Convergence \
         estimator's name is not known"
+
+
+    def converge(self, what, startValue, step, *params):
+        """what - variable name from pwscf input, in case of k-points,
+           what = 'kpoints'
+           params - assumes starting value, increment, extraparameters(if
+           required for given property)"""
+        whatPossible = {'nbnd'         : 'system',
+                        'degauss'      : 'system',
+                        'ecutwfc'      : 'system',
+                        'ecutrho'      : 'system',
+                        'conv_thr'     : 'electrons',
+                        'etot_conv_thr': 'control',
+                        'forc_conv_thr': 'control',
+                        'path_thr'     : 'ions',
+                        'kpoints'      : 'k_points'
+                        }
+        if what not in whatPossible:
+            raise Exception('Do not know how to converge that value!')
+        value = numpy.array(startValue)
+        step = numpy.array(step)
+        runHistory = []
+        for iStep in range(self.nMaxSteps):
+            if what == 'kpoints':
+                self.setkPointsAutomatic(value)
+            else:
+                self.qeConfig.namelist(whatPossible[what]).addParam(what, value)
+            self.qeConfig.save()
+            self.getLauncher()
+            runHistory.append( self.getEstimator() )
+            if iStep >= 2:
+                if self.isConverged(runHistory): break
+            value = value + step
+
+        print 'optimized ' + what + ' value : ', value, '\n'
+        print "Printing run history:\n", runHistory, '\n'
+        print "End of convergence test\n"
+        self.convergedValue = value
+        return value
+
+        
 
     def isConverged(self,runHistory):
         import math
@@ -43,9 +98,10 @@ class Converger(QECalc):
                 tol1.append( math.fabs( runHistory[-1][i]/runHistory[-2][i] - 1.0) )
                 tol2.append( math.fabs( runHistory[-2][i]/runHistory[-3][i] - 1.0) )
         if max(tol1) < self.tolerance/100. and max(tol2) < self.tolerance/100.:
-            print "\nSuccess! ",self.taskName,""" estimator value in two
-            consecutive runs differs less than """, self.tolerance,
-            ' percent: ', max(tol2)*100, max(tol1)*100
+            print "\nSuccess! ",self.taskName,\
+            " estimator value in two consecutive runs \ndiffers less than ", \
+            self.tolerance, ' percent: ', max(tol2)*100,'%, ', \
+            max(tol1)*100, '%\n'
             return True
         else:
             print runHistory[-1]

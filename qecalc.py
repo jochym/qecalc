@@ -61,16 +61,20 @@ class QECalc(Launcher, Property):
     def getkPointsFromPWSCF(self):
         """ Returns array of points. Does not have to be AUTOMATIC """
         kpoints = []
-        for line in self.qeConfig.getCardLines('k_points'):
+        for line in self.qeConfig.cards['k_points'].getLines():
             kpoints.append([float(k) for k in line.split()])
         return numpy.array(kpoints)
 
-    def setkPointsAutomatic(self, kpoints):
+    def setkPointsAutomatic(self, kpoints, shifts = None):
+        if shifts == None:
+            shifts = [int(k) for k in self.getkPointsFromPWSCF()[0,3:]]
         self.qeConfig.cards['k_points'].removeLines()
         self.qeConfig.cards['k_points'].setArgument('AUTOMATIC')
         string = ""
         for k in kpoints:
             string = string + str(k) + " "
+        for s in shifts:
+            string = string + str(s) + " "
         self.qeConfig.cards['k_points'].addLine(string)
         self.qeConfig.save(self.pwscfInput)
 

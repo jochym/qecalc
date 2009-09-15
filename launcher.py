@@ -37,7 +37,7 @@ class Launcher(Setting):
         self.pwscfLauncher()
         self.phLauncher()
 
-        cmdstr_dynmat = "dynmat.x -inp " + self.dynmatInput + " > " + self.dynmatOutput
+        cmdstr_dynmat = "dynmat.x < " + self.dynmatInput + " > " + self.dynmatOutput
         print cmdstr_dynmat
         self.__check(os.system(cmdstr_dynmat))
 
