@@ -43,11 +43,10 @@ class Converger(QECalc):
         estimator's name is not known"
 
 
-    def converge(self, what, startValue, step, *params):
+    def converge(self, what, startValue, step = None, multiply = None):
         """what - variable name from pwscf input, in case of k-points,
            what = 'kpoints'
-           params - assumes starting value, increment, extraparameters(if
-           required for given property)"""
+           params -  extraparameters(if required for given property)"""
         whatPossible = {'nbnd'         : 'system',
                         'degauss'      : 'system',
                         'ecutwfc'      : 'system',
@@ -60,6 +59,8 @@ class Converger(QECalc):
                         }
         if what not in whatPossible:
             raise Exception('Do not know how to converge that value!')
+        if step == None and multiply == None:
+            raise Exception("Should set either 'step' or 'multiply'")
         value = numpy.array(startValue)
         step = numpy.array(step)
         runHistory = []
@@ -73,7 +74,10 @@ class Converger(QECalc):
             runHistory.append( self.getEstimator() )
             if iStep >= 2:
                 if self.isConverged(runHistory): break
-            value = value + step
+            if multiply !=None:
+                value = value*numpy.array(multiply)
+            else:
+                value = value + step
 
         print 'optimized ' + what + ' value : ', value, '\n'
         print "Printing run history:\n", runHistory, '\n'

@@ -14,7 +14,7 @@ from converger import Converger
 
 
 opt = Converger('config.ini','total energy', tolerance = 0.1)
-
+conv_thr = opt.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.1)
 ecut = opt.converge(what = 'ecutwfc', startValue = 18, step = 4)
 ecutrho = opt.converge('ecutrho', ecut*4, 16)
 #opt.converge('kpoints',[12,12,12],[2,2,2])
