@@ -18,7 +18,8 @@ class Setting:
         'q2rOutput': 'q2r.out',
         'matdynInput': 'matdyn.in',
         'matdynOutput': 'matdyn.out',
-        'matdynModes': 'matdyn.modes'
+        'matdynModes': 'matdyn.modes',
+        'matdynFreqs': 'matdyn.freq'
         }
 
         try:
@@ -55,4 +56,5 @@ class Setting:
         self.matdynInput = self.config.get('Setting', 'matdynInput')
         self.matdynOutput = self.config.get('Setting', 'matdynOutput')
         self.matdynModes = self.config.get('Setting', 'matdynModes')
+        self.matdynFreqs = self.config.get('Setting', 'matdynFreqs')
         

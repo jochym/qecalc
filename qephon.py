@@ -74,10 +74,11 @@ class QEPhon(QECalc):
         return histPartOmega/norm, axis
 
 
-
+from parser.qe_io_dict import *
 class QEPhonQHA(QECalc):
+    """This is a wrapper class for Eyvaz Isaev QHA code"""
     def __init__(self, fname):
-        QECalc.__init__(fname)
+        QECalc.__init__(self,fname)
 
 
     def dosLauncher(self):
@@ -89,9 +90,10 @@ class QEPhonQHA(QECalc):
         5) Run Partial_phonon DOS.x < phdos1.in Needs ttrinp, phdos1.in, matdyn.modes
            in current dir
            Will generate partial_DOS file
-        6) Run phonon_dos.x < frequency. Needs phdos.in, frequency"""
+        6) Run phonon_dos.x < frequency. Needs phdos.in, frequency
+        7) To run total DOS with new frequencies just provide new frequency file
+           Partial DOSes will be wrong of course"""
         import os
-        from parser.qe_io_dict import *
         self.__setVertecies()
         os.system('./tetra.x')
 
@@ -102,11 +104,11 @@ class QEPhonQHA(QECalc):
             newDic[i] = matdynIn[i]
         save_dic(newDic, self.matdynInput)
 
-        kptsFile = file('kpts_out','r')
+        kptsFile = open('kpts_out','r')
         kptsString = kptsFile.read()
 
-        file = open(self.matdynInput, 'a')
-        
+        # write new kpoints into file
+        file = open(self.matdynInput, 'a')        
         file.write(kptsString)
 
         file.close()
@@ -116,7 +118,47 @@ class QEPhonQHA(QECalc):
 
 
         os.system('./Partial_phonon DOS.x < phdos1.in')
-        os.system('./phonon_dos.x < matdyn.freq')
+        os.system('./phonon_dos.x < ' + self.matdynFreqs)
+
+
+    def dosRelauncher(self):
+        """Will relaunch DOS calculation with updated frequencies (obtained e.g.
+           from loadPhonons). Only total DOS will be correct"""
+        import os
+        self.saveMatdynFreq()
+        cmd = './phonon_dos.x < ' + self.matdynFreqs
+        print cmd
+        os.system(cmd)
+
+
+    def loadPhonons(self, fname = None):
+        self.__modes, self.__freqs, self.__qpts = self.getMultiPhonon(fname)
+
+
+    def saveMatdynFreq(self, fname=None):
+        """Will save frequencies into text file in matdyn.freq format.
+           Needed for phonon_dos.x program"""
+        if fname == None:
+            fname = self.matdynFreqs
+        file = open(fname, 'w')
+        str = ' &plot nbnd=   %d, nks= %d /\n'% (self.structure.nat*3, len(self.__qpts))
+        file.write(str)
+        for i in range(len(self.__qpts)):
+            str = '            %f  %f  %f\n'% (self.__qpts[i,0],  \
+                                             self.__qpts[i,1], self.__qpts[i,2])
+            file.write(str)
+            str = ''
+            for j in range(self.__freqs.shape[1]):
+                if j % 4 == 0 and j != 0:
+                    str = str + '  %*.4f\n'% (8, self.__freqs[i,j])
+                else:
+                    str = str + '  %*.4f'%  (8, self.__freqs[i,j])
+            if (self.structure.nat*3-1) % 4 != 0:
+                str = str + '\n'
+            file.write(str)
+        file.close()
+            
+                   
 
     def __load(self):
 
@@ -138,11 +180,11 @@ class QEPhonQHA(QECalc):
 
     def __setVertecies(self):
         import os
-        if structure.lattice.ibrav != 4:
+        if self.structure.lattice.ibrav != 4:
             raise Exception('This lattice type is not supported')
 
-        if structure.lattice.ibrav == 4:
-            c_a_2 = structure.lattice.c/structure.lattice.a/2.0
+        if self.structure.lattice.ibrav == 4:
+            c_a_2 = self.structure.lattice.c/self.structure.lattice.a/2.0
             os.system("sed 's/X/'" + str(c_a_2) + "'/g' ttrinp_hcp > ttrinp")
 
     def __read_table(self,fname):
