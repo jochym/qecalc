@@ -9,13 +9,13 @@ from scipy.optimize import *
 from pylab import *
 #from dos_utils import *
 #from matdyn import *
-from qephon import QEPhon
+from qecalc import QECalc
 
 class QuasiHarmonic():
     def __init__(self, fname, indexRange, prcntVolume, modePrefix):
         """indexRange is for files' indexing. prcntVolume - coresponding volume
        expansions"""
-        self.mphon = QEPhon(fname)
+        self.qecalc = QECalc(fname)
         self.__modePrefix = modePrefix
         self.__indexRange = indexRange
         self.__prcntVolume = prcntVolume
@@ -68,14 +68,14 @@ class QuasiHarmonic():
 
     def loadPhonons(self):
         fname = self.__modePrefix + str(self.__indexRange[0]) + '.modes'
-        Pol, Omega, qPoints = self.mphon.getMultiPhonon(fname)
+        Pol, Omega, qPoints = self.qecalc.getMultiPhonon(fname)
         self.__volOmega = zeros(shape=(len(self.__indexRange), shape(Omega)[0], shape(Omega)[1]  ) )
         self.__volPol = zeros(shape=(len(self.__indexRange), shape(Pol)[0], shape(Pol)[1], shape(Pol)[2], shape(Pol)[3] ) )
         self.__volPol[0] = Pol
         self.__volOmega[0] = Omega
         for i in range(1,len(indexRange)):
             fname = self.__modePrefix + str(self.__indexRange[i]) + '.modes'
-            Pol, Omega, qPoints = self.mphon.getMultiPhonon(fname)
+            Pol, Omega, qPoints = self.qecalc.getMultiPhonon(fname)
             self.__volPol[i] = Pol
             self.__volOmega[i] = Omega
 #        return volPol, volOmega, qPoints
@@ -109,9 +109,9 @@ class QuasiHarmonic():
 #    return prcntVol, coeffOmega, volOmega, nonlinearity
 
     def gammaDispersion(self, *pathNPoints):
-        self.mphon.dispersion.setPath(*pathNPoints)
-        self.mphon.dispersion.setValues(-self.__coeffOmega[:,:,0])
-        self.mphon.dispersion.plot()
+        self.qecalc.dispersion.setPath(*pathNPoints)
+        self.qecalc.dispersion.setValues(-self.__coeffOmega[:,:,0])
+        self.qecalc.dispersion.plot()
 
 
 if __name__ == "__main__":

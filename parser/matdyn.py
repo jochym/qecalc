@@ -39,7 +39,7 @@ def matdyn(fname):
 	    # get omegas in THz:
 
 #            print float( matdynDict[ iOmega].split('=')[1].split()[0] )
-            Omega.append( float( matdynDict[ iOmega].split('=')[1].split()[0] ) )
+            Omega.append( float( matdynDict[ iOmega].split('=')[2].split()[0] ) )
 #	    Atom = [ [ ] ]
             Atom = []
             for iAtom in range( iOmega + omegaShift, iOmega + omegaShift + nAtom ):
@@ -52,8 +52,9 @@ def matdyn(fname):
         Omegas.append( Omega )
     npOmega = np.array(Omegas)
     npPol = np.array(Pol)
-    THz2meV = 4.1357 # meV * s
-    return npPol, npOmega*THz2meV, qPoints
+#    THz2meV = 4.1357 # meV * s
+#    output Omega in cm-1
+    return npPol, npOmega, qPoints
     
     
 if __name__ == '__main__':

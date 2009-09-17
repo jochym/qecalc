@@ -74,6 +74,7 @@ class QEPhon(QECalc):
         return histPartOmega/norm, axis
 
 
+
 from parser.qe_io_dict import *
 class QEPhonQHA(QECalc):
     """This is a wrapper class for Eyvaz Isaev QHA code"""
@@ -123,8 +124,11 @@ class QEPhonQHA(QECalc):
 
     def dosRelauncher(self):
         """Will relaunch DOS calculation with updated frequencies (obtained e.g.
-           from loadPhonons). Only total DOS will be correct"""
+           from loadPhonons). Only total DOS will be correct. Should update
+           lattice parameters before calling this routine"""
         import os
+        #update vertices with new lattice parameters:
+        self.__setVertecies()
         self.saveMatdynFreq()
         cmd = './phonon_dos.x < ' + self.matdynFreqs
         print cmd
@@ -149,11 +153,11 @@ class QEPhonQHA(QECalc):
             file.write(str)
             str = ''
             for j in range(self.__freqs.shape[1]):
-                if j % 4 == 0 and j != 0:
+                if j % 5 == 0 and j != 0:
                     str = str + '  %*.4f\n'% (8, self.__freqs[i,j])
                 else:
                     str = str + '  %*.4f'%  (8, self.__freqs[i,j])
-            if (self.structure.nat*3-1) % 4 != 0:
+            if (self.structure.nat*3-1) % 5 != 0:
                 str = str + '\n'
             file.write(str)
         file.close()
