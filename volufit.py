@@ -6,12 +6,6 @@ __date__ ="$Sep 16, 2009 12:42:48 PM$"
 
 import numpy
 import scipy.optimize
-#from scipy import *
-#from scipy.optimize import *
-#from pylab import *
-#from dos_utils import *
-#from matdyn import *
-#from qecalc import QECalc
 
 class VoluFit():
     def __init__(self, *fitDirective):
@@ -63,9 +57,6 @@ class FreqFit(VoluFit):
 
     def __fit(self):
         import copy
-    #    volPol, volOmega, qPoints = loadPhonons(indexRange, prefix)
-    #    prcntVol = array(indexRange)/1000.0
-        # percent change in Omegas relative to equilibrium
         self.__prcntFreqs = numpy.zeros(self.__freqs.shape)
         # introduce Omega0 to get rid of 0s in denominator
         Omega0 = copy.copy(self.__freqs[0])
