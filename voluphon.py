@@ -15,27 +15,21 @@ class VoluPhon():
         self.phon = QEPhon(fname)
         self.__prcntVolume = prcntVolume
 
-        self.__latParFitDirective = ('polynom', 1)
-        self.__energyFitDirective = ('polynom', 4)
-        self.__freqFitDirective = ('polynom', 2)
 
-    def setA(self, values):
-        self.a = volufit.ValueFit(self.__prcntVolume, values, \
-                                                    *self.__latParFitDirective)
+    def setA(self, values, *fitDirective):
+        self.a = volufit.ValueFit(self.__prcntVolume, values, *fitDirective)
 
         
-    def setC(self, values):
-        self.c = volufit.ValueFit(self.__prcntVolume, values, \
-                                                    *self.__latParFitDirective)
+    def setC(self, values, *fitDirective):
+        self.c = volufit.ValueFit(self.__prcntVolume, values, *fitDirective)
 
 
-    def setEnergy(self, values):
-        self.energy = volufit.ValueFit(self.__prcntVolume, values, \
-                                                    *self.__energyFitDirective)
+    def setEnergy(self, values, *fitDirective):
+        self.energy = volufit.ValueFit(self.__prcntVolume, values,*fitDirective)
 
 
-    def setPhonons(self, indexRange):
-        """Will read freqs from x_matdyn.modes files"""
+    def setPhonons(self, indexRange, *fitDirective):
+        """Will read freqs from x_matdyn.modes files and fit the freqs"""
         fname = str(indexRange[0]) + '_' + self.phon.matdynModes
         Pol, Omega, qPoints = self.phon.getMultiPhonon(fname)
         volOmega = numpy.zeros(shape=(len(indexRange), numpy.shape(Omega)[0], \
@@ -46,8 +40,7 @@ class VoluPhon():
             Pol, Omega, qPoints = self.phon.getMultiPhonon(fname)
             volOmega[i] = Omega
 
-        self.freqs = volufit.FreqFit(self.__prcntVolume, volOmega, \
-                                                     *self.__freqFitDirective)
+        self.freqs = volufit.FreqFit(self.__prcntVolume, volOmega,*fitDirective)
 
 
     def gammaDispersion(self, *pathNPoints):
@@ -58,5 +51,14 @@ class VoluPhon():
         self.phon.dispersion.plot()
 
 
+    def prcntVolume (self):
+        return self.__prcntVolume
+
+
 if __name__ == "__main__":
-    print "Hello World";
+    indexRange = range(0,7,2)
+    prcntVol = array(indexRange)/1000.0
+    voluPhon = VoluPhon('config.ini', prcntVol)
+    voluPhon.setPhonons(indexRange)
+    voluPhon.gammaDispersion('Gamma','K', 'M', 'Gamma', 'A', 'H', 'L', 'A', \
+                              100, 100, 100, 100, 100, 100, 100)

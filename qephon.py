@@ -129,6 +129,8 @@ class QEPhonQHA(QECalc):
         import os
         #update vertices with new lattice parameters:
         self.__setVertecies()
+        os.system('./tetra.x') # generate new q points in kpts_out
+        self.__setQptsFromKptsOut()
         self.saveMatdynFreq()
         cmd = './phonon_dos.x < ' + self.matdynFreqs
         print cmd
@@ -145,10 +147,10 @@ class QEPhonQHA(QECalc):
         if fname == None:
             fname = self.matdynFreqs
         file = open(fname, 'w')
-        str = ' &plot nbnd=   %d, nks= %d /\n'% (self.structure.nat*3, len(self.__qpts))
+        str = ' &plot nbnd=   %d, nks=%d /\n'% (self.structure.nat*3, len(self.__qpts))
         file.write(str)
         for i in range(len(self.__qpts)):
-            str = '            %f  %f  %f\n'% (self.__qpts[i,0],  \
+            str = '           %f  %f  %f\n'% (self.__qpts[i,0],  \
                                              self.__qpts[i,1], self.__qpts[i,2])
             file.write(str)
             str = ''
@@ -167,16 +169,22 @@ class QEPhonQHA(QECalc):
     def __load(self):
 
         pDOS = []
-        for atom in structure.diffpy():
+        for atom in self.structure.diffpy():
             #for atom in mp.structure.diffpy()
             fname = 'projected_DOS.'+ atom.element
-            pdos = read_table(fname)
+            pdos = self.__read_table(fname)
             for i in range(pdos.shape[0]):
                 for j in range(pdos.shape[1]):
-                    if isNaN( pdos[i,j] ): pdos[i,j] = pdos[i-1,j] + pdos[i+1,j]
+                    if self.__isNaN( pdos[i,j] ): pdos[i,j] = pdos[i-1,j] + pdos[i+1,j]
             pDOS.append(pdos)
             axis = pDOS[0][:, 0]
-            return numpy.array(pDOS), axis
+            return axis, numpy.array(pDOS)
+
+
+    def DOS(self):
+        axis, pDOS = self.__load()
+        return axis, pDOS[0,:,1]
+
 
 
     def __isNaN(self, x):
@@ -197,7 +205,22 @@ class QEPhonQHA(QECalc):
         line = file.readline()
         while line:
             if '#' not in line:
-                # also convert to eV
-                pdos.append([float(w)*0.1239 for w in line.split()])
+                pdos.append([float(w) for w in line.split()])
             line = file.readline()
         return numpy.array(pdos)
+
+    def __setQptsFromKptsOut(self):
+        kpts = []
+        file = open('kpts_out', 'r')
+        line = file.readline()
+        while line:
+            words = line.split()
+            if len(words) > 1:
+                kpts.append([float(w) for w in words])
+            line = file.readline()
+        self.__qpts = numpy.array(kpts)
+
+    def setFreqs(self, freqs):
+        self.__freqs = freqs
+
+
