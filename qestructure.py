@@ -97,10 +97,12 @@ class QEStructure():
                 coords = str(coords/self.lattice.a)[1:-1]
             else:
                 if self.atomicPositionsType == 'crystal':
-                    coords = str(atom.xyz)[1:-1]
+                    #coords = str(atom.xyz)[1:-1]
+                    coords = '%f  %f  %f'%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
-            line = atom.element + ' ' + coords + ' ' + str(constraint)[1:-1]
+            line = atom.element + '    ' + coords + '  ' + str(constraint)[1:-1]
+#            line = atom.element + ' ' + coords + ' ' + str(constraint)[1:-1]
             qeConf.card('atomic_positions').addLine(line)
 
         # update ATOMIC_SPECIES card
