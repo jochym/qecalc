@@ -98,7 +98,7 @@ class QEStructure():
             else:
                 if self.atomicPositionsType == 'crystal':
                     #coords = str(atom.xyz)[1:-1]
-                    coords = '%f  %f  %f'%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                    coords = '%f.8  %f.8  %f.8'%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
             line = atom.element + '    ' + coords + '  ' + str(constraint)[1:-1]
