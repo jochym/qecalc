@@ -1,7 +1,6 @@
 QECalc is a set of Quantum Espresso launchers and input/ouput parsers.
 It's primary goal is to use its classes, such as QECalc, QEPhon, to
-create batch jobs. One such example can be classes  EcutConverger and
-KConverger from qecalc/converger.py wich can be  used to converge such
+create batch jobs. One such example can be class Converger from qecalc/converger.py wich can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
 cut off energies and number of k-points. More examples can be seen in examples
 directory.
