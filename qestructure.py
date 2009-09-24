@@ -3,6 +3,7 @@ from diffpy.Structure.atom import Atom
 from qelattice import QELattice
 import numpy
 from parser.configParser import *
+from parser.orderedDict import OrderedDict
 
 
 class AtomicSpecies():
@@ -22,7 +23,7 @@ class QEStructure():
         """the structure is initialized from PWSCF config file
            'lattice' and 'structure' are automatically updated"""
         self.filename = fname
-        self.atomicSpecies = {}
+        self.atomicSpecies = OrderedDict()
         self.lattice = None
         # optConstraints three 1/0 for each coordinate of each atom
         self.optConstraints = []
