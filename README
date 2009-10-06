@@ -65,7 +65,6 @@ getkPointsFromPWSCF() - Returns array of points. Does not have to be AUTOMATIC
 setkPointsAutomatic(kpoints) - kpoints is a list [nkx, nky, nkz, 1/0, 1/0, 1/0]
 getEkincutoff() - reads kinnetic energy cutoff
 
-
 qecalc/qephon:
 
 Most usefull for now:
