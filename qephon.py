@@ -95,6 +95,20 @@ class QEPhonQHA(QECalc):
         7) To run total DOS with new frequencies just provide new frequency file
            Partial DOSes will be wrong of course"""
         import os
+
+        self.prepareMatdyn()
+        
+        os.system('./Partial_phonon DOS.x < phdos1.in')
+        os.system('./phonon_dos.x < ' + self.matdynFreqs)
+
+    def prepareMatdyn(self):
+        """What QHA (By Eyvaz Isaev) needs:
+        1) set proper Vertecies
+        2) Run tetra.x to generate k-points
+        3) Prepare matdyn.in
+        4) Run matdyn.x
+        """
+        import os
         self.__setVertecies()
         os.system('./tetra.x')
 
@@ -109,17 +123,12 @@ class QEPhonQHA(QECalc):
         kptsString = kptsFile.read()
 
         # write new kpoints into file
-        file = open(self.matdynInput, 'a')        
+        file = open(self.matdynInput, 'a')
         file.write(kptsString)
 
         file.close()
         kptsFile.close()
-
         self.matdynLauncher()
-
-
-        os.system('./Partial_phonon DOS.x < phdos1.in')
-        os.system('./phonon_dos.x < ' + self.matdynFreqs)
 
 
     def dosRelauncher(self):

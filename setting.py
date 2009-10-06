@@ -1,5 +1,6 @@
 class Setting:
     def __init__(self, fname=None):
+        import os
         import ConfigParser
         
        # Default values, see explanations below:        
@@ -35,26 +36,29 @@ class Setting:
         # before using this class
 
         # parallelization parameters
+
+        currentDir = os.getcwd()
+
         self.numProc = self.config.getint('Setting','numProc')
         self.paraPrefix = self.config.get('Setting', 'paraPrefix')
         self.paraPostfix = self.config.get('Setting', 'paraPostfix')
 
-        self.pwscfInput = self.config.get('Setting', 'pwscfInput')
+        self.pwscfInput = currentDir + self.config.get('Setting', 'pwscfInput')
         # pwscf output file relevant to 'total energy' as well as 'geometry' tasks           
-        self.pwscfOutput = self.config.get('Setting', 'pwscfOutput')
+        self.pwscfOutput = currentDir + self.config.get('Setting', 'pwscfOutput')
         
-        self.phInput = self.config.get('Setting', 'phInput')
-        self.phOutput = self.config.get('Setting', 'phOutput')
+        self.phInput = currentDir + self.config.get('Setting', 'phInput')
+        self.phOutput = currentDir + self.config.get('Setting', 'phOutput')
         
         # dynmat input/output file relevant to 'single phonon' task        
-        self.dynmatInput = self.config.get('Setting', 'dynmatInput')
-        self.dynmatOutput = self.config.get('Setting', 'dynmatOutput')
+        self.dynmatInput = currentDir + self.config.get('Setting', 'dynmatInput')
+        self.dynmatOutput = currentDir + self.config.get('Setting', 'dynmatOutput')
         
         # input/output files relevant to 'multiple phonon' task    
-        self.q2rInput = self.config.get('Setting', 'q2rInput')
-        self.q2rOutput = self.config.get('Setting', 'q2rOutput')
-        self.matdynInput = self.config.get('Setting', 'matdynInput')
-        self.matdynOutput = self.config.get('Setting', 'matdynOutput')
-        self.matdynModes = self.config.get('Setting', 'matdynModes')
-        self.matdynFreqs = self.config.get('Setting', 'matdynFreqs')
+        self.q2rInput = currentDir + self.config.get('Setting', 'q2rInput')
+        self.q2rOutput = currentDir + self.config.get('Setting', 'q2rOutput')
+        self.matdynInput = currentDir + self.config.get('Setting', 'matdynInput')
+        self.matdynOutput = currentDir + self.config.get('Setting', 'matdynOutput')
+        self.matdynModes = currentDir + self.config.get('Setting', 'matdynModes')
+        self.matdynFreqs = currentDir + self.config.get('Setting', 'matdynFreqs')
         

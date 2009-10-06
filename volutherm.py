@@ -54,6 +54,7 @@ class VoluTherm():
         self.voluPhon.phonQHA.dosRelauncher()
         axis, dos = self.voluPhon.phonQHA.DOS()
         phonTherm = PhononThermodynamics(axis, dos)
+        Cv = phonTherm.Cv(temperature)
         phononFreeEnergy = phonTherm.freeEnergy(temperature)
         F = self.voluPhon.energy.fittedValue(prcntVolumeValue)+phononFreeEnergy
 
@@ -62,13 +63,13 @@ class VoluTherm():
                
         print "Total free energy = ", F
         # energy assumed to be in Ry !!!
-        return F, self.voluPhon.energy.fittedValue(prcntVolumeValue), \
+        return Cv, F, self.voluPhon.energy.fittedValue(prcntVolumeValue), \
                phononFreeEnergy
 
     def totalFreeEnergyBrent(self, prcntVolumeValue, *params):
         """Free energy calculation wrapper for brent minimization"""
         temperature = params[0]
-        total, electronic, phonon = \
+        Cv, total, electronic, phonon = \
                             totalFreeEnergy(self, prcntVolumeValue, temperature)
         return total
 
