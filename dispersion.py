@@ -1,9 +1,17 @@
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-
-__author__="markovsk"
-__date__ ="$Sep 4, 2009 2:26:50 PM$"
-
+#!/usr/bin/env python
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# QEcalc              by DANSE Inelastic group
+#                     Brent Fultz
+#                     California Institute of Technology
+#                     (C) 2009  All Rights Reserved
+#
+# File coded by:      Nikolay Markovskiy
+#
+# See AUTHORS.txt for a list of people who contributed.
+# See LICENSE.txt for license information.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import numpy
 
 #High symmetry points:
@@ -183,3 +191,6 @@ class Dispersion():
 
 if __name__ == "__main__":
     print "Hello World";
+
+__author__="Nikolay Markovskiy"
+__date__ ="$Sep 4, 2009 2:26:50 PM$"

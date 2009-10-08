@@ -1,3 +1,17 @@
+#!/usr/bin/env python
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# QEcalc              by DANSE Inelastic group
+#                     Brent Fultz
+#                     California Institute of Technology
+#                     (C) 2009  All Rights Reserved
+#
+# File coded by:      Nikolay Markovskiy
+#
+# See AUTHORS.txt for a list of people who contributed.
+# See LICENSE.txt for license information.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import string
 from parser.qe_io_dict import *
 import numpy
