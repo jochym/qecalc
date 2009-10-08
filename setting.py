@@ -6,6 +6,9 @@ class Setting:
        # Default values, see explanations below:        
         configDic = {
         'isMetallic': 'True',
+        'useTorque' : 'True',
+        'torqueResourceList': '-l nodes=1:ppn=1',
+        'numNodes'  : '1',
         'numProc': '1',
         'paraPrefix': '',
         'paraPostfix': '',
@@ -31,34 +34,37 @@ class Setting:
         
         self.config = ConfigParser.SafeConfigParser(configDic)
         self.config.read(fname)
+
+        #workDir = os.getcwd() + '/'
         
         # all the relevant input files must be preconfiguered for specific tasks 
         # before using this class
 
         # parallelization parameters
 
-        currentDir = os.getcwd()
+        self.useTorque =  self.config.getboolean('Setting','useTorque')
+        self.torqueResourceList = self.config.get('Setting', 'torqueResourceList')
 
         self.numProc = self.config.getint('Setting','numProc')
         self.paraPrefix = self.config.get('Setting', 'paraPrefix')
         self.paraPostfix = self.config.get('Setting', 'paraPostfix')
 
-        self.pwscfInput = currentDir + self.config.get('Setting', 'pwscfInput')
+        self.pwscfInput = self.config.get('Setting', 'pwscfInput')
         # pwscf output file relevant to 'total energy' as well as 'geometry' tasks           
-        self.pwscfOutput = currentDir + self.config.get('Setting', 'pwscfOutput')
+        self.pwscfOutput = self.config.get('Setting', 'pwscfOutput')
         
-        self.phInput = currentDir + self.config.get('Setting', 'phInput')
-        self.phOutput = currentDir + self.config.get('Setting', 'phOutput')
+        self.phInput =  self.config.get('Setting', 'phInput')
+        self.phOutput =  self.config.get('Setting', 'phOutput')
         
         # dynmat input/output file relevant to 'single phonon' task        
-        self.dynmatInput = currentDir + self.config.get('Setting', 'dynmatInput')
-        self.dynmatOutput = currentDir + self.config.get('Setting', 'dynmatOutput')
+        self.dynmatInput =  self.config.get('Setting', 'dynmatInput')
+        self.dynmatOutput =  self.config.get('Setting', 'dynmatOutput')
         
         # input/output files relevant to 'multiple phonon' task    
-        self.q2rInput = currentDir + self.config.get('Setting', 'q2rInput')
-        self.q2rOutput = currentDir + self.config.get('Setting', 'q2rOutput')
-        self.matdynInput = currentDir + self.config.get('Setting', 'matdynInput')
-        self.matdynOutput = currentDir + self.config.get('Setting', 'matdynOutput')
-        self.matdynModes = currentDir + self.config.get('Setting', 'matdynModes')
-        self.matdynFreqs = currentDir + self.config.get('Setting', 'matdynFreqs')
+        self.q2rInput =  self.config.get('Setting', 'q2rInput')
+        self.q2rOutput =  self.config.get('Setting', 'q2rOutput')
+        self.matdynInput =  self.config.get('Setting', 'matdynInput')
+        self.matdynOutput =  self.config.get('Setting', 'matdynOutput')
+        self.matdynModes =  self.config.get('Setting', 'matdynModes')
+        self.matdynFreqs =  self.config.get('Setting', 'matdynFreqs')
         
