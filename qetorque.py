@@ -14,12 +14,20 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import subprocess
 import sys
-#import launcher
+import ConfigParser
 import os
 import time
 class QETorque:
     def __init__(self, fname):
-        self._workDir = os.getcwd()
+        # need this in case $HOME includes symbolic links:
+        myHome = os.environ['HOME']
+        myRealHome = os.path.realpath(myHome)
+        myRealWorkDir = os.getcwd()
+        if myRealHome in myRealWorkDir:
+            relativeWorkDir = myRealWorkDir.replace(myRealHome, '')
+            self._workDir = myHome + relativeWorkDir
+        else:
+            self._workDir = os.getcwd()
         self._jobID = None
 
         configDic = {
@@ -60,14 +68,14 @@ class QETorque:
                 continue
             else:
                 # check for exit code:
-                for line in qstatOut:
+                for line in qstatOut.splitlines():
                     if 'exit_status' in line:
-                        exitcode = line.split()[2]
+                        exitcode = int(line.split()[2])
                         if exitcode != 0:
+                            print 'exitcode = ', exitcode
                             raise Exception("Quantum Espresso crashed: " +\
                      "check your settings and/or clean your 'outdir' directory")
                 break
-        print "qstatOut = " + qstatOut
 
 
     def serial(self, cmdStr):
@@ -77,8 +85,8 @@ class QETorque:
 
 
 if __name__ == "__main__":
-    torque = QETorque()
-    torque.serial('ls')
+    torque = QETorque('config.ini')
+    torque.serial('ps')
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 6, 2009 10:13:47 PM$"
