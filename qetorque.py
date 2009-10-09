@@ -19,7 +19,8 @@ import os
 import time
 class QETorque:
     def __init__(self, fname):
-        # need this in case $HOME includes symbolic links:
+        # need this in case $HOME includes symbolic links otherwise torque
+        # gets confused:
         myHome = os.environ['HOME']
         myRealHome = os.path.realpath(myHome)
         myRealWorkDir = os.getcwd()
