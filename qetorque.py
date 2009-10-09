@@ -32,11 +32,13 @@ class QETorque:
         self._jobID = None
 
         configDic = {
-        'torqueResourceList': '-l nodes=1:ppn=1'
+        'torqueResourceList': '-l nodes=1:ppn=1',
+        'torqueJobName' : 'myjob'
         }
         self.config = ConfigParser.SafeConfigParser(configDic)
         self.config.read(fname)
         self.torqueResourceList = self.config.get('Setting', 'torqueResourceList')
+        self.torqueJobName = self.config.get('Setting', 'torqueJobName')
 
         # use qmgr (not implemented)
     def submit(self, cmdStr):
