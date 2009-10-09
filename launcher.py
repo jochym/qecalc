@@ -13,13 +13,14 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 from setting import Setting
+import qetorque
 import os
 
 class Launcher(Setting):
     def __init__(self, fname=None):
         Setting.__init__(self,fname)
         if self.useTorque:
-            self.torque = QETorque(self.configFileName)
+            self.torque = qetorque.QETorque(self.configFileName)
 
     def _check(self, x):
         """Will check the exit status of QE program"""
