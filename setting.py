@@ -20,7 +20,7 @@ class Setting:
        # Default values, see explanations below:        
         configDic = {
         'isMetallic': 'True',
-        'useTorque' : 'True',
+        'useTorque' : 'False',
         'torqueResourceList': '-l nodes=1:ppn=1',
         'numNodes'  : '1',
         'numProc': '1',
@@ -45,7 +45,7 @@ class Setting:
              raise NameError("Config should be initialized with a filename")
         except NameError:
             raise
-        
+        self.configFileName = fname
         self.config = ConfigParser.SafeConfigParser(configDic)
         self.config.read(fname)
 
@@ -57,7 +57,6 @@ class Setting:
         # parallelization parameters
 
         self.useTorque =  self.config.getboolean('Setting','useTorque')
-        self.torqueResourceList = self.config.get('Setting', 'torqueResourceList')
 
         self.numProc = self.config.getint('Setting','numProc')
         self.paraPrefix = self.config.get('Setting', 'paraPrefix')
