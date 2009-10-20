@@ -29,7 +29,7 @@ Quantum Espresso is in your PATH. See also example directory
 
 Here is a large overview:
 
-.. image:: QECalc_diagram.png
+.. image:: ../QECalc_diagram.png
 
 .. todo: don't forget to replace the dataobjects with the current ones
 
@@ -44,7 +44,12 @@ mphon = QEPhon('config.ini')
 
 For the following postprocessing routines to work, it is assumed all the input/output files exist.
 
-.. todo: this documentation could be put as docstrings and then just autodoc'd here...
+.. todo: this documentation could be put as docstrings and then just autodoc'd here...(see http://sphinx.pocoo.org/ext/autodoc.html)
+
+.. automodule qecalc.qecalc
+	:members:
+	:undoc-members:
+	:inherited-members:
 
 qecalc/property.py:
 
@@ -83,6 +88,8 @@ See qephon_ex.py example in examples/qephon directory
 
 Here are some examples of inheritance diagrams:
 
-.. in
+.. inheritance_diagram:: qecalc.qecalc
 
 Here are some examples of class diagrams:
+
+.. class_diagram::

@@ -26,7 +26,8 @@ class QECalc(object):
 
     def _kMesh(self, nkx, nky, nkz):
         """Will generate k-point mesh in crystal coordinates in [0,1] box
-        Mesh is uniform. I.e. lattice symmetry is not taken into account."""
+        Mesh is uniform. I.e. lattice symmetry is not taken into account.
+        """
         j = numpy.complex(0,1)
         data = numpy.mgrid[0.0:1.0:nkx*j,0:1.0:nky*j,0:1.0:nkz*j]
         data = numpy.transpose(data.reshape(3,nkx*nky*nkz))
