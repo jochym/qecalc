@@ -12,44 +12,17 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from launcher import Launcher
-from property import Property
-from parser.configParser import *
-from qestructure import QEStructure
-import dispersion
-
+from setting import Setting
 import numpy
-from diffpy.Structure.structure import Structure
-from diffpy.Structure.lattice import Lattice
 
-
-class QECalc(Launcher, Property):
+class QECalc(object):
     def __init__(self, fname):
         
-        Launcher.__init__(self, fname)
-        Property.__init__(self, fname)
-
-        self.qeConfig = QEConfig(self.pwscfInput)
-        self.qeConfig.parse()
-
-        self.structure = QEStructure(self.pwscfInput)
-
+        self.setting = Setting(fname)
         self.dispersion = dispersion.Dispersion(self)
 
 #        self._kpts = self.getkPoints()
         self._ekincutoff = self.getEkincutoff()
-
-#    def getNamelistParameter(self, namelist, parameter):
-#        self.__qeConfig.parse()
-#        return self.__qeConfig.namelist(namelist).param(parameter)
-
-#    def setNamelistParameter(self, namelist, parameter, value):
-#        self.__qeConfig.namelists[namelist].params[parameter] = str(value)
-#        self.__qeConfig.save(self.pwscfInput)
-#
-#    def getCard(self, name):
-#        self.__qeConfig.parse()
-#        return self.__qeConfig.cards[name].getLines()
 
     def _kMesh(self, nkx, nky, nkz):
         """Will generate k-point mesh in crystal coordinates in [0,1] box
@@ -69,7 +42,6 @@ class QECalc(Launcher, Property):
             kpts_cart[k,:] = self.structure.lattice.recipCartesian(kpts[k,:])
 #            self.structure.lattice.diffpy().cartesian(kpt)/ \
 #                        self.structure.lattice.a
-
         return kpts_cart
 
     def getkPointsFromPWSCF(self):

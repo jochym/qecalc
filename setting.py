@@ -13,7 +13,7 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class Setting:
-    def __init__(self, fname=None):
+    def __init__(self, fname= None):
         import os
         import ConfigParser
         
@@ -35,9 +35,10 @@ class Setting:
         'q2rInput': 'q2r.in',
         'q2rOutput': 'q2r.out',
         'matdynInput': 'matdyn.in',
-        'matdynOutput': 'matdyn.out',
+        'matdynOutput': 'matdyn.out',        
         'matdynModes': 'matdyn.modes',
-        'matdynFreqs': 'matdyn.freq'
+        'matdynFreqs': 'matdyn.freq',
+        'matdynfldos' : 'matdyn.phdos'
         }
 
         try:
@@ -80,4 +81,5 @@ class Setting:
         self.matdynOutput =  self.config.get('Setting', 'matdynOutput')
         self.matdynModes =  self.config.get('Setting', 'matdynModes')
         self.matdynFreqs =  self.config.get('Setting', 'matdynFreqs')
+        self.matdynfldos =  self.config.get('Setting', 'matdynfldos')
         

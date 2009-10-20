@@ -1,5 +1,0 @@
- &input
-    asr='simple',  dos=.true. 
-    amass(1) = 26.982538, amass(2)=11.000, amass(3)=24.305, 
-    flfrc='almgb4444.fc', fldos='almgb4.444.phdos', nk1=28,nk2=28,nk3=28
- /
