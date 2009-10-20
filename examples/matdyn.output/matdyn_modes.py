@@ -1,5 +1,5 @@
-from setting import Setting
-from qetask.taskmatdyn import MatdynTask
+from qecalc.setting import Setting
+from qecalc.qetask.taskmatdyn import MatdynTask
 
 setting = Setting('config.ini')
 matdyn = MatdynTask(setting)
