@@ -1,6 +1,0 @@
-&CONTROL
-    title = 'Fe',
-    restart_mode = 'from_scratch',
-/
-ATOMIC_SPECIES
- Ni  26.98  Ni.pbe-nd-rrkjus.UPF
