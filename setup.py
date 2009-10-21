@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 
-"""QECalc2- wrapper for QE.
+"""QECalc - wrapper for Quantum Espresso.
 
 """
 
@@ -10,10 +10,10 @@ from setuptools import setup, find_packages
 # define distribution
 setup(
         name = "qecalc",
-        version = "1.0",
+        version = "0.2",
         #namespace_packages = ['matter'],
         packages = find_packages(exclude=['DOC','examples']),
-        test_suite = 'tests',
+        test_suite = 'examples',
 #        install_requires = [
 #            'PyCifRW',
 #        ],
@@ -21,19 +21,19 @@ setup(
 #            'http://www.diffpy.org/packages/',
 #        ],
 
-        author = 'Nikolay',
-        author_email = 'jbrkeith@gmail.edu',
-        description = "wrapper for QE",
+        author = 'Nikolay Markovskiy',
+        author_email = 'markovskiy@gmail.com',
+        description = "wrapper for Quantum Espresso",
         license = 'BSD',
         keywords = "quantum espresso",
         classifiers = [
             # List of possible values at
             # http://pypi.python.org/pypi?:action=list_classifiers
-            'Development Status :: 5 - Production/Stable',
+            'Development Status :: 2 - Pre-Alpha',
             'Environment :: Console',
             'Intended Audience :: Science/Research',
-            'Operating System :: MacOS',
-            'Operating System :: Microsoft :: Windows',
+            #'Operating System :: MacOS',
+            #'Operating System :: Microsoft :: Windows',
             'Operating System :: POSIX',
             'Programming Language :: Python :: 2.5',
             'Topic :: Scientific/Engineering :: Physics',
