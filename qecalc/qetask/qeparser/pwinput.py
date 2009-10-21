@@ -14,17 +14,16 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qeinput import QEInput
-from qestructure import QEStructure
+#from qestructure import QEStructure
 
 class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
-        super(PWInput, self).__init__(self,filename, config, type='pw')
+        QEInput.__init__(self,filename, config, type='pw')
         self.structure = None
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
-        super(PWInput, self).parse()
-        #(self.namelists, self.cards) = self.parser.parse()
+        (self.namelists, self.cards) = self.parser.parse()
         #self.structure = QEStructure(self)
 
 

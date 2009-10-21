@@ -20,12 +20,11 @@ NEWLINE         = '[\n\r]*'             # New line ()
 PARAMTER        = '[\w,()]+'            # Parameter characters (space is not allowed)
 VALUE           = '[^\s,]+'             # Parameter's value (numerate all possible characters)
 EXPRESSION      = '(%s%s=%s%s)' % (PARAMTER, SPACES, SPACES, VALUE)     # Parameter's expression
-NAMELIST        = """%s&%s%s(([^/]*(['"][^'"]*['"])?)*)/""" % (SPACES, SPACES, NAME)        # Namelist block (handles directory slashes)
+NAMELIST        = """%s&%s%s([^&]*)/""" % (SPACES, SPACES, NAME)        # Namelist block (handles directory slashes)
 OPEN_BRACKET    = '[({]?'               # Open bracket
 CLOSE_BRACKET   = '[)}]?'               # Close bracket
 CARD            = '(%s[\w]+)%s%s(%s[\w]*%s)%s' % (SPACES, SPACES, OPEN_BRACKET, SPACES, SPACES, CLOSE_BRACKET)  # Card name
 EMPTY_LINE  = r'^\s*'                # Empty line
-#NAMELIST       = """%s&%s%s([^/]*)/""" % (SPACES, SPACES, NAME)        #  Original Namelist block
 
 import re
 from orderedDict import OrderedDict
@@ -294,9 +293,9 @@ if __name__ == "__main__":
     qeparserText    = QEParser(configText = textProblem)
     qeparserText.parse()
     qeparserText.toString()
-#    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
-#    qeparserFile.parse()
-#    qeparserFile.toString()
+    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
+    qeparserFile.parse()
+    qeparserFile.toString()
 
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"
