@@ -32,10 +32,10 @@ class QECalc(object):
             taskList = self.taskList
         value = None
         for task in taskList:
-            try:
-                value = task.output.property(propertyName, withUnits)
-            except KeyError:
-                pass
+            #try:
+            value = task.output.property(propertyName, withUnits)
+            #except KeyError:
+            #    pass
         return value
 
 if __name__ == '__main__':
