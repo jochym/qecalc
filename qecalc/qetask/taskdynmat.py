@@ -24,7 +24,7 @@ class DynmatTask(QETask):
         self.output = QEOutput(self.setting, type = 'dynmat')
         self.cmdStr = "dynmat.x < " + self.setting.dynmatInput + " > " + \
                        self.setting.dynmatOutput
-        self.name = 'dynamt.x'
+        self.name = 'dynmat.x'
 
 
 if __name__ == "__main__":

@@ -20,16 +20,16 @@ from qetask.taskpw import PWTask
 from qetask.taskph import PHTask
 from qetask.taskq2r import Q2RTask
 from qetask.taskdynmat import DynmatTask
+from qetask.mergerpwph import PWPHMerger
 
 class SinglePhononCalc(QECalc):
     def __init__(self, fname):
         QECalc.__init__(self, fname)
         self.pw = PWTask(self.setting)
         self.ph = PHTask(self.setting)
-        self.q2r = Q2RTask(self.setting)
-        self.matdyn = MatdynTask(self.setting)
-        self.pwph = PWPHMerger(pw,ph, cleanOutDir = True)
-        self.taskList = [self.pwph, self.q2r, self.dynmat]
+        self.dynmat = DynmatTask(self.setting)
+        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
+        self.taskList = [self.pwph, self.dynmat]
 
 if __name__ == "__main__":
     print "Hello World";

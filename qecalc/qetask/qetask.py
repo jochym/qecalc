@@ -13,6 +13,8 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+import os
+
 class QETask(object):
     def __init__(self, setting, cleanOutDir = False):
         self.setting = setting
@@ -40,10 +42,11 @@ class QETask(object):
         else:
             self._check(os.system(self.cmdStr))
 
-    def cleanOutDir(self):
-        from qeparser.qeconfig import QEConfig
+    def cleanOutputDir(self):
+        """will always parse pwscfInput file"""
+        from qeparser.qeinput import QEInput
         import shutil
-        qeConf = QEConfig(self.setting.pwscfInput)
+        qeConf = QEInput(self.setting.pwscfInput)
         qeConf.parse()
         outDir = qeConf.namelist('control').param('outdir')[1:-1]
         if self.setting.useTorque:
@@ -62,7 +65,7 @@ class QETask(object):
         else:
             clean = self.cleanOutDir
         if clean:
-            self.cleanOutDir()
+            self.cleanOutputDir()
         self.input.parse()
         self._run()
         self.output.parse(parserList = 'all')

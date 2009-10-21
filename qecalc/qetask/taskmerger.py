@@ -13,8 +13,10 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+from qetask import QETask
+
 class TaskMerger(QETask):
-    def __init__(self, setting, *tasks, cleanOutDir = False):
+    def __init__(self, setting, tasks, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
         self.tasks = tasks
         self.cmdStr = tasks[0].cmdLine()
@@ -29,9 +31,9 @@ class TaskMerger(QETask):
         else:
             clean = self.cleanOutDir
         if clean:
-            self.cleanOutDir()
+            self.cleanOutputDir()
         for task in self.tasks:
-            self.tasks[task].input.parse()
+            task.input.parse()
         self._run()
         for task in self.tasks:
-            self.tasks[task].output.parse(parserList = 'all')
+            task.output.parse(parserList = 'all')

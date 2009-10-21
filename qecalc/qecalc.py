@@ -19,6 +19,24 @@ class QECalc(object):
     def __init__(self, fname):
         
         self.setting = Setting(fname)
+        self.taskList = []
+
+    def launch(self):
+        for task in self.taskList:
+            task.launch()
+
+    def lookupProperty(self, propertyName, taskList = None, \
+                                                           withUnits = False):
+        """Will look up a specific output property from a list if tasks"""
+        if taskList == None:
+            taskList = self.taskList
+        value = None
+        for task in taskList:
+            try:
+                value = task.output.property(propertyName, withUnits)
+            except KeyError:
+                pass
+        return value
 
 if __name__ == '__main__':
     qe = QECalc('config.ini')

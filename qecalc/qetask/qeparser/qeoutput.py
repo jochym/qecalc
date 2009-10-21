@@ -52,7 +52,7 @@ class QEOutput(object):
         #    properties = self._properties[name]
         #else:
         #    properties = self._properties[name]
-        #print properties
+        #print self._properties[name]
         for tpl in self._properties[name]:
             #print tpl
             if withUnits:
