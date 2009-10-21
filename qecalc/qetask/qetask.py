@@ -14,13 +14,14 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import os
+from qetorque import QETorque
 
 class QETask(object):
     def __init__(self, setting, cleanOutDir = False):
         self.setting = setting
         self.cleanOutDir = cleanOutDir
         if self.setting.useTorque:
-            self.torque = qetorque.QETorque(self.setting.configFileName)        
+            self.torque = QETorque(self.setting.configFileName)        
         self.input = None
         self.output = None
         self.cmdStr = None
