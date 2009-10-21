@@ -12,40 +12,24 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from diffpy.Structure.lattice import Lattice, cosd
-from math import sqrt, degrees
-import numpy
-from qecalc.qetask.qeparser.qeinput import QEInput
-from qecalc.qetask.qeparser.qelattice import QELattice
-from qecalc.qetask.qeparser.qestructure import QEStructure
+
+from qecalc.calcpw import PWCalc
 
 if __name__ == '__main__':
 
-    pwInput = QEInput('scf.in', type = 'pw')
-    pwInput.parse()
-    qeLattice = QELattice(qeConf = pwInput)
-    print qeLattice.latticeParams()
-    qeLattice.a = 13.0
-    qeLattice.b = 24.0
-    qeLattice.c = 3.
-    qeLattice.ibrav = 4
-    print qeLattice.b, qeLattice.c,
-    print qeLattice.latticeParams()
-    qeLattice.saveLatticeToPWSCF('./scf_2.in')
+    calc = PWCalc('config.ini')
+    calc.pw.input.parse()
+    calc.pw.input.structure.lattice.a = 13
+    calc.pw.input.structure.lattice.b = 14
+    calc.pw.input.structure.lattice.c = 3
 
-    pwInput = QEInput('scf.in', type = 'pw')
-    pwInput.parse()
-    myStruct = QEStructure(qeConf = pwInput)
-    myStruct.lattice.ibrav = 4
-    print myStruct.lattice.a
-    print myStruct.lattice.c
-    myStruct.lattice.a = 43
-    #pwInput.save()
-    myStruct.saveStructureToPWSCF('scf_3.in')
-    print myStruct.structure
+    print calc.pw.input.structure.lattice.latticeParams()
 
-#    qeLattice2 = QELattice()
-#    qeLattice2.setLatticeFromPrimitiveVectors(qeLattice.ibrav, qeLattice.lattice().base )
-    #print qeLattice.lattice().base
-    #testLattice = Lattice(5,5,5,90,90,90)
-    #print testLattice.base
+    calc.pw.input.structure.lattice.saveLatticeToPWSCF('./scf_2.in')
+
+    print calc.pw.input.structure.structure
+
+    calc.pw.input.structure.saveStructureToPWSCF('./scf_3.in')
+
+
+
