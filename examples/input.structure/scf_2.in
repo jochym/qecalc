@@ -1,0 +1,41 @@
+&CONTROL
+    calculation = 'scf',
+    wf_collect = .true.,
+    tstress = .true.,
+    tprnfor = .true.,
+    verbosity = 'high',
+    prefix = 'mgb2',
+    pseudo_dir = 'mgb2',
+    lkpoint_dir = .false.,
+    outdir = 'temp',
+/
+&SYSTEM
+    ibrav = 4,
+    nspin = 1,
+    nbnd = 12,
+    occupations = 'smearing',
+    degauss = 0.025,
+    smearing = 'methfessel-paxton',
+    ecutwfc = 32.0,
+    ecutrho = 256.0,
+    la2f = .false.,
+    celldm(1) = 43,
+    celldm(2) = 1,
+    celldm(3) = 0.152867294634,
+    celldm(4) = -0.5,
+    ntyp = 2,
+    nat = 3,
+/
+&ELECTRONS
+    conv_thr = 1.0d-12,
+    diago_full_acc = .TRUE.,
+/
+K_POINTS (automatic)
+ 24 24 24 0 0 0
+ATOMIC_POSITIONS (alat)
+ Mg     0.  0.  0.  
+ B     0.5         0.28867513  0.07643365  
+ B     0.          0.57735027  0.07643365  
+ATOMIC_SPECIES
+ Mg 24.305 mg_6.ncpp
+ B 11.0 B.pbe-n-van_ak.UPF
