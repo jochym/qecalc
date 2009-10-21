@@ -26,13 +26,13 @@ if __name__ == '__main__':
     calc.pw.input.structure.lattice.b = 4
     calc.pw.input.structure.lattice.c = 5
 
-    #Write/update lattice into PW config file, if the file does not exist,
-    # a new one will be created
     print
     print calc.pw.input.structure.lattice.toString()
 
     print '\nLattice parameters: ', calc.pw.input.structure.lattice.latticeParams()
 
+    #Write/update lattice into PW config file, if the file does not exist,
+    # a new one will be created
     calc.pw.input.structure.lattice.save('./scf_2.in')
 
     #Write/update structure into PW config file, if the file does not exist,
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     print '\nPrinting structure:'
     print calc.pw.input.structure.diffpy()
 
-    calc.pw.input.structure.save('./scf_3.in')
+    calc.pw.input.structure.save('./scf_44.in')
 
 
 
