@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qeinput import QEInput
-#from qestructure import QEStructure
+from qestructure import QEStructure
 
 class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
@@ -24,7 +24,7 @@ class PWInput(QEInput):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
         (self.namelists, self.cards) = self.parser.parse()
-        #self.structure = QEStructure(self)
+        self.structure = QEStructure(self)
 
 textA = """
 &control

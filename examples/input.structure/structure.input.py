@@ -13,22 +13,15 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#from qecalc.calcpw import PWCalc
-from qecalc.qetask.taskpw import PWTask
-from qecalc.setting import Setting
-
-from qecalc.qetask.qeparse.pwinput import PWInput
+from qecalc.calcpw import PWCalc
 
 if __name__ == '__main__':
 
-    #calc = PWCalc('config.ini')
-    setting = Setting('config.ini')
-    pwInput = PWInput(setting)
-    pwInput.parse()
-#    pw = PWTask(setting)
-#    pw.input.parse()
-#    calc.pw.input.parse()
-#    calc.pw.input.structure.lattice.a = 13
+    calc = PWCalc('config.ini')
+
+    calc.pw.input.parse()
+
+    calc.pw.input.structure.lattice.a = 13
     calc.pw.input.structure.lattice.b = 14
     calc.pw.input.structure.lattice.c = 3
 

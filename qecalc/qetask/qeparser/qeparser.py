@@ -65,7 +65,9 @@ class QEParser:
 
     def _setReferences(self):
         input   = "input%s" % self.type
-        module  = _import("inputs.%s" % input)
+        module = __import__("inputs.%s" % input, globals(), \
+                            locals(), [''], -1)        
+        #module  = _import("inputs.%s" % input)
         self.namelistRef   = getattr(module, "namelists")
         self.cardRef       = getattr(module, "cards")
         
