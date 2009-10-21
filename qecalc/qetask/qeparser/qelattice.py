@@ -137,8 +137,6 @@ class QELattice(object):
             qeConf = self.qeConf
         if qeConf == None:
             raise NotImplementedError("writeLatticeToPWSCF: qeConf was not properly initialized")
-        print qeConf.namelist('system')
-        print "setLatticeFromPWInput: ", self.qeConf.namelist('system').param('ibrav')
         if 'ibrav' in self.qeConf.namelists['system'].params:
             ibrav  = int(self.qeConf.namelist('system').param('ibrav'))
             if ibrav >= 0:
@@ -265,15 +263,19 @@ class QELattice(object):
 #            print self._standardLattice.base
         self._base = qeBase
 
-    def printBase(self):
+    def toString(self):
+        st = ''
         if self._ibrav == 0:
-            print '"generic" cell:'
+            st = st + '"generic" cell:\n'
         else:
             qeBaseTuple = self._getQEBaseFromParCos(self._ibrav, self._a, self._b,
                                                self._c, self._cBC, self._cAC, self._cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]
-            print '"' + qeBaseTuple[2] + '" cell:'
-        print qeBase
+            st = st + '"' + qeBaseTuple[2] + '" cell:\n'
+        s = repr(qeBase).replace('array',' ')
+        s = '      ' + ''.join([ c for c in s if c not in ('(', ')','[',']',',')])
+        st = st + s
+        return st
 
     def latticeParams(self):
         return [self._a, self._b,self._c, self._cBC, self._cAC, self._cAB]
@@ -441,11 +443,14 @@ class QELattice(object):
 
 
 
-    def saveLatticeToPWSCF(self, fname = None):
+    def save(self, fname = None):
         """Will save the lattice either into its own file or into supplied with fname.
            It will also create all relevant sections/cards"""
+        from os.path import exists
         if fname != None:
             filename = fname
+            if not exists(filename):
+                f = open(filename, 'w')
             qeConf = QEInput(fname)
             qeConf.parse()
         else:

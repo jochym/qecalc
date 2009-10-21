@@ -20,18 +20,27 @@ if __name__ == '__main__':
     calc = PWCalc('config.ini')
 
     calc.pw.input.parse()
+    print calc.pw.input.structure.lattice.toString()
+    calc.pw.input.structure.lattice.ibrav = 8 # make orthorombic
+    calc.pw.input.structure.lattice.a = 3
+    calc.pw.input.structure.lattice.b = 4
+    calc.pw.input.structure.lattice.c = 5
 
-    calc.pw.input.structure.lattice.a = 13
-    calc.pw.input.structure.lattice.b = 14
-    calc.pw.input.structure.lattice.c = 3
+    #Write/update lattice into PW config file, if the file does not exist,
+    # a new one will be created
+    print
+    print calc.pw.input.structure.lattice.toString()
 
-    print calc.pw.input.structure.lattice.latticeParams()
+    print '\nLattice parameters: ', calc.pw.input.structure.lattice.latticeParams()
 
-    calc.pw.input.structure.lattice.saveLatticeToPWSCF('./scf_2.in')
+    calc.pw.input.structure.lattice.save('./scf_2.in')
 
-    print calc.pw.input.structure.structure
+    #Write/update structure into PW config file, if the file does not exist,
+    # a new one will be created
+    print '\nPrinting structure:'
+    print calc.pw.input.structure.diffpy()
 
-    calc.pw.input.structure.saveStructureToPWSCF('./scf_3.in')
+    calc.pw.input.structure.save('./scf_3.in')
 
 
 

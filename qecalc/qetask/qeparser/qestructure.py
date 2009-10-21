@@ -115,17 +115,17 @@ class QEStructure():
             qeConf.card('atomic_species').addLine(specie.toString())
 
 
-    def saveStructureToPWSCF(self, fname = None):
-        """Writes/updates structure into PWSCF config file,
+    def save(self, fname = None):
+        """Writes/updates structure into PW config file,
            if the file does not exist, new one will be created"""
         if fname != None:
             filename = fname
-            self.lattice.saveLatticeToPWSCF(filename)
+            self.lattice.save(filename)
             qeConf = QEInput(fname)
             qeConf.parse()
         else:
             filename = self.filename
-            self.lattice.saveLatticeToPWSCF(filename)
+            self.lattice.save(filename)
             qeConf = self.qeConf
             #qeConf.parse()
         self.updatePWInput(qeConf )
