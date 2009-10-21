@@ -58,7 +58,7 @@ if __name__ == '__main__':
     c_apar = [c0/a0]
     # obtain total energy at equilibrium:
     pwcalc.launch()
-    energy = pwcalc.output.property('total energy')[0]
+    energy = pwcalc.pw.output.property('total energy')[0]
     print volPercRange
     for volPrcnt in volPercRange:
          print "Optimizing volume at " + str(volPrcnt) + "% expansion"
