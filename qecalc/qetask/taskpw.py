@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.pwinput import PWInput
 from qeparser.qeoutput import QEOutput
 
 class PWTask(QETask):

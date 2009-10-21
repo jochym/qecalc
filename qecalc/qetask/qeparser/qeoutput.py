@@ -37,7 +37,8 @@ class QEOutput(object):
             try:
                 properties[parserName] = self.output.parse(parserName, self.setting)
             except KeyError: pass
-            except IOError: 
+            except IOError: pass
+            except TypeError:
                 properties[parserName] = [(None, None)]
         self._properties = properties
 
@@ -45,12 +46,25 @@ class QEOutput(object):
         """Will output the property of interest as a set of tuples if withUnits is True.
            Will output property itself otherwise"""
         prop = []
+        #print self._properties[name]
+        #if len(self._properties[name]) > 1:
+        #    print 'preved'
+        #    properties = self._properties[name]
+        #else:
+        #    properties = self._properties[name]
+        #print properties
         for tpl in self._properties[name]:
+            #print tpl
             if withUnits:
                 prop.append(tpl)
             else:
                 prop.append(tpl[0])
-        return prop[0]
+               # print "hello",  tpl[0]
+        #print prop[0]
+        if len(self._properties[name]) > 1:
+            return prop
+        else:
+            return prop[0]
 
     def properties(self, withUnits = False):
         propDic = {}

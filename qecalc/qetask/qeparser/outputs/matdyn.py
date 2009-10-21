@@ -29,7 +29,7 @@ class Output(BaseOutput):
     def getMultiPhonon(self,setting):
         ''' Obtain a list of phonon modes and eigen vectors from output generated \
              by matdyn.x'''
-        return [self.matdyn_modes( setting.matdynModes )]
+        return self.matdyn_modes( setting.matdynModes )
 
     def getPhononDOS(self,setting):
         """Obtain density of states from matdyn.x output. Returns DOS axis in

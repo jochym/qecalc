@@ -41,6 +41,8 @@ class Output(BaseOutput):
         """Extract lattice parameters after pwscf geometry optimization
            Returns a list of 6 parameters: A, B, C, cos(BC), cos(AC), cos(AB)"""
         from qetask.qeparser.qelattice import QELattice
+        # does not work yet
+        return [(None, None)]
         # obtain lattice from PWSCF input file:
         lat = QELattice(fname = setting.pwscfInput)
         pwscfOut = read_file(setting.pwscfOutput)
