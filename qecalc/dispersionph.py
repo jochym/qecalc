@@ -16,8 +16,8 @@
 from qedispersion import QEDispersion
 
 class PHDispersion(QEDispersion):
-    def __init__(self, structure, matdynTask):
-        QEDispersion.__init__(self,structure)
+    def __init__(self, pwInput, matdynTask):
+        QEDispersion.__init__(self,pwInput.structure)
         self.matdynTask = matdynTask
 
     # temporary hack
@@ -30,6 +30,8 @@ class PHDispersion(QEDispersion):
             newDic[i] = matdynIn[i]
         save_dic(newDic, self.matdynTask.setting.matdynInput)
 
+
+        pwInput.parse()
         self.setPath(*pathNPoints)
 
         file = open(self.matdynTask.setting.matdynInput, 'a')
