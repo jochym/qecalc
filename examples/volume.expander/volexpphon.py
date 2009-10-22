@@ -9,6 +9,7 @@ mphon = MultiPhononCalc('config.ini')
 indexRange = [0,2,4]
 print indexRange
 for i in indexRange:
+    mphon.pw.input.parse()
     mphon.pw.input.structure.lattice.a = a_range[i]
     mphon.pw.input.structure.lattice.c = c_a_range[i]*a_range[i]
     mphon.pw.input.structure.save()    
