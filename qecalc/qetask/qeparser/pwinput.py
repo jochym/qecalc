@@ -61,7 +61,7 @@ class PWInput(QEInput):
             if cardOrder[i] in self.cards:
                 s += self.cards[cardOrder[i]].toString()
 
-    return s
+        return s
 
 textA = """
 &control
