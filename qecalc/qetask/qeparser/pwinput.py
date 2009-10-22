@@ -54,13 +54,12 @@ class PWInput(QEInput):
         for i in range(len(namelistOrder)):
             if namelistOrder[i] in self.namelists:
                 s += self.namelists[namelistOrder[i]].toString()
-#        for nl in self.namelists.values():
-#            s += nl.toString()
+                s += '\n'
 
         for i in range(len(cardOrder)):
             if cardOrder[i] in self.cards:
                 s += self.cards[cardOrder[i]].toString()
-
+                s += '\n'
         return s
 
 textA = """

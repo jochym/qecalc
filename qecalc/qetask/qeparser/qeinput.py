@@ -104,9 +104,11 @@ class QEInput(object):
         s = ''
         for nl in self.namelists.values():
             s += nl.toString()
+            s += '\n'
 
         for c in self.cards.values():
             s += c.toString()
+            s += '\n'
         return s
 
     def save(self, filename=None):
