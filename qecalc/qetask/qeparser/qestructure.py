@@ -112,6 +112,9 @@ class QEStructure():
 
 
     def updatePWInput(self, qeConf = None):
+
+        self.lattice.updatePWInput()
+
         qeConf.namelist('system').remove('ntyp')
         qeConf.namelist('system').remove('nat')
         qeConf.namelist('system').add('ntyp', self.ntyp)
