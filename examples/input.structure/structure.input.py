@@ -39,6 +39,7 @@ if __name__ == '__main__':
     # a new one will be created
     print '\nPrinting structure:'
     print calc.pw.input.structure.diffpy()
+    print calc.pw.input.structure.toString()
 
     calc.pw.input.structure.save('./scf_44.in')
 
