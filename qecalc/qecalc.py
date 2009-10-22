@@ -22,8 +22,8 @@ class QECalc(object):
         self.taskList = []
 
     def launch(self):
-        print 'preved launcher'
         for task in self.taskList:
+            print task.name()
             task.launch()
 
     def lookupProperty(self, propertyName, taskList = None, \
