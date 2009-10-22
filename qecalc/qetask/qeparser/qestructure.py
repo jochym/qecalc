@@ -86,9 +86,13 @@ class QEStructure():
 
     def toString(self):
         s = self.lattice.toString() + '\n'
+        if self.atomicPositionsType == 'alat':
+            s = s + 'Atomic positions in units of lattice parametr "a":\n'        
+        if self.atomicPositionsType == 'crystal':
+            s = s + 'Atomic positions in crystal coordinates:\n'
         for atom, constraint in zip(self.structure, self.optConstraints):
-            if self.atomicPositionsType == 'alat':
-                coords = self.lattice.diffpy().cartesian(atom.xyz)
+            if self.atomicPositionsType == 'alat':      
+                coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
                 coords = self.formatString%(coords[0], coords[1], coords[2])
                 #coords = str(coords/self.lattice.a)[1:-1]
             else:
@@ -119,7 +123,7 @@ class QEStructure():
         qeConf.card('atomic_positions').setArg(self.atomicPositionsType)
         for atom, constraint in zip(self.structure, self.optConstraints):
             if self.atomicPositionsType == 'alat':
-                coords = self.lattice.diffpy().cartesian(atom.xyz)
+                coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
                 coords = self.formatString%(coords[0], coords[1], coords[2])
             else:
                 if self.atomicPositionsType == 'crystal':
