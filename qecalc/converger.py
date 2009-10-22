@@ -61,6 +61,7 @@ class Converger():
                         'kpoints'      : 'k_points'
                         }
         calc = self.lookupTable[self.taskName][0]
+        # this implies all available calcs have pw task in them:
         calc.pw.input.parse()
 
         if what not in whatPossible:
