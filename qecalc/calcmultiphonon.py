@@ -34,7 +34,7 @@ class MultiPhononCalc(QECalc):
         self.ph = PHTask(self.setting)
         self.q2r = Q2RTask(self.setting)
         self.matdyn = MatdynTask(self.setting)
-        self.pwph = PWPHMerger(pw,ph, cleanOutDir = True)
+        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
         # Does not work yet::
         #self.dispersion = PHDispersion(self.pw.input.structure)
