@@ -18,10 +18,46 @@ class PWKpoints(object):
     def __init__(self, qeInput):
         self.qeInput = qeInput
         self.isAutomatic = False
-        self.kpoints, self.shifts = self.load()
+        self.qpoints = self.load()
+
+    def set(self, points):
+
+
+    def setPhononPath(self,matdynTask, *pathNPoints):
+        from parser.qe_io_dict import *
+        matdynIn = read_file(matdynTask.setting.matdynInput)
+        keyStart = find_key_from_string(matdynIn, '/')
+        newDic = {}
+        for i in range(keyStart+1)[1:]:
+            newDic[i] = matdynIn[i]
+        save_dic(newDic, matdynTask.setting.matdynInput)
+
+        self.setPath(*pathNPoints)
+
+        file = open(matdynTask.setting.matdynInput, 'a')
+        file.write(self.__toMatdynString())
+        file.close()
+        matdynTask.launch()
+        pol, disp, qpoints =  matdynTask.output.property('multi phonon')
+        self._dispersion = disp
+
+    def _toString(self):
+        string = str(len(self.qpoints)) + '\n'
+        for elem, coord in zip(self.__path, self.__axis):
+            string = string + \
+                   "%f    %f    %f    %f\n" % (elem[0], elem[1], elem[2], coord)
+        return string
 
     def load(self):
-        """ Returns array of points. Does not have to be AUTOMATIC """
+        """ Loads array of points.  """
+        from output.qe_io_dict import *
+        matdynIn = read_file(self.qeInput.filename)
+        keyStart = find_key_from_string(matdynIn, '/')
+        newDic = {}
+        for i in range(keyStart+1)[1:]:
+            newDic[i] = matdynIn[i]
+        save_dic(newDic, matdynTask.setting.matdynInput)
+
         kpoints = []
         if self.qeInput.cards['k_points'].arg() == 'automatic':
             self.isAutomatic = True

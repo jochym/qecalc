@@ -13,27 +13,30 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+from qedipsersion import QEDispersion
 
 class PHDispersion(QEDispersion):
-    def __init__(self, structure):
+    def __init__(self, structure, matdynTask):
         QEDispersion.__init__(structure)
+        self.matdynTask = matdynTask
 
-    def setPhononPath(self,matdynTask, *pathNPoints):
-        from parser.qe_io_dict import *
-        matdynIn = read_file(matdynTask.setting.matdynInput)
+    # temporary hack
+    def setPhononPath(self, *pathNPoints):
+        from qetask.qeparser.output.parser.qe_io_dict import *
+        matdynIn = read_file(self.matdynTask.setting.matdynInput)
         keyStart = find_key_from_string(matdynIn, '/')
         newDic = {}
         for i in range(keyStart+1)[1:]:
             newDic[i] = matdynIn[i]
-        save_dic(newDic, matdynTask.setting.matdynInput)
+        save_dic(newDic, self.matdynTask.setting.matdynInput)
 
         self.setPath(*pathNPoints)
 
-        file = open(matdynTask.setting.matdynInput, 'a')
+        file = open(self.matdynTask.setting.matdynInput, 'a')
         file.write(self.__toMatdynString())
         file.close()
-        matdynTask.launch()
-        pol, disp, qpoints =  matdynTask.output.property('multi phonon')
+        self.matdynTask.launch()
+        pol, disp, qpoints =  self.matdynTask.output.property('multi phonon')
         self._dispersion = disp
 
     def __toMatdynString(self):

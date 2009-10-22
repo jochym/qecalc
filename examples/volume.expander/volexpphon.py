@@ -6,10 +6,10 @@ a_range = [5.7883493196, 5.7915203461101745, 5.7943730191592495, 5.7973580900681
 c_a_range = [1.13667006535, 1.137073615299389, 1.1376612947393401, 1.1381676060959949, 1.1386537405854196, 1.1391757603566126, 1.1397559358795943, 1.1400820726311993, 1.1407340161439217, 1.1411590161587388, 1.1416252954554391, 1.1421120734472419, 1.1426896187884585]
 
 mphon = MultiPhononCalc('config.ini')
+mphon.pw.input.parse()
 indexRange = [0,2,4]
 print indexRange
-for i in indexRange:
-    mphon.pw.input.parse()
+for i in indexRange:    
     mphon.pw.input.structure.lattice.a = a_range[i]
     mphon.pw.input.structure.lattice.c = c_a_range[i]*a_range[i]
     mphon.pw.input.structure.save()    
