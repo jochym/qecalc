@@ -17,7 +17,7 @@ from qedispersion import QEDispersion
 
 class PHDispersion(QEDispersion):
     def __init__(self, structure, matdynTask):
-        QEDispersion.__init__(structure)
+        QEDispersion.__init__(self,structure)
         self.matdynTask = matdynTask
 
     # temporary hack
