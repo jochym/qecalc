@@ -37,6 +37,7 @@ class QELattice(object):
     def __init__(self, ibrav = 1,a = 1. ,b = 1.,c = 1.,
                  cBC = 0.,cAC = 0. ,cAB = 0., qeConf = None, base = None ):
 #        Lattice.__init__(self)
+        self.formatString = '%# .8f %# .8f %# .8f'
         self.qeConf = qeConf
         self._type = 'celldm'
         self._primitiveLattice = Lattice()
@@ -272,9 +273,12 @@ class QELattice(object):
                                                self._c, self._cBC, self._cAC, self._cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]
             st = st + '"' + qeBaseTuple[2] + '" cell:\n'
-        s = repr(qeBase).replace('array',' ')
-        s = '      ' + ''.join([ c for c in s if c not in ('(', ')','[',']',',')])
-        st = st + s
+        
+        for i in range(3):
+            v = self._primitiveLattice.base[i,:]
+            st = st + self.formatString%(v[0], v[1], v[2])
+            st = st + '\n'
+      
         return st
 
     def latticeParams(self):
@@ -439,7 +443,8 @@ class QELattice(object):
                     qeConf.card('cell_parameters').removeLines()
                     for i in range(3):
                         v = self._primitiveLattice.base[i,:]
-                        qeConf.card('cell_parameters').addLine(str(v)[1:-1])
+                        qeConf.card('cell_parameters').addLine(\
+                                       self.formatString%(v[0], v[1], v[2]))
 
 
 

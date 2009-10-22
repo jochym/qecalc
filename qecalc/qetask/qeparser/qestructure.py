@@ -27,7 +27,7 @@ class AtomicSpecies():
         self.pseudopotential = pseudopotential
         self.mass = mass
     def toString(self):
-        return self.element + ' ' + str(self.mass) + ' ' + self.pseudopotential
+        return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.pseudopotential
 
 
 
@@ -39,6 +39,7 @@ class QEStructure():
         self.filename = qeConf.filename
         self.atomicSpecies = OrderedDict()
         self.lattice = None
+        self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self.optConstraints = []
         self.qeConf = qeConf
@@ -88,15 +89,15 @@ class QEStructure():
         for atom, constraint in zip(self.structure, self.optConstraints):
             if self.atomicPositionsType == 'alat':
                 coords = self.lattice.diffpy().cartesian(atom.xyz)
-                coords = '%.8f  %.8f  %.8f'%(coords[0], coords[1], coords[2])
+                coords = self.formatString%(coords[0], coords[1], coords[2])
                 #coords = str(coords/self.lattice.a)[1:-1]
             else:
                 if self.atomicPositionsType == 'crystal':
                     #coords = str(atom.xyz)[1:-1]
-                    coords = '%21.12f  %0.8f  %0.8f'%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                    coords = self.formatString%(v[0], v[1], v[2])%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
-            s = s + '%2s'%atom.element + '    ' + coords + '  ' \
+            s = s + '%-3s'%atom.element + '    ' + coords + '  ' \
                     + str(constraint)[1:-1] + '\n'
 
         s = s + '\n'
@@ -119,14 +120,14 @@ class QEStructure():
         for atom, constraint in zip(self.structure, self.optConstraints):
             if self.atomicPositionsType == 'alat':
                 coords = self.lattice.diffpy().cartesian(atom.xyz)
-                coords = str(coords/self.lattice.a)[1:-1]
+                coords = self.formatString%(coords[0], coords[1], coords[2])
             else:
                 if self.atomicPositionsType == 'crystal':
                     #coords = str(atom.xyz)[1:-1]
-                    coords = '%f.8  %f.8  %f.8'%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                    coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
-            line = atom.element + '    ' + coords + '  ' + str(constraint)[1:-1]
+            line = '%-3s'%atom.element + '    ' + coords + '  ' + str(constraint)[1:-1]
 #            line = atom.element + ' ' + coords + ' ' + str(constraint)[1:-1]
             qeConf.card('atomic_positions').addLine(line)
 
