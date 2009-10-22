@@ -16,7 +16,7 @@ from qecalc import QECalc
 
 import numpy
 
-from dispersionph import PHDispersion
+#from dispersionph import PHDispersion
 
 from qetask.taskpw import PWTask
 from qetask.taskph import PHTask
