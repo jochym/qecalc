@@ -22,6 +22,7 @@ class QECalc(object):
         self.taskList = []
 
     def launch(self):
+        print 'preved launcher'
         for task in self.taskList:
             task.launch()
 
