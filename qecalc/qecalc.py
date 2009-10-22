@@ -23,6 +23,7 @@ class QECalc(object):
 
     def launch(self):
         for task in self.taskList:
+            print 'lounching task ', task.name
             task.launch()
 
     def lookupProperty(self, propertyName, taskList = None, \
