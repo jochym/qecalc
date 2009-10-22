@@ -12,8 +12,6 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from qecalc import QECalc
-
 import numpy
 
 #from dispersionph import PHDispersion
@@ -22,6 +20,7 @@ from qetask.taskpw import PWTask
 from qetask.taskph import PHTask
 from qetask.taskq2r import Q2RTask
 from qetask.taskmatdyn import MatdynTask
+from qetask.mergerpwph import PWPHMerger
 
 class MultiPhononCalc(QECalc):
     def __init__(self, fname):
