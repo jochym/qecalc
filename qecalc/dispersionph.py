@@ -13,7 +13,7 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qedipsersion import QEDispersion
+from qedispersion import QEDispersion
 
 class PHDispersion(QEDispersion):
     def __init__(self, structure, matdynTask):
