@@ -38,7 +38,8 @@ class QEOutput(object):
                 properties[parserName] = self.output.parse(parserName, self.setting)
             except KeyError: pass
             except IOError: pass
-            except TypeError:
+            except TypeError: pass
+            except ValueError:
                 properties[parserName] = [(None, None)]
         self._properties = properties
 

@@ -29,6 +29,40 @@ class PWInput(QEInput):
         self.structure = QEStructure(self)
         self.kpoints = PWKpoints(self)
 
+    def toString(self):
+        s = ''
+        namelistOrder = {
+        0 : 'control',
+        1 : 'system',
+        2 : 'electrons',
+        3 : 'ions',
+        4 : 'cell',
+        5 : 'phonon',
+        6 : 'ee'
+        }
+
+        cardOrder = {
+        0 : 'atomic_species',
+        1 : 'atomic_positions',
+        2 : 'k_points',
+        3 : 'cell_parameters',
+        4:  'occupations',
+        5 : 'climbing_images',
+        6 : 'constraints',
+        7 : 'collective_vars'
+        }
+        for i in range(len(namelistOrder)):
+            if namelistOrder[i] in self.namelists:
+                s += self.namelists[namelistOrder[i]].toString()
+#        for nl in self.namelists.values():
+#            s += nl.toString()
+
+        for i in range(len(cardOrder)):
+            if cardOrder[i] in self.cards:
+                s += self.cards[cardOrder[i]].toString()
+
+    return s
+
 textA = """
 &control
 calculation='scf'
