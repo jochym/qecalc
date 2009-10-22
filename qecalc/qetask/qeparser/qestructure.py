@@ -83,6 +83,29 @@ class QEStructure():
                         self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
 
+    def toString(self):
+        s = self.lattice.toString() + '\n'
+        for atom, constraint in zip(self.structure, self.optConstraints):
+            if self.atomicPositionsType == 'alat':
+                coords = self.lattice.diffpy().cartesian(atom.xyz)
+                coords = '%.8f  %.8f  %.8f'%(coords[0], coords[1], coords[2])
+                #coords = str(coords/self.lattice.a)[1:-1]
+            else:
+                if self.atomicPositionsType == 'crystal':
+                    #coords = str(atom.xyz)[1:-1]
+                    coords = '%21.12f  %0.8f  %0.8f'%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                else:
+                    raise NonImplementedError
+            s = s + '%2s'%atom.element + '    ' + coords + '  ' \
+                    + str(constraint)[1:-1] + '\n'
+
+        s = s + '\n'
+        for element, specie in self.atomicSpecies.items():
+            s = s + specie.toString() + '\n'
+
+        return s
+
+
     def updatePWInput(self, qeConf = None):
         qeConf.namelist('system').remove('ntyp')
         qeConf.namelist('system').remove('nat')
