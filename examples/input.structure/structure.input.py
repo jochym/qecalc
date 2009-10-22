@@ -20,14 +20,15 @@ if __name__ == '__main__':
     calc = PWCalc('config.ini')
 
     calc.pw.input.parse()
-    print calc.pw.input.structure.lattice.toString()
+    print calc.pw.input.structure.toString()
     calc.pw.input.structure.lattice.ibrav = 8 # make orthorombic
+
+    print calc.pw.input.structure.toString()
+
     calc.pw.input.structure.lattice.a = 3
     calc.pw.input.structure.lattice.b = 4
     calc.pw.input.structure.lattice.c = 5
 
-    print
-    print calc.pw.input.structure.lattice.toString()
 
     print '\nLattice parameters: ', calc.pw.input.structure.lattice.latticeParams()
 
