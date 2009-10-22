@@ -88,8 +88,8 @@ See qephon_ex.py example in examples/qephon directory
 
 Here are some examples of inheritance diagrams:
 
-.. inheritance_diagram:: qecalc.qecalc
+.. .. inheritance_diagram:: qecalc.qecalc
 
 Here are some examples of class diagrams:
 
-.. class_diagram::
+.. .. class_diagram::
