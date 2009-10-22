@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import numpy
 
-#from dispersionph import PHDispersion
+from dispersionph import PHDispersion
 
 from qecalc import QECalc
 
