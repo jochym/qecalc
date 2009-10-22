@@ -13,11 +13,12 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 class PHDispersion(QEDispersion):
     def __init__(self, structure):
         QEDispersion.__init__(structure)
 
-    def setPhononPath(self, *pathNPoints, matdynTask):
+    def setPhononPath(self,matdynTask, *pathNPoints):
         from parser.qe_io_dict import *
         matdynIn = read_file(matdynTask.setting.matdynInput)
         keyStart = find_key_from_string(matdynIn, '/')

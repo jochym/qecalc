@@ -35,7 +35,8 @@ class MultiPhononCalc(QECalc):
         self.matdyn = MatdynTask(self.setting)
         self.pwph = PWPHMerger(pw,ph, cleanOutDir = True)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
-        self.dispersion = PHDispersion(self.pw.input.structure)
+        # Does not work yet::
+        #self.dispersion = PHDispersion(self.pw.input.structure)
 
 
     def loadPhonons(self, fname = None):
