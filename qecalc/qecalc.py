@@ -27,7 +27,7 @@ class QECalc(object):
 
     def lookupProperty(self, propertyName, taskList = None, \
                                                            withUnits = False):
-        """Will look up a specific output property from a list if tasks"""
+        """Will look up a specific output property from a list of tasks"""
         if taskList == None:
             taskList = self.taskList
         value = None
