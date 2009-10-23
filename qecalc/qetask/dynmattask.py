@@ -2,7 +2,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # QEcalc              by DANSE Inelastic group
-#                     Brent Fultz
+#                     Nikolay Markovskiy
 #                     California Institute of Technology
 #                     (C) 2009  All Rights Reserved
 #
@@ -17,18 +17,18 @@ from qetask import QETask
 from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
-class Q2RTask(QETask):
+class DynmatTask(QETask):
     def __init__(self, setting, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(self.setting.q2rInput, type = 'q2r')
-        self.output = QEOutput(self.setting, type = 'pw')
-        self.cmdStr = "q2r.x < " + self.setting.q2rInput + " > " + \
-                       self.setting.q2rOutput
-        self.name = 'q2r.x'
+        self.input = QEInput(self.setting.dynmatInput, type = 'dynmat')
+        self.output = QEOutput(self.setting, type = 'dynmat')
+        self.cmdStr = "dynmat.x < " + self.setting.dynmatInput + " > " + \
+                       self.setting.dynmatOutput
+        self.name = 'dynmat.x'
 
 
 if __name__ == "__main__":
     print "Hello World";
 
 __author__="Nikolay Markovskiy"
-__date__ ="$Oct 19, 2009 3:12:40 PM$"
+__date__ ="$Oct 19, 2009 3:24:51 PM$"

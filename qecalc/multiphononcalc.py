@@ -2,7 +2,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # QEcalc              by DANSE Inelastic group
-#                     Brent Fultz
+#                     Nikolay Markovskiy
 #                     California Institute of Technology
 #                     (C) 2009  All Rights Reserved
 #
@@ -14,15 +14,15 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import numpy
 
-from dispersionph import PHDispersion
+from phdispersion import PHDispersion
 
 from qecalc import QECalc
 
-from qetask.taskpw import PWTask
-from qetask.taskph import PHTask
-from qetask.taskq2r import Q2RTask
-from qetask.taskmatdyn import MatdynTask
-from qetask.mergerpwph import PWPHMerger
+from qetask.pwtask import PWTask
+from qetask.phtask import PHTask
+from qetask.q2rtask import Q2RTask
+from qetask.matdyntask import MatdynTask
+from qetask.pwphmerger import PWPHMerger
 
 class MultiPhononCalc(QECalc):
     def __init__(self, fname):

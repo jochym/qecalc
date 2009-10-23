@@ -1,6 +1,4 @@
-#from task.writetopwscf import varnameValue, atomic_positions
-#from task.task import Task
-from qecalc.calcpw import PWCalc
+from qecalc.pwcalc import PWCalc
 import numpy as np
 from scipy.optimize import brent
 import scipy

@@ -2,7 +2,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # QEcalc              by DANSE Inelastic group
-#                     Brent Fultz
+#                     Nikolay Markovskiy
 #                     California Institute of Technology
 #                     (C) 2009  All Rights Reserved
 #
@@ -12,8 +12,8 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from calcpw import PWCalc
-from calcsinglephonon import SinglePhononCalc
+from pwcalc import PWCalc
+from singlephononcalc import SinglePhononCalc
 import numpy
 
 class Converger():

@@ -1,5 +1,5 @@
 from qecalc.setting import Setting
-from qecalc.qetask.taskpw import PWTask
+from qecalc.qetask.pwtask import PWTask
 
 setting = Setting('config.ini')
 pw = PWTask(setting)
