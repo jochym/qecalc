@@ -12,3 +12,7 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import qecalc.qecalc
+import qecalc.calcpw
+import qecalc.calcsinglephonon
+import qecalc.calcmultiphonon
