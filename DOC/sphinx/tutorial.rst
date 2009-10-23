@@ -3,17 +3,17 @@ Tutorial
 
 Introduction
 ------------
-Quantum Espresso(QE) is a widely used GNU distributed open source ab initio package
+`Quantum Espresso <http://www.quantum-espresso.org>`_(QE) is widely used GNU distributed open source ab initio package
 for plane wave Density Functional Theory (DFT) and molecular dynamics calculations.
 Often users need to go beyond basic capabilities of an ab initio program and
-use it's outputs for more advanced tasks. Some examples:
+use its outputs for more advanced tasks. Some examples:
 
 * convergence studies of a property of interest with respect to ranging values of different input parameters
 * Various optimization and minimization problems
 * Plotting and data processing
 
 QECalc is a set of Quantum Espresso launchers and input/ouput parsers.
-It's primary goal is to use its classes to streamline users workflow,
+Its primary goal is to use its classes to streamline users workflow,
 offer new functionality and provide the machinery  to build new  features using
 numpy, scipy, and matplotlib. One such example can be the class Converger from
 qecalc/converger.py wich can be  used to converge such
@@ -45,9 +45,9 @@ It is important to check that QE input files lead to statisfactory results
 before using them in automated manner.
 
 In order to run python scripts with Quantum Espresso, one needs to provide all
-the appropriate config files for (scf.in for total energy or geometry optimization;
+the appropriate config files (scf.in for total energy or geometry optimization;
 additionally ph.in and dynmat.in for single phonon; or ph.in, q2r.in and matdyn.in
-for multi phonon calculation) and place config.ini
+for multi phonon calculation; etc) and place config.ini
 into working dir, which specifies parallel environment of your task as well as
 all the relevant input and output files. An example of config.ini is located in qecalc directory. All
 its sections do not need to be populated, only the parameters needed for a

@@ -16,18 +16,39 @@ from setting import Setting
 import numpy
 
 class QECalc(object):
+    """Base abstract class for 'CalcNameCalc' family of classes and does not provide
+    any functionality. All user defined classes should be derived from this
+    class. All tasks of user defined Calcs should be appended to the taskList
+    for launch() and lookupProperty methods to work
+
+      setting -- provides access to parallel environment and QE input/output files
+
+      taskList -- list of all user specified tasks. Should reflect
+      their launching order
+    """
     def __init__(self, fname):
         
         self.setting = Setting(fname)
         self.taskList = []
 
     def launch(self):
+        """Launches all tasks in taskList one after another:
+        
+          >>> pwCalc = PWCalc('config.ini')
+          >>> pwCalc.launch()
+        
+        """
         for task in self.taskList:
             task.launch()
 
     def lookupProperty(self, propertyName, taskList = None, \
                                                            withUnits = False):
-        """Will look up a specific output property from a list of tasks"""
+        """
+        Will look up a specific output property with propertyName from the
+        list of tasks taskList:
+          >>> mphonCalc = MultiPhononCalcCalc('config.ini')
+          >>> print mphonCalc.lookupProperty('total energy', withUnits = True)
+        """
         if taskList == None:
             taskList = self.taskList
         value = None
