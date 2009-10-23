@@ -1,12 +1,13 @@
 Tutorial
 ========
 
-QECalc is a set of Quantum Espresso launchers and input/ouput parsers.
-It's primary goal is to use its classes, such as QECalc, QEPhon, to
-create batch jobs. One such example can be class Converger from qecalc/converger.py wich can be  used to converge such
+QECalc is a set of Quantum Espresso launchers and input/ouput parsers. It's primary goal is to use its classes, derived from QECalc to
+create batch jobs. One such example can be a class Converger from qecalc/converger.py wich can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
-cut off energies and number of k-points. More examples can be seen in examples
+any iteratable property of PW config file. More examples can be seen in examples
 directory.
+
+Main f
 
 Currently, to use the module one needs to create a python
 file (example is main.py) and edit it according to the task desired,
@@ -19,9 +20,6 @@ into working dir. An example of config.ini is located in qecalc directory. All
 its sections do not need to be populated, only the parameters needed for a
 specific task. If some of the parameters are missing, default values will be used.
 
-For now, QE config files should have one variable per line and no
-comments. Also make sure that cards arguments from pwscf input file do not
-have brackets around them
 
 Before the run, check all the pseudopotentials from the config file
 are available and all the directories are created (e.g. temp/ ) and
