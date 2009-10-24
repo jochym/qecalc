@@ -19,8 +19,8 @@ import numpy
 from qetask.pwtask import PWTask
 
 class PWCalc(QECalc):
-    def __init__(self, fname):
-        QECalc.__init__(self, fname)
+    def __init__(self, filename):
+        QECalc.__init__(self, filename)
         self.pw = PWTask(self.setting)
         self.taskList = [self.pw]
 

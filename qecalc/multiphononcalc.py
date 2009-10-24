@@ -25,8 +25,8 @@ from qetask.matdyntask import MatdynTask
 from qetask.pwphmerger import PWPHMerger
 
 class MultiPhononCalc(QECalc):
-    def __init__(self, fname):
-        QECalc.__init__(self, fname)
+    def __init__(self, filename):
+        QECalc.__init__(self, filename)
         self._freqs = None
         self._modes = None
         self._qpts = None

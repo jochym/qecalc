@@ -26,9 +26,9 @@ class QECalc(object):
       taskList -- list of all user specified tasks. Should reflect
       their launching order
     """
-    def __init__(self, fname):
+    def __init__(self, filename):
         
-        self.setting = Setting(fname)
+        self.setting = Setting(filename)
         self.taskList = []
 
     def launch(self, taskList = None):

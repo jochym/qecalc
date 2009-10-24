@@ -23,8 +23,8 @@ from qetask.dynmattask import DynmatTask
 from qetask.pwphmerger import PWPHMerger
 
 class SinglePhononCalc(QECalc):
-    def __init__(self, fname):
-        QECalc.__init__(self, fname)
+    def __init__(self, filename):
+        QECalc.__init__(self, filename)
         self.pw = PWTask(self.setting)
         self.ph = PHTask(self.setting)
         self.dynmat = DynmatTask(self.setting)
