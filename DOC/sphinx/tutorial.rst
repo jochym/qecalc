@@ -56,10 +56,13 @@ specific task. If some of the parameters are missing, default values will be use
 The default values are located in qecalc/qecalc/settings.py
 
 
-Before the run, check all the pseudopotentials from the pw config file
-are available and your output dir existsts (e.g. temp/ ). Make sure
-Quantum Espresso is in your $PATH environment variable. See examples directory
-for more details
+Before the run, check that all the pseudopotentials from the pw config file
+are available and your output dir existsts (e.g. temp/ ). Also make sure
+Quantum Espresso is in your $PATH environment variable.
 
 Execute your python script which uses qecalc API from your working dir.
+
+See examples directory as well as API documentation for more details
+
+
 
