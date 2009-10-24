@@ -23,17 +23,26 @@ from qetask.pwphmerger import PWPHMerger
 
 class SinglePhononCalc(QECalc):
     """ Calc for multi phonon calculations:
-        Task list:
-          pw     -- PWTask
-          ph     -- PHTask
-          dynmat -- DynmatTask
-          pwph   -- PWPHMerger - task merger used for submission of pw.x and ph.x
-                    commands in a single command string
-          taskList = [pwph, dynmat]
-          Example:
-            >>> phonCalc = SinglePhononCalc('config.ini')
-            >>> phonCalc.launch()
-            >>> print phonCalc.dynmat.output('single phonon')
+
+    Task list:
+
+      pw     -- PWTask
+
+      ph     -- PHTask
+
+      dynmat -- DynmatTask
+
+      pwph   -- PWPHMerger - task merger used for submission of pw.x and ph.x
+      commands in a single command string
+
+      taskList = [pwph, dynmat]
+      
+    Example:
+      
+      >>> phonCalc = SinglePhononCalc('config.ini')
+      >>> phonCalc.launch()
+      >>> print phonCalc.dynmat.output('single phonon')
+      
     """
     def __init__(self, filename):
         QECalc.__init__(self, filename)
