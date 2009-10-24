@@ -32,7 +32,7 @@ class QETask(object):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name + " crashed: check your settings")
+            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self.cmdStr)
 
     def _run(self):        
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdStr:

@@ -14,10 +14,10 @@ use its outputs for more advanced tasks. Some examples:
 
 QECalc is a set of Quantum Espresso launchers and input/ouput parsers available
 organized  under single API.
-Its primary goal is to use its classes to streamline users workflow,
+Its primary goal is to use its classes to streamline user's work flow,
 offer new functionality and provide the machinery  to build new  features using
 numpy, scipy, and matplotlib. One such example can be the class Converger from
-qecalc/converger.py wich can be  used to converge such
+qecalc/converger.py which can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
 any iteratable variable of PW config file. More examples can be seen in examples
 directory.
@@ -40,9 +40,9 @@ and go through the following steps:
 
 Usage
 ------------
-It is essential the user knows how to use Qunatum Espresso for the basic tasks.
+It is essential the user knows how to use Quantum Espresso for the basic tasks.
 Excellent place to start is the `Quantum Espresso wiki <http://www.quantum-espresso.org/wiki>`_ page.
-It is important to check that QE input files lead to statisfactory results
+It is important to check that QE input files lead to satisfactory results
 before using them in automated manner.
 
 In order to run python scripts with Quantum Espresso, one needs to provide all

@@ -19,7 +19,7 @@ class QECalc(object):
     """Base abstract class for 'CalcNameCalc' family of classes and does not provide
     any functionality. All user defined classes should be derived from this
     class. All tasks of user defined Calcs should be appended to the taskList
-    for launch() and lookupProperty methods to work
+    for launch() and lookupProperty() methods to work properly
 
       setting -- provides access to parallel environment and QE input/output files
 
@@ -31,20 +31,23 @@ class QECalc(object):
         self.setting = Setting(fname)
         self.taskList = []
 
-    def launch(self):
+    def launch(self, taskList = None):
         """Launches all tasks in taskList one after another:
         
           >>> pwCalc = PWCalc('config.ini')
           >>> pwCalc.launch()
         
         """
-        for task in self.taskList:
+        if taskList == None:
+            taskList = self.taskList
+            
+        for task in taskList:
             task.launch()
 
     def lookupProperty(self, propertyName, taskList = None, \
                                                            withUnits = False):
         """
-        Will look up a specific output property with propertyName from the
+        Will look up a specific output property with propertyName in the
         list of tasks taskList:
           >>> phonCalc = SinglePhononCalc('config.ini')
           >>> phonCalc.launch()
@@ -53,6 +56,7 @@ class QECalc(object):
         """
         if taskList == None:
             taskList = self.taskList
+            
         value = None
         for task in taskList:
             #try:
