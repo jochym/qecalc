@@ -25,6 +25,23 @@ from qetask.matdyntask import MatdynTask
 from qetask.pwphmerger import PWPHMerger
 
 class MultiPhononCalc(QECalc):
+    """ Calc for multi phonon calculations:
+        Task list:
+          pw     -- PWTask
+          ph     -- PHTask
+          q2r    -- Q2RTask
+          matdyn -- MatdynTask
+          pwph   -- PWPHMerger - task merger used for submission of pw.x and ph.x
+                    commands in a single command string
+          taskList = [pwph, q2r, matdyn]
+          Example:
+            >>> mphonCalc = MultiPhononCalc('config.ini')
+            >>> mphon.launch()
+            >>> print mphon.pw.output.property('total energy')
+            >>> print mphon.matdyn.output.listParsers()
+            >>> print mphon.matdyn.output.property('phonon dos')
+            >>> polVecs, freqs, qpoints =  mphon.lookupProperty('multi phonon')
+    """
     def __init__(self, filename):
         QECalc.__init__(self, filename)
         self._freqs = None

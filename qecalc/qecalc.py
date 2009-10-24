@@ -16,8 +16,8 @@ from setting import Setting
 import numpy
 
 class QECalc(object):
-    """Base abstract class for 'CalcNameCalc' family of classes and does not provide
-    any functionality. All user defined classes should be derived from this
+    """Base abstract class for 'CalcNameCalc' family of classes.
+    All user defined classes should be derived from this
     class. All tasks of user defined Calcs should be appended to the taskList
     for launch() and lookupProperty() methods to work properly
 

@@ -19,6 +19,13 @@ import numpy
 from qetask.pwtask import PWTask
 
 class PWCalc(QECalc):
+    """ Calc for single pw.x use.:
+        Task list:
+          pw -- PWTask
+          Example:
+            >>> pwCalc = PWCalc('config.ini')
+            >>> pwCalc.launch()
+    """
     def __init__(self, filename):
         QECalc.__init__(self, filename)
         self.pw = PWTask(self.setting)
