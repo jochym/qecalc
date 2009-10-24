@@ -53,7 +53,8 @@ Inheritance diagrams of QECalc family of classes:
 
 
 
-Here is a large overview:
+Class diagram of QECalc
+------------------------------
 
 .. image:: ../QECalc_diagram.png
    :width:  1024

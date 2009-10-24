@@ -32,7 +32,10 @@ class QECalc(object):
         self.taskList = []
 
     def launch(self, taskList = None):
-        """Launches all tasks in taskList one after another:
+        """Launches all tasks in taskList one after another. With no taskList
+        provided internal taskList is used.
+
+        Example:
         
           >>> pwCalc = PWCalc('config.ini')
           >>> pwCalc.launch()
@@ -48,7 +51,11 @@ class QECalc(object):
                                                            withUnits = False):
         """
         Will look up a specific output property with propertyName in the
-        list of tasks taskList:
+        list of tasks taskList. With no taskList  provided internal taskList
+        is used.
+
+        Example:
+
           >>> phonCalc = SinglePhononCalc('config.ini')
           >>> phonCalc.launch()
           >>> print phonCalc.lookupProperty('total energy', withUnits = True)
