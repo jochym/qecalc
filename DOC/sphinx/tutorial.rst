@@ -3,7 +3,7 @@ Tutorial
 
 Introduction
 ------------
-`Quantum Espresso <http://www.quantum-espresso.org>`_(QE) is widely used GNU distributed open source ab initio package
+`Quantum Espresso <http://www.quantum-espresso.org>`_ (QE) is widely used GNU distributed open source ab initio package
 for plane wave Density Functional Theory (DFT) and molecular dynamics calculations.
 Often users need to go beyond basic capabilities of an ab initio program and
 use its outputs for more advanced tasks. Some examples:
