@@ -47,6 +47,7 @@ class QECalc(object):
         Will look up a specific output property with propertyName from the
         list of tasks taskList:
           >>> phonCalc = SinglePhononCalc('config.ini')
+          >>> phonCalc.launch()
           >>> print phonCalc.lookupProperty('total energy', withUnits = True)
           >>> print phonCalc.lookupProperty('single phonon', withUnits = True)
         """
