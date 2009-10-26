@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qecalc.multiphononcalc import MultiPhononCalc
-from thermo.thermodyn import PhononThermodynamics
+from qeutils.thermo.thermodyn import PhononThermodynamics
 import numpy
 import os
 from qeutils.volufit import ValueFit
@@ -25,8 +25,8 @@ a_range = numpy.array([5.6724469859199997, 5.6750274863032173, 5.678581493991043
 c_a_range = numpy.array([1.0895502669999999, 1.0902407788521165, 1.0903670852940217, 1.090818910093668, 1.091273295187184, 1.0916348386375583, 1.0920383848325765, 1.0924889987431634, 1.0928205534256967, 1.0932932254548433, 1.09371350862399, 1.0941445604290785, 1.0945705200579436, 1.0950163576406637, 1.0954506600760952, 1.0958756352290124, 1.0962652071369421, 1.0968668161284669, 1.0971422049606323, 1.0976396117859046, 1.0980884501524621, 1.0985427361942841])
 e_total = numpy.array([-17.173580479999998, -17.173578419999998, -17.173568249999999, -17.17354963, -17.17352326, -17.17348866, -17.173445699999998, -17.17339467, -17.17333614, -17.17326946, -17.17319517, -17.173113239999999, -17.173023669999999, -17.172927080000001, -17.1728223, -17.172710599999998, -17.172591560000001, -17.17246548, -17.172331499999999, -17.172185509999998, -17.172038229999998, -17.17188402])
 
-fc_name = 'alb2888.fc'
-matdynfldos = 'alb2888.phdos'
+fc_name = 'alb2666.fc'
+matdynfldos = 'alb2666.phdos'
 
 indexRange = [0,2,4,6,8,10,12]
 prcntVol = 2.0*numpy.array(indexRange)/1000.0
@@ -44,7 +44,7 @@ class FreeEnergy():
         self.prcntVol = prcntVol
         self.fitEnergy = ValueFit(prcntVol,e_total[indexRange], 'polynom', 4, True)
         self.fitPhononEnergy = ValueFit(prcntVol,phonon, 'polynom', 1, True)
-        
+
     def totalFreeEnergy(self,v, *params):
         return self.fitEnergy.fittedValue(v) + self.fitPhononEnergy.fittedValue(v)
 
@@ -78,8 +78,12 @@ if __name__ == "__main__":
     for temperature in temperatures:
         lines = ''
         phonon = []
+        matdynfldosName = mphonCalc.setting.matdynfldos = matdynfldos
         for i,v in zip(indexRange, prcntVol):
-            axis, dos = qecalc.getPhononDOS(str(i) + '_' + matdynfldos)
+            mphonCalc.setting.matdynfldos = str(i) + '_' + matdynfldosName
+            mphonCalc.matdyn.output.parse()
+            print mphonCalc.matdyn.output.property('phonon dos')
+            axis, dos = mphonCalc.matdyn.output.property('phonon dos')
             phonTherm = PhononThermodynamics(axis, dos)
             Cv = phonTherm.Cv(temperature)
             phonon.append(phonTherm.freeEnergy(temperature))
