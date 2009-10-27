@@ -44,7 +44,9 @@ class QETask(object):
             self._check(os.system(self.cmdStr))
 
     def cleanOutputDir(self):
-        """will always parse pwscfInput file"""
+        """
+        Parses pwscfInput file for output dir name and cleans the directory
+        """
         from qeparser.qeinput import QEInput
         import shutil
         qeConf = QEInput(self.setting.pwscfInput)
@@ -61,6 +63,9 @@ class QETask(object):
         return self.cmdStr
 
     def launch(self, cleanOutDir = None):
+        """
+        Parses input. Launches task. Parses output.
+        """
         if cleanOutDir != None:
             clean = cleanOutDir
         else:

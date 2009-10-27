@@ -1,9 +1,16 @@
 API
 ===
 
-Inheritance diagrams of QECalc family of classes:
+Class backbone of QECalc
+-------------------------
 
-.. inheritance-diagram:: qecalc.qecalc
+.. image:: ../overview.png
+   :width:  512
+
+
+Inheritance diagrams of QECalc family of classes
+-------------------------------------------------
+
 .. inheritance-diagram:: qecalc.pwcalc
 .. inheritance-diagram:: qecalc.singlephononcalc
 .. inheritance-diagram:: qecalc.multiphononcalc
@@ -52,12 +59,44 @@ Inheritance diagrams of QECalc family of classes:
 .. .. class-diagram::
 
 
+Inheritance diagrams of QETask family of classes
+-------------------------------------------------
 
-Class diagram of QECalc
+.. image:: ../tasks.png
+   :width:  512
+
+
+.. .. inheritance-diagram:: qecalc.qetask.pwtask
+.. .. inheritance-diagram:: qecalc.qetask.phtask
+.. .. inheritance-diagram:: qecalc.qetask.matdyntask
+.. .. inheritance-diagram:: qecalc.qetask.dynmattask
+.. .. inheritance-diagram:: qecalc.qetask.matdyntask
+.. inheritance-diagram:: qecalc.qetask.pwphmerger
+
+
+:mod:`qecalc.qetask.qetask`
+----------------------------
+
+.. automodule:: qecalc.qetask.qetask
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+:mod:`qecalc.qetask.taskmerger`
+--------------------------------
+
+.. automodule:: qecalc.qetask.taskmerger
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+Class overview of QECalc
 ------------------------------
 
-.. image:: ../QECalc_diagram.png
-   :width:  1024
+.. image:: ../QECalc_diagram.svg
+   :width:  600
 
 
 .. todo: don't forget to replace the dataobjects with the current ones
