@@ -174,6 +174,7 @@ class QELattice(object):
             qeBase = numpy.array(base, dtype = float)*a
 #            print qeBase
             self._a = 1.0
+            print qeBase
             self._primitiveLattice.setLatBase(qeBase)
             self._standardLattice.setLatBase(qeBase)
         else:
