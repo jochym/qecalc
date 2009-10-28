@@ -30,7 +30,9 @@ class Output(BaseOutput):
                    }
 
     def getTotalEnergy(self, setting):
-        'Extract total energy value from pwscf output'
+        """
+        Extract total energy value from pwscf output
+        """
         #read Espresso output into memory:
         file = open(setting.pwscfOutput)
         pwscfOut = file.readlines()
@@ -43,8 +45,10 @@ class Output(BaseOutput):
         #return [([float(words[4])], 'Ry')]
 
     def getLatticeParameters(self, setting):
-        """Extract lattice parameters after pwscf geometry optimization
-           Returns a list of 6 parameters: A, B, C, cos(BC), cos(AC), cos(AB)"""
+        """
+        Extract lattice parameters after pwscf geometry optimization
+        Returns a list of 6 parameters: A, B, C, cos(BC), cos(AC), cos(AB)
+        """
         # does not work yet
         return [(None, None)]
         from qecalc.qetask.qeparser.qelattice import QELattice
@@ -64,31 +68,6 @@ class Output(BaseOutput):
         lat.setLatticeFromQEVectors(lat.ibrav, latticeVectors)
         return [([lat.a, lat.b, lat.c, lat.cBC ,lat.cAC , lat.cAB], None)]
         
-    def toStructure(self, structure):
-        file = open(setting.pwscfOutput)
-        pwscfOut = file.readlines()
-        pseudoList = []
-        atomList = []
-        massList = []
-        for i, line in enumerate(pwscfOut):
-            if 'lattice parameter (a_0)' in line:
-                a0 = float(line.split()[4])
-            if 'bravais-lattice index' in line:
-                ibrav = int(line.split('=')[1])
-            if 'number of atomic types' in line:
-                nat = int(line.split('=')[1])
-            if 'PseudoPot.' in line:
-                pseudoList.append(line.split('read from file')[1].strip())
-            if 'atomic species   valence    mass     pseudopotential' in line:
-                for j in range(nat):
-                    atomList.append(pwscfOut[i+j+1].split()[0])
-                    massList.append(pwscfOut[i+j+1].split()[2])
-        print a0
-        print ibrav
-        print nat
-        print pseudoList
-        print atomList
-        print massList
 
     def getStress(self, setting):
         '''Extract total stress in kbar after pwscf launch or geometry optimization'''
