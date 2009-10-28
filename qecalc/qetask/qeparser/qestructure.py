@@ -129,7 +129,7 @@ class QEStructure():
                 latticeVectors = [[float(f)*a_0 for f in lastSection[i + 1].split() ],
                                   [float(f)*a_0 for f in lastSection[i + 2].split() ],
                                   [float(f)*a_0 for f in lastSection[i + 3].split() ]]
-                self.lattice = QELattice(ibrav = 0, base = latticeVectors)
+                self.lattice = QELattice(ibrav = ibrav, base = latticeVectors)
                 print self.lattice.diffpy().base
             if 'ATOMIC_POSITIONS (alat)' in line:
                 self.structure = Structure(lattice = self.lattice.diffpy())
@@ -144,7 +144,7 @@ class QEStructure():
                     print numpy.array(coords[0:3])*a_0
                     coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
-        self.lattice.ibrav = ibrav
+                #self.lattice.ibrav = ibrav
         print 'Output structure from output file: ', self.toString()
     
     
