@@ -45,7 +45,7 @@ class Output(BaseOutput):
         from qecalc.qetask.qeparser.qelattice import QELattice
         # does not work yet
         # obtain lattice from PWSCF input file:
-        lat = QELattice(fname = setting.pwscfInput)
+        lat = QELattice(setting)
         pwscfOut = read_file(setting.pwscfOutput)
         key_a_0 = find_key_from_string(pwscfOut, 'lattice parameter (a_0)')
         a_0 = float( string.split( pwscfOut[key_a_0] )[4] )
@@ -58,6 +58,32 @@ class Output(BaseOutput):
                          [ float(valstr)*a_0 for valstr in string.split( pwscfOut[keyCellPar+2] ) ]]
         lat.setLatticeFromQEVectors(lat.ibrav, latticeVectors)
         return [([lat.a, lat.b, lat.c, lat.cBC ,lat.cAC , lat.cAB], None)]
+        
+    def toStructure(self, structure):
+        file = open(setting.pwscfOutput)
+        pwscfOut = file.readlines()
+        pseudoList = []
+        atomList = []
+        massList = []
+        for i, line in enumerate(pwscfOut):
+            if 'lattice parameter (a_0)' in line:
+                a0 = float(line.split()[4])
+            if 'bravais-lattice index' in line:
+                ibrav = int(line.split('=')[1])
+            if 'number of atomic types' in line:
+                nat = int(line.split('=')[1])
+            if 'PseudoPot.' in line:
+                pseudoList.append(line.split('read from file')[1].strip())
+            if 'atomic species   valence    mass     pseudopotential' in line:
+                for j in range(nat):
+                    atomList.append(pwscfOut[i+j+1].split()[0])
+                    massList.append(pwscfOut[i+j+1].split()[2])
+        print a0
+        print ibrav
+        print nat
+        print pseudoList
+        print atomList
+        print massList
 
     def getStress(self, setting):
         '''Extract total stress in kbar after pwscf launch or geometry optimization'''
@@ -78,7 +104,13 @@ class Output(BaseOutput):
         return [(forces, 'Ry/au')]
 
 if __name__ == "__main__":
-    print "Hello World";
-
+    #from qecalc.qetask.qeparser import PWInput
+    #from qecalc.qetask.qeparser.qestructure import QEStructure
+    #setting = Setting('config.ini')
+    #pwInput = PWInput(setting)
+    #output = Output()
+    #output.toStructure(pwInput.structure)
+    
+    
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 18, 2009 6:52:35 PM$"

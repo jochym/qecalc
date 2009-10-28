@@ -51,3 +51,6 @@ def find_last_key_from_string(dic, val):
     """Will find last key with string mentioning 'val' after '!' """
     keyEnd = max( find_all_keys_from_marker_string(dic, '!', 'total energy') )
     return find_key_from_string_afterkey(dic, keyEnd, val)
+    
+    
+    

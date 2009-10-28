@@ -44,9 +44,78 @@ class QEStructure():
         self.optConstraints = []
         self.qeConf = qeConf
         #self.qeConf.parse()
+        #self.setStructureFromQEInput()
+        self.lattice = None
+        self.structure = None
+        self.nat = None
+        self.ntyp = None
+        
+        
+    def parseInput(self):
         self.setStructureFromQEInput()
-
-
+        
+    def parseOutput(self, pwscfOutputFile):
+        self.setStructureFromPWOutput(pwscfOutputFile)
+        
+    def setStructureFromPWOutput(self, pwscfOutputFile): 
+        """ Loads structure from PWSCF output file after geometry optimization"""
+        file = open(pwscfOutputFile)
+        pwscfOut = file.readlines()
+        pseudoList = []
+        atomList = []
+        massList = []
+        self.atomicPositionsType = 'alat'  
+        # parse beginning:
+        for i, line in enumerate(pwscfOut):
+            if 'lattice parameter (a_0)' in line:
+                a_0 = float(line.split()[4])
+            if 'bravais-lattice index' in line:
+                ibrav = int(line.split('=')[1])
+            if 'number of atoms/cell' in line:
+                self.nat = int(line.split('=')[1])
+            if 'number of atomic types' in line:
+                self.ntyp = int(line.split('=')[1])
+            if 'PseudoPot.' in line:
+                pseudoList.append(line.split('read from file')[1].strip())
+            if 'atomic species   valence    mass     pseudopotential' in line:
+                for j in range(self.ntyp):
+                    atomList.append(pwscfOut[i+j+1].split()[0])
+                    massList.append(float(pwscfOut[i+j+1].split()[2]))
+        for a, m, p in zip(atomList, massList, pseudoList):
+            self.atomicSpecies[a] = AtomicSpecies(a, m, p)
+        #Parse end:
+        # Find all geometry optimization steps
+        posList =  [i for i,line in enumerate(pwscfOut) if '!    total energy' in line]
+        lastSection = pwscfOut[posList[-1]:]
+        for i, line in enumerate(lastSection):
+            if 'CELL_PARAMETERS (alat)' in line:
+                latticeVectors = [[float(f)*a_0 for f in lastSection[i + 1].split() ],
+                                  [float(f)*a_0 for f in lastSection[i + 2].split() ],
+                                  [float(f)*a_0 for f in lastSection[i + 3].split() ]]
+                self.lattice = QELattice(ibrav = 0, base = latticeVectors)
+                self.structure = Structure(lattice = self.lattice.diffpy())
+            if 'ATOMIC_POSITIONS (alat)' in line:
+                for n in range(self.nat):
+                    words = lastSection[i + n + 1].split()
+                    atomSymbol = words[0]
+                    coords = [float(w) for w in words[1:4]]
+                    constraint = []
+                    if len(words) > 4:
+                        constraint = [int(c) for c in words[4:7]]
+                    self.optConstraints.append(numpy.array(constraint, dtype = int))                    
+                    print numpy.array(coords[0:3])*a_0
+                    coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
+                    self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+        self.lattice.ibrav = ibrav
+        print self.toString()
+        print 'Lattice Parameters:'
+        print self.lattice.latticeParams()
+                    
+        #print pseudoList
+        #print atomList
+        #print massList    
+    
+    
     def setStructureFromQEInput(self):
         """ Loads structure from PWSCF config file"""
         self.lattice = QELattice(qeConf = self.qeConf)
@@ -173,12 +242,13 @@ class QEStructure():
 
 if __name__ == '__main__':
     pwInput = QEInput('scf.in', type = 'pw')
-    pwInput.parse()
+    #pwInput.parse()
     myStruct = QEStructure(qeConf = pwInput)
-    myStruct.lattice.ibrav = 4
-    print myStruct.lattice.a
-    print myStruct.lattice.c
-    myStruct.lattice.a = 43
+    #myStruct.lattice.ibrav = 4
+    #print myStruct.lattice.a
+    #print myStruct.lattice.c
+    #myStruct.lattice.a = 43
     #pwInput.save()
-    myStruct.saveStructureToPWSCF('scf_2.in')
-    print myStruct.structure
+    #myStruct.saveStructureToPWSCF('scf_2.in')
+    #print myStruct.structure
+    myStruct.parseOutput('geom.out')
