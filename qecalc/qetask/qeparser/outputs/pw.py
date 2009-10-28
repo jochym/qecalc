@@ -92,6 +92,5 @@ if __name__ == "__main__":
     #from qecalc.qetask.qeparser.qestructure import QEStructure
     #setting = Setting('config.ini')
     #pwInput = PWInput(setting)
-    #output = Output()
-    #output.toStructure(pwInput.structure)
+    output = Output()    
     
