@@ -116,6 +116,3 @@ if __name__ == "__main__":
     #output = Output()
     #output.toStructure(pwInput.structure)
     
-    
-__author__="Nikolay Markovskiy"
-__date__ ="$Oct 18, 2009 6:52:35 PM$"
