@@ -108,7 +108,7 @@ class QEStructure():
                 self.structure = Structure(lattice = self.lattice.diffpy())
                 for n in range(self.nat):
                     words = pwscfOut[i + n + 1].split()
-                    atomSymbol = words[0]
+                    atomSymbol = words[1]
                     coords = [float(w) for w in words[6:9]]
                     constraint = []
                     self.optConstraints.append(numpy.array(constraint, dtype = int))
