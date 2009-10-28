@@ -112,14 +112,14 @@ class QEStructure():
                     coords = [float(w) for w in words[6:9]]
                     constraint = []
                     self.optConstraints.append(numpy.array(constraint, dtype = int))
-                    print numpy.array(coords[0:3])*a_0
+                    #print numpy.array(coords[0:3])*a_0
                     coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
 
         for a, m, p in zip(atomList, massList, pseudoList):
             self.atomicSpecies[a] = AtomicSpecies(a, m, p)
 
-        print 'Input structure from output file: ', self.toString()
+        #print 'Input structure from output file: ', self.toString()
         #Parse end:
         # Find all geometry optimization steps
         posList =  [i for i,line in enumerate(pwscfOut) if '!    total energy' in line]
@@ -141,11 +141,11 @@ class QEStructure():
                     if len(words) > 4:
                         constraint = [int(c) for c in words[4:7]]
                     self.optConstraints.append(numpy.array(constraint, dtype = int))
-                    print numpy.array(coords[0:3])*a_0
+                    #print numpy.array(coords[0:3])*a_0
                     coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
                 #self.lattice.ibrav = ibrav
-        print 'Output structure from output file: ', self.toString()
+        #print 'Output structure from output file: ', self.toString()
     
     
     def setStructureFromQEInput(self):
