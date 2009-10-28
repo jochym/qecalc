@@ -64,6 +64,7 @@ class QEStructure():
         pseudoList = []
         atomList = []
         massList = []
+        self.atomicSpecies = OrderedDict()
         self.atomicPositionsType = 'alat'  
         # parse beginning:
         for i, line in enumerate(pwscfOut):
@@ -94,6 +95,7 @@ class QEStructure():
                                   [float(f)*a_0 for f in lastSection[i + 3].split() ]]
                 self.lattice = QELattice(ibrav = 0, base = latticeVectors)
                 self.structure = Structure(lattice = self.lattice.diffpy())
+                print self.lattice.diffpy().base
             if 'ATOMIC_POSITIONS (alat)' in line:
                 for n in range(self.nat):
                     words = lastSection[i + n + 1].split()
@@ -102,22 +104,16 @@ class QEStructure():
                     constraint = []
                     if len(words) > 4:
                         constraint = [int(c) for c in words[4:7]]
-                    self.optConstraints.append(numpy.array(constraint, dtype = int))                    
+                    self.optConstraints.append(numpy.array(constraint, dtype = int))
                     print numpy.array(coords[0:3])*a_0
                     coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
         self.lattice.ibrav = ibrav
-        print self.toString()
-        print 'Lattice Parameters:'
-        print self.lattice.latticeParams()
-                    
-        #print pseudoList
-        #print atomList
-        #print massList    
     
     
     def setStructureFromQEInput(self):
         """ Loads structure from PWSCF config file"""
+        self.atomicSpecies = OrderedDict()
         self.lattice = QELattice(qeConf = self.qeConf)
         self.structure = Structure(lattice = self.lattice.diffpy())
         self.nat  = int(self.qeConf.namelist('system').param('nat'))
@@ -252,3 +248,4 @@ if __name__ == '__main__':
     #myStruct.saveStructureToPWSCF('scf_2.in')
     #print myStruct.structure
     myStruct.parseOutput('geom.out')
+    print myStruct.toString()
