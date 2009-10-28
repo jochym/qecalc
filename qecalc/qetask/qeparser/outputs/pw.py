@@ -32,10 +32,15 @@ class Output(BaseOutput):
     def getTotalEnergy(self, setting):
         'Extract total energy value from pwscf output'
         #read Espresso output into memory:
-        pwscfOut = read_file(setting.pwscfOutput)
-        key = find_key_from_marker_string(pwscfOut, '!', 'total energy')
-        words = string.split(pwscfOut[key])
-        return [([float(words[4])], 'Ry')]
+        file = open(setting.pwscfOutput)
+        pwscfOut = file.readlines()
+        posList =  [i for i,line in enumerate(pwscfOut) if '!    total energy' in line]
+        return [([float(pwscfOut[posList[-1]].split()[4])], 'Ry')]
+
+        #pwscfOut = read_file(setting.pwscfOutput)
+        #key = find_key_from_marker_string(pwscfOut, '!', 'total energy')
+        #words = string.split(pwscfOut[key])
+        #return [([float(words[4])], 'Ry')]
 
     def getLatticeParameters(self, setting):
         """Extract lattice parameters after pwscf geometry optimization
