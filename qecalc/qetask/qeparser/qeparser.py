@@ -42,7 +42,7 @@ class QEParser:
         self.type           = type
 
     def parse(self):
-        self._setReferences()
+        self.getReferences()
 
         if self.configText is not None: # First try use configText
             text = self.configText
@@ -63,15 +63,14 @@ class QEParser:
             print self.cards[c].toString()
 
 
-    def _setReferences(self):
+    def getReferences(self):
         input   = "input%s" % self.type
-        module = __import__("inputs.%s" % input, globals(), \
-                            locals(), [''], -1)        
-        #module  = _import("inputs.%s" % input)
+        module  = _import("inputs.%s" % input)
         self.namelistRef   = getattr(module, "namelists")
         self.cardRef       = getattr(module, "cards")
-        
+        return (self.namelistRef, self.cardRef)
 
+        
     def _parseNamelists(self, text):
         namelists  = OrderedDict()
         p   = re.compile(COMMENT)
@@ -131,7 +130,7 @@ class QEParser:
         for line in s:
             line    = line.strip()
             if line != '':
-                rawlist.append(line)
+                rawlist.append(line)    # rawlist contains both cardnames and card lines in order
 
         self._convertCards(self._getCards(rawlist))
 
@@ -139,12 +138,14 @@ class QEParser:
         cards       = OrderedDict()
         cardName    = None
         for l in rawlist:
+            isCardName  = False
             p   = re.compile(CARD)
             m   = p.match(l)
-            if m is not None:
+            if m is not None:       # If card name matches
                 firstPart   = m.group(1).lower()
                 secondPart  = m.group(2).strip().lower()    # Catch argument of the card
                 if firstPart in self.cardRef:
+                    isCardName  = True
                     cardName    = firstPart
                     cards[cardName]    = {}
 
@@ -154,8 +155,8 @@ class QEParser:
                         cards[cardName]["args"] = None
                     cards[cardName]["values"]   = []
 
-                elif cardName is not None:
-                    cards[cardName]["values"].append(l)
+            if cardName is not None and not isCardName:
+                cards[cardName]["values"].append(l)
 
         return cards
 
@@ -185,7 +186,7 @@ class QEParser:
         return text
 
 def _import(package):
-    return __import__(package, {}, {}, [''])
+    return __import__(package, globals(), locals(), [''], -1)
 
 
 
@@ -238,57 +239,16 @@ blah
 """
 
 textProblem = """
-&control
-calculation='scf'
-! restart_mode='from_scratch',
-wf_collect = .true.,
-tstress = .true. ,
-tprnfor = .true. ,
-verbosity = 'high',
-prefix='mgb2',
-pseudo_dir = '/home/markovsk/projects/pslib/espresso/mgb2/',
-lkpoint_dir = .false. ,
-outdir='temp/'
-/
-&system
-ibrav=4,
-celldm(1) = 5.78739785,
-celldm(2) = 5.78739785,
-celldm(3) = 1.135794331,
-! celldm(1) = 5.8260,
-! celldm(2) = 5.8260,
-! celldm(3) = 1.1420,
-nat = 3,
-ntyp = 2,
-nspin = 1,
-nbnd = 12,
-occupations='smearing',
-! degauss=0.025
-degauss=0.025,
-smearing = 'methfessel-paxton' ,
-ecutwfc =32.0,
-ecutrho =256.0,
-la2f = .false.
-/
-&electrons
-conv_thr = 1.0d-12
-diago_full_acc=.TRUE.
-/
-ATOMIC_SPECIES
-Mg 24.305 mg_6.ncpp
-B 11.000 B.pbe-n-van_ak.UPF
-!b_rc_1.4_pcc.ncpp
-! B 10.811 B.pbe-tmnc.UPF
-
-
-ATOMIC_POSITIONS alat
-Mg 0.000000000 0.0000000000000000 0.000000000
-B 0.500000000 0.2886751345948129 0.5678971655
-B 0.000000000 0.5773502691896257 0.5678971655
-
-
+CELL_PARAMETERS
+   0.993162743  -0.000000000   0.000000000
+  -0.496581371   0.860104165  -0.000000000
+  -0.000000000  -0.000000000   4.345938530
+ATOMIC_POSITIONS
+ Ni 0.00 0.00 0.00
 K_POINTS AUTOMATIC
-24 24 24 0 0 0
+4 4 4 1 1 1
+blah
+
 """
 
 if __name__ == "__main__":

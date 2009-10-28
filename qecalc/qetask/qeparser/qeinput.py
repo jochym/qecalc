@@ -51,6 +51,8 @@ class QEInput(object):
         self.type       = type
         self.namelists  = OrderedDict()
         self.cards      = OrderedDict()
+        self.namelistRef    = None
+        self.cardRef        = None
         self.qe         = [self.namelists, self.cards]
 
     def parse(self):
@@ -101,15 +103,26 @@ class QEInput(object):
             raise
 
     def toString(self):
+        (self.namelistRef, self.cardRef)    = self.parser.getReferences()
         s = ''
-        for nl in self.namelists.values():
-            s += nl.toString()
-            s += '\n'
+        for name in self.namelistRef:
+            nl  = self.getObject(name, self.namelists)
+            if nl is not None:
+                s   += nl.toString()
 
-        for c in self.cards.values():
-            s += c.toString()
-            s += '\n'
+        for name in self.cardRef:
+            c  = self.getObject(name, self.cards)
+            if c is not None:
+                s   += c.toString()
+
         return s
+
+    def getObject(self, name, dict):
+        for n in dict.values():
+            if n.name() == name:
+                return dict[name]
+
+        return None
 
     def save(self, filename=None):
         """ Saves the QEInput to the configuration file"""
@@ -127,7 +140,10 @@ class QEInput(object):
 
     def type(self):
         return self.type
+
         
+def _import(package):
+    return __import__(package, globals(), locals(), [''], -1)
 
 def testCreateConfig():
     print "Testing creation of config file"
@@ -145,7 +161,7 @@ def testCreateConfig():
     print "Adding line to card:\n%s" % c.toString()
     qe.addCard(c)
     print "Adding card to QEInput:\n%s" % qe.toString()
-    qe.save()
+    #qe.save()
 
 def testParseConfig():
     print "Testing parsing config file"
@@ -160,7 +176,7 @@ def testParseConfig():
     c = qe.card('atomic_positions')
     c.editLines(['Say Hi! :)'])
     print qe.toString()
-    qe.save("ni.scf.in.mod")
+    #qe.save("ni.scf.in.mod")
 
 if __name__ == "__main__":
     testCreateConfig()
