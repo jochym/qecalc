@@ -215,7 +215,10 @@ class QEStructure():
 
     def updatePWInput(self, qeConf = None):
 
-        self.lattice.updatePWInput()
+        if qeConf == None:
+            qeConf = self.qeConf
+
+        self.lattice.updatePWInput(qeConf)
 
         qeConf.namelist('system').remove('ntyp')
         qeConf.namelist('system').remove('nat')
