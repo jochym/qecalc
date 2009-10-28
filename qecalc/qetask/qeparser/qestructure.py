@@ -56,9 +56,26 @@ class QEStructure():
         
     def parseOutput(self, pwscfOutputFile):
         self.setStructureFromPWOutput(pwscfOutputFile)
-        
+
+#    def _parseAtomicPositions(self, pwscfOut):
+#        for n in range(self.nat):
+#            words = pwscfOut[i + n + 1].split()
+#            atomSymbol = words[0]
+#            coords = [float(w) for w in words[1:4]]
+#            constraint = []
+#            if len(words) > 4:
+#                constraint = [int(c) for c in words[4:7]]
+#            self.optConstraints.append(numpy.array(constraint, dtype = int))
+#            print numpy.array(coords[0:3])*a_0
+#            coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
+#            self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+
     def setStructureFromPWOutput(self, pwscfOutputFile): 
-        """ Loads structure from PWSCF output file after geometry optimization"""
+        """
+        Loads structure from PWSCF output file. If there was geometry
+        optimization (relax or vc-relax), the structure will be reinitialized
+        from the last step of the optimization
+        """
         file = open(pwscfOutputFile)
         pwscfOut = file.readlines()
         pseudoList = []
@@ -82,8 +99,27 @@ class QEStructure():
                 for j in range(self.ntyp):
                     atomList.append(pwscfOut[i+j+1].split()[0])
                     massList.append(float(pwscfOut[i+j+1].split()[2]))
+            if 'crystal axes: (cart. coord. in units of a_0)' in line:
+                latticeVectors = [[float(f)*a_0 for f in pwscfOut[i + 1].split()[3:6] ],
+                                  [float(f)*a_0 for f in pwscfOut[i + 2].split()[3:6] ],
+                                  [float(f)*a_0 for f in pwscfOut[i + 3].split()[3:6] ]]
+                self.lattice = QELattice(ibrav = ibrav, base = latticeVectors)
+            if 'site n.     atom                  positions (a_0 units)' in line:
+                self.structure = Structure(lattice = self.lattice.diffpy())
+                for n in range(self.nat):
+                    words = pwscfOut[i + n + 1].split()
+                    atomSymbol = words[0]
+                    coords = [float(w) for w in words[6:9]]
+                    constraint = []
+                    self.optConstraints.append(numpy.array(constraint, dtype = int))
+                    print numpy.array(coords[0:3])*a_0
+                    coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
+                    self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+
         for a, m, p in zip(atomList, massList, pseudoList):
             self.atomicSpecies[a] = AtomicSpecies(a, m, p)
+
+        print 'Input structure from output file: ', self.toString()
         #Parse end:
         # Find all geometry optimization steps
         posList =  [i for i,line in enumerate(pwscfOut) if '!    total energy' in line]
@@ -94,9 +130,9 @@ class QEStructure():
                                   [float(f)*a_0 for f in lastSection[i + 2].split() ],
                                   [float(f)*a_0 for f in lastSection[i + 3].split() ]]
                 self.lattice = QELattice(ibrav = 0, base = latticeVectors)
-                self.structure = Structure(lattice = self.lattice.diffpy())
                 print self.lattice.diffpy().base
             if 'ATOMIC_POSITIONS (alat)' in line:
+                self.structure = Structure(lattice = self.lattice.diffpy())
                 for n in range(self.nat):
                     words = lastSection[i + n + 1].split()
                     atomSymbol = words[0]
@@ -109,6 +145,7 @@ class QEStructure():
                     coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
         self.lattice.ibrav = ibrav
+        print 'Output structure from output file: ', self.toString()
     
     
     def setStructureFromQEInput(self):
