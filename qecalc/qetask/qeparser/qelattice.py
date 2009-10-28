@@ -306,8 +306,8 @@ class QELattice(object):
             if ibrav == 0:
                 # lattice is set in the units of celldm(1)
                 # need to parse CELL_PARAMETERS
-                cellParLines = qeConf.card('cell_parameters').getLines()
-                cellParType = qeConf.card('cell_parameters').argument()
+                cellParLines = qeConf.card('cell_parameters').lines()
+                cellParType = qeConf.card('cell_parameters').arg()
                 if cellParType == 'cubic' or cellParType == None:
                     self._type = 'generic cubic'
                 else:
