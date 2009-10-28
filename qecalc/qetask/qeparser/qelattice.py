@@ -174,7 +174,6 @@ class QELattice(object):
             qeBase = numpy.array(base, dtype = float)*a
 #            print qeBase
             self._a = 1.0
-            print qeBase
             self._primitiveLattice.setLatBase(qeBase)
             self._standardLattice.setLatBase(qeBase)
         else:
@@ -308,6 +307,7 @@ class QELattice(object):
                 # lattice is set in the units of celldm(1)
                 # need to parse CELL_PARAMETERS
                 cellParLines = qeConf.card('cell_parameters').lines()
+                print cellParLines
                 cellParType = qeConf.card('cell_parameters').arg()
                 if cellParType == 'cubic' or cellParType == None:
                     self._type = 'generic cubic'
