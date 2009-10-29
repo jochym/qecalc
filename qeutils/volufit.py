@@ -15,13 +15,24 @@
 import numpy
 import scipy.optimize
 
-class VoluFit():
+class Fit():
+    def __init__(self):
+        self._coeff = None
+
+    def func(self, p, x):
+        """
+        p - coefficients, x - values
+        """
+        pass
+
+    def fit(self): pass
+
+
+class PolynomialFit(Fit):
     def __init__(self, *fitDirective):
-        if fitDirective[0] != 'polynom':
-            raise Exception('This fit is not implemented')
-        self.type = fitDirective[0]
-        polyOrder = fitDirective[1]
-        hasConstantTerm = fitDirective[2]
+        Fit.__init__(self)
+        polyOrder = fitDirective[0]
+        hasConstantTerm = fitDirective[1]
         if hasConstantTerm == True:
             self.constantTerm = 1
         else:
@@ -31,19 +42,6 @@ class VoluFit():
             raise Exception('this polyOrder is not supported')
         self._polyOrder = polyOrder
         self.order = polyOrder + 1
-
-
-    def func(self, p, x):
-        if self._polyOrder == 1:
-            return p[1]*self.constantTerm + p[0]*x
-        if self._polyOrder == 2:
-            return  p[2]*self.constantTerm + p[1]*x + p[0]*x*x
-        if self._polyOrder == 3:
-            return p[3]*self.constantTerm + p[2]*x + p[1]*x*x + p[0]*x*x*x
-        if self._polyOrder == 4:
-            return p[4]*self.constantTerm + p[3]*x + p[2]*x*x + p[1]*x*x*x + \
-                                                              p[0]*x*x*x*x
-
 
     def fit(self, xdata, ydata):
         errFunc = lambda p, x, y: (y - self.func(p, x))
@@ -58,13 +56,43 @@ class VoluFit():
     #   assert success != 1, "fitFreq: Fitting was not successful"
         return v
 
+    def func(self, p, x):
+        if self._polyOrder == 1:
+            return p[1]*self.constantTerm + p[0]*x
+        if self._polyOrder == 2:
+            return  p[2]*self.constantTerm + p[1]*x + p[0]*x*x
+        if self._polyOrder == 3:
+            return p[3]*self.constantTerm + p[2]*x + p[1]*x*x + p[0]*x*x*x
+        if self._polyOrder == 4:
+            return p[4]*self.constantTerm + p[3]*x + p[2]*x*x + p[1]*x*x*x + \
+                                                              p[0]*x*x*x*x
 
 
-class FreqFit(VoluFit):
-    def __init__(self, prcntVolume, freqs, *fitDirective):
+
+#class VoluFit(PolynomialFit):
+#    def __init__(self, *fitDirective):
+#        Fit.__init__(self)
+#        if fitDirective[0] != 'polynom':
+#            raise Exception('This fit is not implemented')
+#        self.type = fitDirective[0]
+#        polyOrder = fitDirective[1]
+#        hasConstantTerm = fitDirective[2]
+#        if hasConstantTerm == True:
+#            self.constantTerm = 1
+#        else:
+#            self.constantTerm = 0
+#
+#        if polyOrder < 1 or polyOrder > 4:
+#            raise Exception('this polyOrder is not supported')
+#        self._polyOrder = polyOrder
+#        self.order = polyOrder + 1
+
+
+class FreqFit():
+    def __init__(self, prcntVolume, freqs, fitter):
         """indexRange is for files' indexing. prcntVolume - coresponding volume
         expansions"""
-        self.fitter = VoluFit(*fitDirective)
+        self.fitter = fitter
 #        Fit.__init__(self, *fitDirective)
         self._prcntVolume = prcntVolume
         self._freqs = freqs
@@ -131,10 +159,10 @@ class FreqFit(VoluFit):
 
 
 class ValueFit():
-    def __init__(self, prcntVolume, values, *fitDirective):
+    def __init__(self, prcntVolume, values, fitter):
         """indexRange is for files' indexing. prcntVolume - coresponding volume
         expansions"""
-        self.fitter = VoluFit(*fitDirective)
+        self.fitter = fitter
 #        Fit.__init__(self, *fitDirective)
         self._prcntVolume = numpy.array(prcntVolume)
         self._values = numpy.array(values)
@@ -166,6 +194,25 @@ class ValueFit():
 
     def coeff(self):
         return self._coeff
+
+
+class BirchMurnaghanFit(Fit):
+    def __init__(self, prcntVolumes, energies):
+        Fit.__init__(self)
+    def func(self, p, x):
+        """
+        x is assumed to be a percent volume,
+        p[0] - E0
+        p[1] - V0*B0
+        p[2] - B0'
+        """
+        val = p[0] + 9.0/16.0*p[1]*( (1/(x+1)^(2/3) - 1)^3*p[2] + \
+            + ( (1/(x+1)^(2/3) - 1))^2*(6.0-4.0/(x+1)^(2/3)) )
+
+        return val
+
+    def fittedValue(self,prcntVol):
+        return (self.fitter.func(self._coeff, prcntVol) + 1.0)*self._values[0]
 
 
 if __name__ == "__main__":

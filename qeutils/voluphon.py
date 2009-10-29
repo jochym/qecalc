@@ -31,15 +31,15 @@ class VoluPhon():
 
 
     def setA(self, values, *fitDirective):
-        self.a = volufit.ValueFit(self.__prcntVolume, values, *fitDirective)
+        self.a = volufit.ValueFit(self.__prcntVolume, values, fitter)
 
         
     def setC(self, values, *fitDirective):
-        self.c = volufit.ValueFit(self.__prcntVolume, values, *fitDirective)
+        self.c = volufit.ValueFit(self.__prcntVolume, values, fitter)
 
 
     def setEnergy(self, values, *fitDirective):
-        self.energy = volufit.ValueFit(self.__prcntVolume, values,*fitDirective)
+        self.energy = volufit.ValueFit(self.__prcntVolume, values, fitter)
 
 
     def setPhonons(self, indexRange, *fitDirective):

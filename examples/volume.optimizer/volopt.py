@@ -2,18 +2,21 @@ from qecalc.pwcalc import PWCalc
 import numpy as np
 from scipy.optimize import brent
 import scipy
+import os
 
 def getHexEnergy(c, *args ):
     """ Total energy launcher for scipy "brent" routine
-        'args' is a tuple with volume and task name 
-        Volume value should be directly related to lattice constants: 
+        'args' is a tuple with volume and task name
+        Volume value should be directly related to lattice constants:
         E.g.: Vhex = a^2*c ommiting all the constant factors """
     volume = args[0]
     qe = args[1]
     qe.pw.input.structure.lattice.a = np.sqrt(volume/c)
     qe.pw.input.structure.lattice.c = c
-    qe.pw.input.structure.save()    
+    qe.pw.input.structure.save()
     qe.launch()
+    qe.pw.input.structure.parseOutput(qe.setting.pwscfOutput)
+    qe.pw.input.structure.save()
     return qe.pw.output.property('total energy')[0]
 
 # will find optimal a and c of hexagonal lattice of fixed volume:
@@ -25,15 +28,15 @@ def hexVolOpt(a0, c0_a0, volumeExpansion):
     qe.pw.input.parse()
     if qe.pw.input.structure.lattice.ibrav != 4:
         raise Exception("The lattice must be hexagonal")
-#   Initial(equilibrium) volume:    
-    c0 = a0*c0_a0    
+#   Initial(equilibrium) volume:
+    c0 = a0*c0_a0
     volume = a0*a0*c0
-            
+
     volume = volume + volume*volumeExpansion/100.
-#   initial assumption: all latice parameters expand equally in percents    
+#   initial assumption: all latice parameters expand equally in percents
     cExpansion = (1.+volumeExpansion/100.)**(1./3.)
     c = c0*cExpansion
-    
+
     prcntC = 0.2 # percent of c we want to bracket around it for minima search(does not have to warantee the minima is inside)s
 
     brentOut = brent(getHexEnergy, (volume, qe), (c-c*prcntC/100, c+c*prcntC/100), tol = 1.e-7, full_output = 1)
@@ -41,19 +44,33 @@ def hexVolOpt(a0, c0_a0, volumeExpansion):
     c = brentOut[0]
     energy = brentOut[1]
     a = np.sqrt(volume/c)
+    os.system('cp ' + qe.setting.pwscfOutput + ' ' +  str(c) + qe.setting.pwscfOutput)
+    os.system('cp ' + qe.setting.pwscfInput + ' ' +  str(c) + qe.setting.pwscfInput)
     return a, c/a, energy
 
 if __name__ == '__main__':
 
 #    volPercRange = scipy.linspace(0.1, 3.0, 29)
-    volPercRange = scipy.linspace(0.2, 2.4 , 12)
+#    volPercRange = scipy.linspace(-0.2, -1.0 , 5)
+#    volPercRange = [2.6, 2.8, 3.0,3.2, 3.4, 3.6, 3.8, 4.0 ]
+    volPercRange = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0]
     # !!!!!!  Make sure you have correct starting scf.in at equilibrium
     pwcalc = PWCalc('config.ini')
+    # name of file at eqilibrium is pwscfInput.eqv:
+    eqvFileName = pwcalc.setting.pwscfInput + '.eqv'
+    if not os.path.exists(eqvFileName):
+        raise Exception('Should provide PW input file at equilibrium')
+    os.system('cp ' + eqvFileName + ' ' + pwcalc.setting.pwscfInput )
     pwcalc.pw.input.parse()
+    if pwcalc.pw.input.namelist('control').param('calculation') != "'relax'":
+        print pwcalc.pw.input.namelist('control').param('calculation')
+        raise Exception("""Should use "calculation = 'relax'" in "control" namelist""")
     a0 = pwcalc.pw.input.structure.lattice.a
     c0 = pwcalc.pw.input.structure.lattice.c
     apar = [a0]
     c_apar = [c0/a0]
+    print apar
+    print c_apar
     # obtain total energy at equilibrium:
     pwcalc.launch()
     energy = pwcalc.pw.output.property('total energy')
