@@ -211,8 +211,18 @@ class BirchMurnaghanFit(Fit):
 
         return val
 
-    def fittedValue(self,prcntVol):
-        return (self.fitter.func(self._coeff, prcntVol) + 1.0)*self._values[0]
+    def fit(self, xdata, ydata):
+        errFunc = lambda p, x, y: (y - self.func(p, x))
+      # initial parameters:
+        pinit = numpy.zeros(3)
+        pinit[1] = (ydata[1]-ydata[0])/(xdata[1] - xdata[0])
+        v, success = scipy.optimize.leastsq(errFunc, pinit, args=(xdata, ydata))
+        if success < 1 or success > 4:
+            print success
+            print ydata
+            print v
+    #   assert success != 1, "fitFreq: Fitting was not successful"
+        return v
 
 
 if __name__ == "__main__":
