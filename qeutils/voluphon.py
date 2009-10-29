@@ -30,19 +30,19 @@ class VoluPhon():
         self.__prcntVolume = prcntVolume
 
 
-    def setA(self, values, *fitDirective):
+    def setA(self, values, fitter):
         self.a = volufit.ValueFit(self.__prcntVolume, values, fitter)
 
         
-    def setC(self, values, *fitDirective):
+    def setC(self, values, fitter):
         self.c = volufit.ValueFit(self.__prcntVolume, values, fitter)
 
 
-    def setEnergy(self, values, *fitDirective):
+    def setEnergy(self, values, fitter):
         self.energy = volufit.ValueFit(self.__prcntVolume, values, fitter)
 
 
-    def setPhonons(self, indexRange, *fitDirective):
+    def setPhonons(self, indexRange, fitter):
         """Will read freqs from x_matdyn.modes files and fit the freqs"""
         matdynModesName = self.mphon.matdynModes
         self.mphon.matdynModes = str(indexRange[0]) + '_' + matdynModesName
@@ -57,7 +57,7 @@ class VoluPhon():
             Pol, Omega, qPoints = self.mphon.matdyn.output.property('multi phonon')
             volOmega[i] = Omega
         self.mphon.matdynModes = matdynModesName
-        self.freqs = volufit.FreqFit(self.__prcntVolume, volOmega,*fitDirective)
+        self.freqs = volufit.FreqFit(self.__prcntVolume, volOmega,fitter)
 
 
     def gammaDispersion(self, *pathNPoints):
