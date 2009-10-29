@@ -72,6 +72,7 @@ class PolynomialFit(Fit):
 class BirchMurnaghanFit(Fit):
     def __init__(self):
         Fit.__init__(self)
+        
     def func(self, p, x):
         """
         x is assumed to be a percent volume,
@@ -79,8 +80,8 @@ class BirchMurnaghanFit(Fit):
         p[1] - V0*B0
         p[2] - B0'
         """
-        val = p[0] + 9.0/16.0*p[1]*( (1/(x+1)**(2/3) - 1)**3*p[2] + \
-            + ( (1/(x+1)**(2/3) - 1))**2*(6.0-4.0/(x+1)**(2/3)) )
+        val = p[0] + 9.0/16.0*p[1]*( (1/(x+1)**(2./3.) - 1)**3*p[2] + \
+            + ( (1/(x+1)**(2./3.) - 1))**2*(6.0-4.0/(x+1)**(2./3.)) )
 
         return val
 
