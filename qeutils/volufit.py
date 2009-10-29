@@ -69,6 +69,34 @@ class PolynomialFit(Fit):
 
 
 
+class BirchMurnaghanFit(Fit):
+    def __init__(self):
+        Fit.__init__(self)
+    def func(self, p, x):
+        """
+        x is assumed to be a percent volume,
+        p[0] - E0
+        p[1] - V0*B0
+        p[2] - B0'
+        """
+        val = p[0] + 9.0/16.0*p[1]*( (1/(x+1)^(2/3) - 1)^3*p[2] + \
+            + ( (1/(x+1)^(2/3) - 1))^2*(6.0-4.0/(x+1)^(2/3)) )
+
+        return val
+
+    def fit(self, xdata, ydata):
+        errFunc = lambda p, x, y: (y - self.func(p, x))
+      # initial parameters:
+        pinit = numpy.zeros(3)
+        pinit[1] = (ydata[1]-ydata[0])/(xdata[1] - xdata[0])
+        v, success = scipy.optimize.leastsq(errFunc, pinit, args=(xdata, ydata))
+        if success < 1 or success > 4:
+            print success
+            print ydata
+            print v
+    #   assert success != 1, "fitFreq: Fitting was not successful"
+        return v
+
 #class VoluFit(PolynomialFit):
 #    def __init__(self, *fitDirective):
 #        Fit.__init__(self)
@@ -194,35 +222,6 @@ class ValueFit():
 
     def coeff(self):
         return self._coeff
-
-
-class BirchMurnaghanFit(Fit):
-    def __init__(self, prcntVolumes, energies):
-        Fit.__init__(self)
-    def func(self, p, x):
-        """
-        x is assumed to be a percent volume,
-        p[0] - E0
-        p[1] - V0*B0
-        p[2] - B0'
-        """
-        val = p[0] + 9.0/16.0*p[1]*( (1/(x+1)^(2/3) - 1)^3*p[2] + \
-            + ( (1/(x+1)^(2/3) - 1))^2*(6.0-4.0/(x+1)^(2/3)) )
-
-        return val
-
-    def fit(self, xdata, ydata):
-        errFunc = lambda p, x, y: (y - self.func(p, x))
-      # initial parameters:
-        pinit = numpy.zeros(3)
-        pinit[1] = (ydata[1]-ydata[0])/(xdata[1] - xdata[0])
-        v, success = scipy.optimize.leastsq(errFunc, pinit, args=(xdata, ydata))
-        if success < 1 or success > 4:
-            print success
-            print ydata
-            print v
-    #   assert success != 1, "fitFreq: Fitting was not successful"
-        return v
 
 
 if __name__ == "__main__":
