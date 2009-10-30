@@ -41,11 +41,14 @@ class QECalc(object):
           >>> pwCalc.launch()
         
         """
+        self.syncInputs()
         if taskList == None:
             taskList = self.taskList
             
         for task in taskList:
             task.launch()
+
+    def syncInputs(self): pass
 
     def lookupProperty(self, propertyName, taskList = None, \
                                                            withUnits = False):

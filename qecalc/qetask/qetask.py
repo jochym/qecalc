@@ -34,7 +34,8 @@ class QETask(object):
         if exitcode != 0:
             raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self.cmdStr)
 
-    def _run(self):        
+    def _run(self):
+        os.remove('CRASH')
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdStr:
             if self.setting.useTorque:
                 self.torque.serial(self.cmdStr)
@@ -42,6 +43,9 @@ class QETask(object):
                 self._check(os.system(self.cmdStr))
         else:
             self._check(os.system(self.cmdStr))
+        if os.path.exists('CRASH'):
+            raise Exception("Task " + self.name + " crashed: 'CRASH' file was discovered")
+
 
     def cleanOutputDir(self):
         """
