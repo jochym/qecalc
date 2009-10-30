@@ -35,7 +35,8 @@ class QETask(object):
             raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self.cmdStr)
 
     def _run(self):
-        os.remove('CRASH')
+        if os.path.exists('CRASH'):
+            os.remove('CRASH')
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdStr:
             if self.setting.useTorque:
                 self.torque.serial(self.cmdStr)
