@@ -41,7 +41,7 @@ class QECalc(object):
           >>> pwCalc.launch()
         
         """
-        self.syncInputs()
+        #self.syncInputs()
         if taskList == None:
             taskList = self.taskList
             

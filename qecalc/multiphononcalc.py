@@ -67,7 +67,7 @@ class MultiPhononCalc(QECalc):
 
     def syncInputs(self):
         for task in self.taskList:
-            task.parse()
+            task.input.parse()
 
         # remove amass from phonon input
         for param in self.ph.input.namelist('input').params:
