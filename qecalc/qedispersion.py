@@ -59,13 +59,13 @@ FCCubSymPoints = {
 
 class QEDispersion():
     def __init__(self, structure):
-        self.__points = []
-        self.__dispersion = []
-        self.__path = []
+        self.points = []
+        self.dispersion = []
+        self.path = []
         self._structure = structure
 
     def setValues(self, array):
-        self.__dispersion = array
+        self.dispersion = array
 
     def setPath(self, *pathNPoints):
         import copy
@@ -95,21 +95,22 @@ class QEDispersion():
         if len(nPoints) != len(path) - 1:
             raise Exception('Dispersion: Numbers of points do not agree')
         self.__nPoints = nPoints
-        self.__path = path
+        self.path = path
+        self.points = []
 
         kPoints = []
-        if self.structure.lattice.ibrav == 4:
+        if self._structure.lattice.ibrav == 4:
             numPoints = [0]
             for i, ipnt in enumerate(nPoints):
                 numPoints.append(ipnt + numPoints[i])
             for symbol, ipnt in zip(path, numPoints ):
                 kPoints.append(hexSymPoints[symbol])
-                self.__points.append((symbol, ipnt))
+                self.points.append((symbol, ipnt))
         else:
             raise Exception("Dispersion path generator does not support this lattice symmetry")
     
         for i, kpt in enumerate(kPoints):
-            kPoints[i] = list(self.structure.lattice.recipCartesian(kPoints[i]))
+            kPoints[i] = list(self._structure.lattice.recipCartesian(kPoints[i]))
 
         startPath = copy.deepcopy(kPoints[0])
 
@@ -126,14 +127,14 @@ class QEDispersion():
             for i in range(nPoints[iPoint]):
                 Path.append( addPoints( Path[lastElem + i], dPoint ) )
 
-        self.__path = []
-        self.__axis = []
+        self.path = []
+        self.axis = []
         for elem in Path:
             for i in range(len(elem)):
                 if abs(elem[i]) < 1.e-14:
                     elem[i] = 0.0e0
-            self.__path.append(elem[0:3])
-            self.__axis.append(elem[3])
+            self.path.append(elem[0:3])
+            self.axis.append(elem[3])
 #            format = "%1.12f  %1.12f  %1.12f  %1.5f"
 #            print format % (elem[0], elem[1], elem[2], elem[3])
 
@@ -143,7 +144,7 @@ class QEDispersion():
     def printPoints(self):
         """Generates phonon dispersions. Presently requires properly configures
            preconfigured matdyn.in file as well as .fc (force constants) file"""
-        for elem in self.__points:
+        for elem in self.points:
             print elem[0], elem[1]
 
     def plot(self):
@@ -152,16 +153,16 @@ class QEDispersion():
         import matplotlib
         legStr = []
         markerStyle = ['b.', 'g.', 'r.', 'c.', 'm.', 'y.', 'k.', 'b,', 'g,', 'r,', 'c,', 'm,', 'y,', 'k,', 'bo', 'go', 'ro', 'co', 'mo', 'yo', 'ko']
-#        cmap = matplotlib.colors.ListedColormap(colors, name = 'myPlotCollors', N = self.__dispersion.shape[1])
-        for i in range(self.__dispersion.shape[1]):
-            pylab.plot(self.__axis, self.__dispersion[:,i], markerStyle[i])#, color = colors[i])
+#        cmap = matplotlib.colors.ListedColormap(colors, name = 'myPlotCollors', N = self.dispersion.shape[1])
+        for i in range(self.dispersion.shape[1]):
+            pylab.plot(self.axis, self.dispersion[:,i], markerStyle[i])#, color = colors[i])
 
             legStr.append(str(i))
 
 #            pylab.ylim([0.0, 3.0])
         pylab.legend(legStr, numpoints = 1)
-        for i in range(len(self.__points)):
-            xcoord = self.__axis[ self.__points[i][1] ]
+        for i in range(len(self.points)):
+            xcoord = self.axis[ self.points[i][1] ]
             pylab.axvline(x=xcoord, color='black')
             # need to add greek labels
         pylab.show()
