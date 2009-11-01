@@ -21,7 +21,7 @@ class QETask(object):
         self.setting = setting
         self.cleanOutDir = cleanOutDir
         if self.setting.useTorque:
-            self.torque = QETorque(self.setting.configFileName)        
+            self._torque = QETorque(self.setting.configFileName)
         self.input = None
         self.output = None
         self.cmdStr = None
@@ -39,7 +39,7 @@ class QETask(object):
             os.remove('CRASH')
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdStr:
             if self.setting.useTorque:
-                self.torque.serial(self.cmdStr)
+                self._torque.serial(self.cmdStr)
             else:
                 self._check(os.system(self.cmdStr))
         else:

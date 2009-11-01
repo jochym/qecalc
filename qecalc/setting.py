@@ -19,7 +19,6 @@ class Setting:
         
        # Default values, see explanations below:        
         configDic = {
-        'isMetallic': 'True',
         'useTorque' : 'False',
         'torqueResourceList': '-l nodes=1:ppn=1',
         'numNodes'  : '1',
