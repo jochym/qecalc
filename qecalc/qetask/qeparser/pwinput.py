@@ -25,7 +25,7 @@ class PWInput(QEInput):
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
-        (self.namelists, self.cards) = self.parser.parse()
+        (self.namelists, self.cards, self.attach) = self.parser.parse()
         self.structure.parseInput()
         self.kpoints = PWKpoints(self)
 

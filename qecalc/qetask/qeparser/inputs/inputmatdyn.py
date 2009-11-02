@@ -13,7 +13,7 @@
 
 # Configuration parameters matdyn.x
 
-namelists   = ('input')
+namelists   = ('input',)
 
 cards       = ()
 

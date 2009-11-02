@@ -32,9 +32,17 @@ from namelist import Namelist
 from card import Card
 
 class QEParser:
+    """
+    Flexible Parser for Quantum Espresso (QE) configuration files. It parses the file specified
+    by filename or configuration string and stores parameters in namelists, cards and
+    attachment (specific for matdyn) data structures that later on can be used in
+    parameters' manipulations
+    """
+    
     def __init__(self, filename=None, configText=None, type='pw'):
         self.namelists  = OrderedDict()
         self.cards      = OrderedDict()
+        self.attach     = None
         self.filename   = filename
         self.configText = configText
         self.namelistRef    = None
@@ -53,7 +61,8 @@ class QEParser:
         
         self._parseNamelists(text)
         self._parseCards(text)
-        return (self.namelists, self.cards)
+        return (self.namelists, self.cards, self.attach)
+
 
     def toString(self):
         for n in self.namelists.keys():
@@ -61,6 +70,9 @@ class QEParser:
 
         for c in self.cards.keys():
             print self.cards[c].toString()
+
+        if self.attach:
+            print self.attach
 
 
     def getReferences(self):
@@ -85,6 +97,7 @@ class QEParser:
 
         self._convertNamelists(namelists)
 
+
     # Converts from dictionary to Namelist
     def _convertNamelists(self, namelists):
         for name in namelists.keys():
@@ -93,6 +106,7 @@ class QEParser:
                 nl.add(p[0], p[1])
                 
             self.namelists[name] = nl
+
 
     # Parses parameters
     def _parseParams(self, text):
@@ -123,6 +137,12 @@ class QEParser:
         s1  = re.sub(p, '', text)       # Remove comments
         p2  = re.compile(NAMELIST)
         s2  = re.sub(p2, '', s1)        # Remove namelists
+
+        # Special case for 'matdyn'
+        if self.type == 'matdyn': 
+            self.attach = s2.strip()
+            return
+        
         rawlist = []
 
         p   = re.compile(EMPTY_LINE)
@@ -251,13 +271,44 @@ blah
 
 """
 
+textMatdyn = """
+ &input
+    asr='crystal',
+    amass(1)=24.305, amass(2)=11.000,
+    flfrc='mgb2666.fc'
+ /
+176
+0.000000    0.000000    0.456392    0.000000
+0.000000    0.000000    0.447264    0.009128
+0.000000    0.000000    0.438137    0.018256
+0.000000    0.000000    0.429009    0.027384
+0.000000    0.000000    0.419881    0.036511
+"""
+
+textDynmat = """
+&input  fildyn='mgb2.dynG', asr='simple',
+        q(1)=0.0, q(2)=0.0, q(3)=0.0 /
+"""
+
+textPh  = """
+ &inputph
+  tr2_ph=1.0d-10,
+  amass(1)=24.305,
+  amass(2)=11.000,
+  prefix='mgb2',
+  outdir='/scratch/markovsk/mgb2'
+  fildyn='mgb2.dynG',
+ /
+
+"""
+
 if __name__ == "__main__":
-    qeparserText    = QEParser(configText = textProblem)
+    qeparserText    = QEParser(configText = textMatdyn, type="matdyn") #textProblem) #
     qeparserText.parse()
     qeparserText.toString()
-    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
-    qeparserFile.parse()
-    qeparserFile.toString()
+#    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
+#    qeparserFile.parse()
+#    qeparserFile.toString()
 
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"

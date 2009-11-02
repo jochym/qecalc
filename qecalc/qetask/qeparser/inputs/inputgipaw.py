@@ -16,7 +16,7 @@
 
 # Namelist: INPUTGIPAW
 
-namelists   = ('inputgipaw')
+namelists   = ('inputgipaw',)
 cards       = ()
 
 namelist_inputgipaw = ('job',
