@@ -20,7 +20,7 @@ from qeparser.qeoutput import QEOutput
 class PHTask(QETask):
     def __init__(self, setting, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(self.setting.phInput, type = 'ph')
+        self.input = QEInput(filename = self.setting.phInput, type = 'ph')
         self.output = QEOutput(self.setting, type='pw')
         self.cmdStr = self.setting.paraPrefix + " ph.x " +  \
                       self.setting.paraPostfix + " -inp " + \

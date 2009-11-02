@@ -20,7 +20,7 @@ from qeparser.qeoutput import QEOutput
 class MatdynTask(QETask):
     def __init__(self, setting, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(self.setting.matdynInput, type = 'matdyn')
+        self.input = QEInput(filename = self.setting.matdynInput, type = 'matdyn')
         self.output = QEOutput(self.setting, type = 'matdyn')
         self.cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
         self.setting.matdynOutput

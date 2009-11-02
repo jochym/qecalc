@@ -20,7 +20,7 @@ from qeparser.qeoutput import QEOutput
 class Q2RTask(QETask):
     def __init__(self, setting, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(self.setting.q2rInput, type = 'q2r')
+        self.input = QEInput(filename = self.setting.q2rInput, type = 'q2r')
         self.output = QEOutput(self.setting, type = 'pw')
         self.cmdStr = "q2r.x < " + self.setting.q2rInput + " > " + \
                        self.setting.q2rOutput

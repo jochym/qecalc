@@ -20,7 +20,7 @@ from qeparser.qeoutput import QEOutput
 class DynmatTask(QETask):
     def __init__(self, setting, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(self.setting.dynmatInput, type = 'dynmat')
+        self.input = QEInput(filename = self.setting.dynmatInput, type = 'dynmat')
         self.output = QEOutput(self.setting, type = 'dynmat')
         self.cmdStr = "dynmat.x < " + self.setting.dynmatInput + " > " + \
                        self.setting.dynmatOutput
