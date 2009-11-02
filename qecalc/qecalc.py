@@ -70,7 +70,10 @@ class QECalc(object):
         value = None
         for task in taskList:
             #try:
-            value = task.output.property(propertyName, withUnits)
+            value = task.output.property(propertyName, withUnits = False)
+            if value != None:
+                value = task.output.property(propertyName, withUnits)
+                break
             #except KeyError:
             #    pass
         return value
