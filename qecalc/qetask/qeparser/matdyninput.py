@@ -14,22 +14,21 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qeinput import QEInput
-from qestructure import QEStructure
 from matdynqpoints import MatdynQpoints
 
 class MatdynInput(QEInput):
     def __init__(self, filename=None, config=None):
-        QEInput.__init__(self,filename, config, type='pw')
-        self.qpoints = None
-        self.axis #
+        QEInput.__init__(self,filename, config, type='matdyn')
+        self.qpoints = MatdynQpoints(self)
 
 
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
-        (self.namelists, self.cards) = self.parser.parse()
-        self.structure = QEStructure(self)
-        self.qpoints = MatdynQpoints(self)
+        (self.namelists, self.cards, self.attach) = self.parser.parse()
+        self.qpoints.parse()
+
+
 
 
 if __name__ == "__main__":

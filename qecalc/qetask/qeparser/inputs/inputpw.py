@@ -155,22 +155,22 @@ namelist_ions = ('ion_dynamics',
                  'fe_nstep',
                  'sw_nstep')
 
-namelist_cell = ('cell_dynamics | press | wmass | cell_factor | press_conv_thr | cell_dofree')
+namelist_cell = ('cell_dynamics | press | wmass | cell_factor | press_conv_thr | cell_dofree',)
  
-namelist_phonon = ('modenum | xqq') 
+namelist_phonon = ('modenum | xqq',)
 
-card_atomic_species = ('atomic_species')        # X | Mass_X | PseudoPot_X 
+card_atomic_species = ('atomic_species',)        # X | Mass_X | PseudoPot_X
 
-card_atomic_positions = ('atomic_positions')    # X | x | y | z | if_pos(1) | if_pos(2) | if_pos(3) | 
+card_atomic_positions = ('atomic_positions',)    # X | x | y | z | if_pos(1) | if_pos(2) | if_pos(3) |
     
-card_k_points = ('k_points')                    # nks | xk_x | xk_y | xk_z | wk | nk1 | nk2 | nk3 | sk1 | sk2 | sk3 
+card_k_points = ('k_points',)                    # nks | xk_x | xk_y | xk_z | wk | nk1 | nk2 | nk3 | sk1 | sk2 | sk3
 
-card_cell_parameters = ('cell_parameters')      # v1 | v2 | v3 
+card_cell_parameters = ('cell_parameters',)      # v1 | v2 | v3
 
-card_climbing_images = ('climbing_images')      # index1, index2, ... indexN 
+card_climbing_images = ('climbing_images',)      # index1, index2, ... indexN
 
-card_constraints = ('constraints')              # nconstr | constr_tol | constr_type | constr(1) | constr(2) | constr(3) | constr(4) | constr_target 
+card_constraints = ('constraints',)              # nconstr | constr_tol | constr_type | constr(1) | constr(2) | constr(3) | constr(4) | constr_target
 
-card_collective_vars = ('collective_vars')      # ncolvar | colvar_tol | colvar_type | colvar(1) | colvar(2) | colvar(3) | colvar(4) 
+card_collective_vars = ('collective_vars',)      # ncolvar | colvar_tol | colvar_type | colvar(1) | colvar(2) | colvar(3) | colvar(4)
 
-card_occupations = ('occupations')              # f_inp1 | f_inp2    
+card_occupations = ('occupations',)              # f_inp1 | f_inp2

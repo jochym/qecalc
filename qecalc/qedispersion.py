@@ -57,7 +57,7 @@ FCCubSymPoints = {
 
 
 
-class QEDispersion():
+class QEdispersion():
     def __init__(self, structure):
         self.points = []
         self.dispersion = []
@@ -135,6 +135,11 @@ class QEDispersion():
                     elem[i] = 0.0e0
             self.path.append(elem[0:3])
             self.axis.append(elem[3])
+
+        self.path = numpy.array(self.path)
+        self.axis = numpy.array(self.axis)
+
+        return self.path, self.axis
 #            format = "%1.12f  %1.12f  %1.12f  %1.5f"
 #            print format % (elem[0], elem[1], elem[2], elem[3])
 

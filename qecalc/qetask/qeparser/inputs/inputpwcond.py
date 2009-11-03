@@ -16,9 +16,9 @@
 
 # Namelist: INPUTCOND
 
-namelists = ('inputcond')
+namelists = ('inputcond',)
 
-cards     = ('k_and_energy_points')
+cards     = ('k_and_energy_points',)
 
 # Namelist: INPUTCOND
 namelist_inputcond = ('outdir',

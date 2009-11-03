@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import numpy
 
-from phdispersion import PHDispersion
+from phdispersion import PHdispersion
 
 from qecalc import QECalc
 
@@ -61,7 +61,7 @@ class MultiPhononCalc(QECalc):
         self.q2r = Q2RTask(self.setting)
         self.matdyn = MatdynTask(self.setting)
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
-        self.dispersion = PHDispersion(self.pw.input, self.matdyn)
+        self.dispersion = PHdispersion(self.pw.input.structure, self.matdyn)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
 
 

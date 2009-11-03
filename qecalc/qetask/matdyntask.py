@@ -14,13 +14,13 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.matdyninput import MatdynInput
 from qeparser.qeoutput import QEOutput
 
 class MatdynTask(QETask):
     def __init__(self, setting, cleanOutDir = False):
         QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(filename = self.setting.matdynInput, type = 'matdyn')
+        self.input = MatdynInput(filename = self.setting.matdynInput)
         self.output = QEOutput(self.setting, type = 'matdyn')
         self.cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
         self.setting.matdynOutput

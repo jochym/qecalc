@@ -38,7 +38,6 @@ class QEStructure():
            'lattice' and 'structure' are automatically updated"""
         self.filename = qeConf.filename
         self.atomicSpecies = OrderedDict()
-        self.lattice = None
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self.optConstraints = []
