@@ -21,13 +21,13 @@ class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
         QEInput.__init__(self,filename, config, type='pw')
         self.structure = QEStructure(self)
-        self.kpoints = None
+        self.kpoints = PWKpoints(self)
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
         (self.namelists, self.cards, self.attach) = self.parser.parse()
         self.structure.parseInput()
-        self.kpoints = PWKpoints(self)
+        self.kpoints.parse()
 
     def toString(self):
         s = ''

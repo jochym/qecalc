@@ -4,7 +4,7 @@ API
 Class backbone of QECalc
 -------------------------
 
-.. image:: ../overview.png
+.. image:: ../overview_2.png
    :width:  512
 
 
@@ -62,7 +62,7 @@ Inheritance diagrams of QECalc family of classes
 Inheritance diagrams of QETask family of classes
 -------------------------------------------------
 
-.. image:: ../tasks.png
+.. image:: ../tasks_2.png
    :width:  512
 
 

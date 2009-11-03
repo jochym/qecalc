@@ -17,9 +17,8 @@ class PWKpoints(object):
     def __init__(self, qeInput):
         self.qeInput = qeInput
         self.isAutomatic = False
-        self.kpoints, self.shifts = self.load()
 
-    def load(self):
+    def parse(self):
         """ Returns array of points. Does not have to be AUTOMATIC """
         kpoints = []
         if self.qeInput.cards['k_points'].arg() == 'automatic':
@@ -39,7 +38,8 @@ class PWKpoints(object):
             shifts = numpy.array(shifts)
         else:
             shifts = None
-        return kpoints, shifts
+        self.coords = kpoints
+        self.shifts = shifts
 
     def setAutomatic(self, kpoints, shifts = None):
         """Takes two lists of values"""
