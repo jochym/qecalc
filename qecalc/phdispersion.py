@@ -13,11 +13,11 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qedispersion import QEdispersion
+from qedispersion import QEDispersion
 
-class PHdispersion(QEdispersion):
+class PHDispersion(QEDispersion):
     def __init__(self, structure , matdynTask):
-        QEdispersion.__init__(self,structure)
+        QEDispersion.__init__(self,structure)
         self.matdynTask = matdynTask
 
     def launch(self, *pathNPoints):

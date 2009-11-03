@@ -57,7 +57,7 @@ FCCubSymPoints = {
 
 
 
-class QEdispersion():
+class QEDispersion():
     def __init__(self, structure):
         self.points = []
         self.dispersion = []
