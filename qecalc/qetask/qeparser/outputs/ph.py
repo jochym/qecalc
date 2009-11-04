@@ -13,32 +13,17 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qecalc import QECalc
-import numpy
+from baseoutput import BaseOutput
 
-from qetask.pwtask import PWTask
+class Output(BaseOutput):
 
-class PWCalc(QECalc):
-    """ Calc for single pw.x use.:
-
-      Task list:
-
-        pw -- PWTask
-
-      Example:
-
-        >>> pwCalc = PWCalc('config.ini')
-        >>> pwCalc.launch()
-            
-    """
-    def __init__(self, filename):
-        QECalc.__init__(self)
-        self.pw = PWTask(filename)
-        self.taskList = [self.pw]
+    def __init__(self):
+        BaseOutput.__init__(self)
+        self.parsers = {}
 
 
 if __name__ == "__main__":
     print "Hello World";
 
 __author__="Nikolay Markovskiy"
-__date__ ="$Oct 19, 2009 3:05:10 PM$"
+__date__ ="$Nov 3, 2009 6:53:12 PM$"

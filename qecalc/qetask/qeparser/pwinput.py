@@ -62,6 +62,10 @@ class PWInput(QEInput):
                 s += '\n'
         return s
 
+    def outDir(self):
+        self.parse()
+        return self.namelist('control').param('outdir')[1:-1]
+
 textA = """
 &control
 calculation='scf'

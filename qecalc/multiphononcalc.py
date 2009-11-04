@@ -52,15 +52,15 @@ class MultiPhononCalc(QECalc):
             
     """
     def __init__(self, filename):
-        QECalc.__init__(self, filename)
+        QECalc.__init__(self)
         self._freqs = None
         self._modes = None
         self._qpts = None
-        self.pw = PWTask(self.setting)
-        self.ph = PHTask(self.setting)
-        self.q2r = Q2RTask(self.setting)
-        self.matdyn = MatdynTask(self.setting)
-        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
+        self.pw = PWTask(filename)
+        self.ph = PHTask(filename)
+        self.q2r = Q2RTask(filename)
+        self.matdyn = MatdynTask(filename)
+        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
         self.dispersion = PHDispersion(self.pw.input.structure, self.matdyn)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
 

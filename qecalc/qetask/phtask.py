@@ -18,12 +18,20 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class PHTask(QETask):
-    def __init__(self, setting, cleanOutDir = False):
-        QETask.__init__(self, setting, cleanOutDir)
-        self.input = QEInput(filename = self.setting.phInput, type = 'ph')
-        self.output = QEOutput(self.setting, type='pw')
-        self.cmdStr = self.setting.paraPrefix + " ph.x " +  \
-                      self.setting.paraPostfix + " -inp " + \
-                      self.setting.phInput + " > " + \
-                      self.setting.phOutput + "< /dev/null"                 
+    def __init__(self, filename, cleanOutDir = None):
+        QETask.__init__(self, filename, cleanOutDir)
+
         self.name = 'ph.x'
+        
+        configDic = {
+        'phInput': 'ph.in',
+        'phOutput': 'ph.out'
+        }
+        self.setting.section(self.name, configDic)
+
+        self.input = QEInput(filename = self.setting.phInput, type = 'ph')
+        self.output = QEOutput(self.setting, type='ph')
+        self._cmdStr = self.setting.paraPrefix + " ph.x " +  \
+                       self.setting.paraPostfix + " -inp " + \
+                       self.setting.phInput + " > " + \
+                       self.setting.phOutput + "< /dev/null"

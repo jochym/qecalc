@@ -1,8 +1,6 @@
-from qecalc.setting import Setting
 from qecalc.qetask.pwtask import PWTask
 
-setting = Setting('config.ini')
-pw = PWTask(setting)
+pw = PWTask('config.ini')
 pw.output.parse()
 energy =pw.output.property('total energy')
 print 'energy: ', energy

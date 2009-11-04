@@ -45,11 +45,11 @@ class SinglePhononCalc(QECalc):
       
     """
     def __init__(self, filename):
-        QECalc.__init__(self, filename)
-        self.pw = PWTask(self.setting)
-        self.ph = PHTask(self.setting)
-        self.dynmat = DynmatTask(self.setting)
-        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
+        QECalc.__init__(self)
+        self.pw = PWTask(filename)
+        self.ph = PHTask(filename)
+        self.dynmat = DynmatTask(filename)
+        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
         self.taskList = [self.pwph, self.dynmat]
 
 if __name__ == "__main__":

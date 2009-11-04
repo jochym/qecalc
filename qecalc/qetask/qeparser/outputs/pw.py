@@ -70,7 +70,9 @@ class Output(BaseOutput):
         
 
     def getStress(self, setting):
-        '''Extract total stress in kbar after pwscf launch or geometry optimization'''
+        """
+        Extract total stress in kbar after pwscf launch or geometry optimization
+        """
         pwscfOut = read_file(setting.pwscfOutput)
         key = find_last_key_from_string(pwscfOut, 'total   stress  (Ry/bohr**3)') + 1
         stress = [[float(val) for val in string.split( pwscfOut[key] )[3:] ],

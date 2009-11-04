@@ -12,7 +12,6 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from setting import Setting
 import numpy
 
 class QECalc(object):
@@ -26,9 +25,8 @@ class QECalc(object):
       taskList -- list of all user specified tasks. Should reflect
       their launching order
     """
-    def __init__(self, filename):
-        
-        self.setting = Setting(filename)
+    def __init__(self):
+        #self.setting = Setting(filename)
         self.taskList = []
 
     def launch(self, taskList = None):

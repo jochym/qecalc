@@ -14,69 +14,83 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import os
+from setting import Setting
 from qetorque import QETorque
 
 class QETask(object):
-    def __init__(self, setting, cleanOutDir = False):
-        self.setting = setting
+    def __init__(self, filename, cleanOutDir = None):
+       # parallelization parameters
+       # Default values, see explanations below:
+        self.name = 'Launcher'
+        configDic = {
+        'useTorque' : 'False',
+        'torqueResourceList': '-l nodes=1:ppn=1',
+        'paraPrefix': '',
+        'paraPostfix': ''
+        }
+        self.setting = Setting(filename)
+        self.setting.section(self.name, configDic)
+
         self.cleanOutDir = cleanOutDir
+
+        if self.setting.useTorque == 'True':
+            self.setting.useTorque = True
+        else:
+            self.setting.useTorque = False
+
         if self.setting.useTorque:
-            self._torque = QETorque(self.setting.configFileName)
-        self.input = None
-        self.output = None
-        self.cmdStr = None
-        self.name = None
+            self._torque = QETorque(self.setting.torqueResourceList)
+
 
     def _check(self, x):
         """Will check the exit status of the program to be executed"""
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self.cmdStr)
+            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self._cmdStr)
 
     def _run(self):
         if os.path.exists('CRASH'):
             os.remove('CRASH')
-        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdStr:
+        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self._cmdStr:
             if self.setting.useTorque:
-                self._torque.serial(self.cmdStr)
+                self._torque.serial(self._cmdStr)
             else:
-                self._check(os.system(self.cmdStr))
+                self._check(os.system(self._cmdStr))
         else:
-            self._check(os.system(self.cmdStr))
+            self._check(os.system(self._cmdStr))
         if os.path.exists('CRASH'):
             raise Exception("Task " + self.name + " crashed: 'CRASH' file was discovered")
 
 
-    def cleanOutputDir(self):
+    def cleanOutputDir(self, cleanOutDir = None):
         """
-        Parses pwscfInput file for output dir name and cleans the directory
+        Cleans the output directory (directory, where large files, used
+        for calculation are stored, can be for example  'temp/' or 'scratch/')
         """
-        from qeparser.qeinput import QEInput
         import shutil
-        qeConf = QEInput(self.setting.pwscfInput)
-        qeConf.parse()
-        outDir = qeConf.namelist('control').param('outdir')[1:-1]
+        if cleanOutDir == None:
+            cleanOutDir = self.cleanOutDir
+        if cleanOutDir == None:
+            raise Exception('outDir can not be cleaned, since it was not defined')
         if self.setting.useTorque:
-            os.system('bpsh -a rm -r -f ' + outDir)
-            os.system('bpsh -a mkdir ' + outDir)
+            os.system('bpsh -a rm -r -f ' + cleanOutDir)
+            os.system('bpsh -a mkdir ' + cleanOutDir)
         else:
-            shutil.rmtree(outDir)
-            os.mkdir(outDir)        
+            shutil.rmtree(cleanOutDir)
+            os.mkdir(cleanOutDir)
     
     def cmdLine(self):
-        return self.cmdStr
+        return self._cmdStr
 
     def launch(self, cleanOutDir = None):
         """
         Parses input. Launches task. Parses output.
         """
+        if cleanOutDir == None:
+            cleanOutDir = self.cleanOutDir
         if cleanOutDir != None:
-            clean = cleanOutDir
-        else:
-            clean = self.cleanOutDir
-        if clean:
-            self.cleanOutputDir()
+            self.cleanOutputDir(cleanOutDir)
         self.input.parse()
         self._run()
         self.output.parse(parserList = 'all')

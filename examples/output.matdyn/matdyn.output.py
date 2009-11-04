@@ -1,8 +1,6 @@
-from qecalc.setting import Setting
 from qecalc.qetask.matdyntask import MatdynTask
 
-setting = Setting('config.ini')
-matdyn = MatdynTask(setting)
+matdyn = MatdynTask('config.ini')
 matdyn.output.parse()
 Pol, Omegas, qPoints = matdyn.output.property('multi phonon')
 print Pol

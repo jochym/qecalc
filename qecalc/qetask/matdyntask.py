@@ -18,13 +18,24 @@ from qeparser.matdyninput import MatdynInput
 from qeparser.qeoutput import QEOutput
 
 class MatdynTask(QETask):
-    def __init__(self, setting, cleanOutDir = False):
-        QETask.__init__(self, setting, cleanOutDir)
+    def __init__(self, filename, cleanOutDir = None):
+        QETask.__init__(self, filename, cleanOutDir)
+
+        self.name = 'matdyn.x'
+        
+        configDic = {
+        'matdynInput': 'matdyn.in',
+        'matdynOutput': 'matdyn.out',
+        'matdynModes': 'matdyn.modes',
+        'matdynFreqs': 'matdyn.freq',
+        'matdynfldos': 'matdyn.phdos'
+        }
+        self.setting.section(self.name, configDic)
+
         self.input = MatdynInput(filename = self.setting.matdynInput)
         self.output = QEOutput(self.setting, type = 'matdyn')
-        self.cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
-        self.setting.matdynOutput
-        self.name = 'matdyn.x'
+        self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
+                        self.setting.matdynOutput
 
 if __name__ == "__main__":
     print "Hello World";
