@@ -95,7 +95,7 @@ Inheritance diagrams of QETask family of classes
 Class overview of QECalc
 ------------------------------
 
-.. image:: ../QECalc_diagram.svg
+.. image:: ../QECalc_diagram.png
    :width:  600
 
 

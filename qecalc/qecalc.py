@@ -20,8 +20,6 @@ class QECalc(object):
     class. All tasks of user defined Calcs should be appended to the taskList
     for launch() and lookupProperty() methods to work properly
 
-      setting -- provides access to parallel environment and QE input/output files
-
       taskList -- list of all user specified tasks. Should reflect
       their launching order
     """

@@ -18,6 +18,14 @@ from setting import Setting
 from qetorque import QETorque
 
 class QETask(object):
+    """
+    Base abstract class for 'TaskNameTask' family of classes. It also provides
+    the interface to loumch tasks
+
+    All user defined tasks should be derived from this class
+
+    setting -- provides access to parallel environment and QE input/output files
+    """
     def __init__(self, filename, cleanOutDir = None):
        # parallelization parameters
        # Default values, see explanations below:
@@ -43,7 +51,9 @@ class QETask(object):
 
 
     def _check(self, x):
-        """Will check the exit status of the program to be executed"""
+        """
+        Will check the exit status of the program to be executed
+        """
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
@@ -81,6 +91,9 @@ class QETask(object):
             os.mkdir(cleanOutDir)
     
     def cmdLine(self):
+        """
+        returns command string of a given task
+        """
         return self._cmdStr
 
     def launch(self, cleanOutDir = None):
