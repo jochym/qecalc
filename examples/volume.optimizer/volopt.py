@@ -15,7 +15,7 @@ def getHexEnergy(c, *args ):
     qe.pw.input.structure.lattice.c = c
     qe.pw.input.structure.save()
     qe.launch()
-    qe.pw.input.structure.parseOutput(qe.setting.pwscfOutput)
+    qe.pw.input.structure.parseOutput(qe.pw.setting.pwscfOutput)
     qe.pw.input.structure.save()
     return qe.pw.output.property('total energy')[0]
 
@@ -44,8 +44,8 @@ def hexVolOpt(a0, c0_a0, volumeExpansion):
     c = brentOut[0]
     energy = brentOut[1]
     a = np.sqrt(volume/c)
-    os.system('cp ' + qe.setting.pwscfOutput + ' ' +  str(c) + qe.setting.pwscfOutput)
-    os.system('cp ' + qe.setting.pwscfInput + ' ' +  str(c) + qe.setting.pwscfInput)
+    os.system('cp ' + qe.pw.setting.pwscfOutput + ' ' +  str(c) + qe.pw.setting.pwscfOutput)
+    os.system('cp ' + qe.pw.setting.pwscfInput + ' ' +  str(c) + qe.pw.setting.pwscfInput)
     return a, c/a, energy
 
 if __name__ == '__main__':
@@ -53,14 +53,14 @@ if __name__ == '__main__':
 #    volPercRange = scipy.linspace(0.1, 3.0, 29)
 #    volPercRange = scipy.linspace(-0.2, -1.0 , 5)
 #    volPercRange = [2.6, 2.8, 3.0,3.2, 3.4, 3.6, 3.8, 4.0 ]
-    volPercRange = [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0]
+    volPercRange = [ 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0]
     # !!!!!!  Make sure you have correct starting scf.in at equilibrium
     pwcalc = PWCalc('config.ini')
     # name of file at eqilibrium is pwscfInput.eqv:
-    eqvFileName = pwcalc.setting.pwscfInput + '.eqv'
+    eqvFileName = pwcalc.pw.setting.pwscfInput + '.eqv'
     if not os.path.exists(eqvFileName):
         raise Exception('Should provide PW input file at equilibrium')
-    os.system('cp ' + eqvFileName + ' ' + pwcalc.setting.pwscfInput )
+    os.system('cp ' + eqvFileName + ' ' + pwcalc.pw.setting.pwscfInput )
     pwcalc.pw.input.parse()
     if pwcalc.pw.input.namelist('control').param('calculation') != "'relax'":
         print pwcalc.pw.input.namelist('control').param('calculation')
