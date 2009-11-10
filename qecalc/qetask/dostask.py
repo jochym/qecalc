@@ -27,8 +27,8 @@ class DOSTask(QETask):
 
         # pwscf input and output
         configDic = {
-        'pwscfInput' : 'dos.in',
-        'pwscfOutput': 'dos.out',
+        'dosInput' : 'dos.in',
+        'dosOutput': 'dos.out',
         'fldos'      : 'fldos.dos'
         }
         self.setting.section(self.name, configDic)
