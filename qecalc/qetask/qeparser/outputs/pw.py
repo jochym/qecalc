@@ -102,6 +102,10 @@ class Output(BaseOutput):
         return [(forces, 'Ry/au')]
 
     def getBands(self, setting):
+        """
+        parses pw.x (scf or nscf) output for electronic bands.
+        outputs prsed kpoints and bands as numpy arrays
+        """
         kpoints = []
         bands = []
         pwscfOut = open(setting.pwscfOutput).readlines()
@@ -109,16 +113,22 @@ class Output(BaseOutput):
                             if 'End of self-consistent calculation' in line or \
                             'End of band structure calculation' in line ]
         for i,line in enumerate(pwscfOut[posList[-1]:]):
-            if 'band energies (ev):' in line:
-                kpoints.append([float(w) for w in line.split()[2:5]])
+            if 'band energies (ev):' in line or \
+                'bands (ev):' in line:
+                words = line.split('-')
+                kpt = []
+                for j, w in enumerate(words[1:]):
+                    words[j+1] = ' -'+ words[j+1]
+                kpoints.append([float(w) for w in ''.join(words).split()[2:5]])
                 s = ''
                 for l in pwscfOut[(posList[-1] + i + 1):]:
-                    if 'band energies (ev):' not in l:
+                    if 'band energies (ev):' not in l and \
+                       'the Fermi energy is' not in l and \
+                       'bands (ev):' not in  l:
                         s = s + l
                     else:
                         break
                 bands.append([float(w) for w in s.split()])
-
         return [(numpy.array(kpoints), None), (numpy.array(bands), 'eV')]
 
 if __name__ == "__main__":
