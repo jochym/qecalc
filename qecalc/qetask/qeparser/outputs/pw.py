@@ -27,7 +27,8 @@ class Output(BaseOutput):
                     'lattice parameters' : self.getLatticeParameters,
                     'fermi'              : self.getFermiEnergy,                    
                     'stress'             : self.getStress,
-                    'forces'             : self.getForces
+                    'forces'             : self.getForces,
+                    'bands'              : self.getBands,
                    }
 
     def getTotalEnergy(self, setting):
