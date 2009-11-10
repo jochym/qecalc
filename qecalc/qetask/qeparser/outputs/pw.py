@@ -120,7 +120,6 @@ class Output(BaseOutput):
 
         return [(numpy.array(kpoints), None), (numpy.array(bands), 'eV')]
 
-'
 if __name__ == "__main__":
     #from qecalc.qetask.qeparser import PWInput
     #from qecalc.qetask.qeparser.qestructure import QEStructure
