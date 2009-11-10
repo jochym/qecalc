@@ -100,6 +100,28 @@ class Output(BaseOutput):
             key = key + 1
         return [(forces, 'Ry/au')]
 
+    def getBands(self, setting):
+        kpoints = []
+        bands = []
+        pwscfOut = file.open(setting.pwscfOutput).readlines()
+        posList =  [i for i,line in enumerate(pwscfOut) \
+                            if 'End of self-consistent calculation' in line or \
+                            'End of band structure calculation' in line ]
+        for i,line in enumerate(pwscfOut[posList[-1]:]):
+            if 'band energies (ev):' in line:
+                kpoints.append([float(w) for w in line.split()[2:5]])
+                lines = [for l in pwscfOut[(posList[-1] + i + 1):]] \
+                s = ''
+                for l in pwscfOut[(posList[-1] + i + 1):]
+                    if 'band energies (ev):' not in l:
+                        s = s + l
+                    else:
+                        break
+                bands.append([float(w) for w in s.split()])
+
+        return [(numpy.array(kpoints), None), (numpy.array(bands), 'eV')]
+
+'
 if __name__ == "__main__":
     #from qecalc.qetask.qeparser import PWInput
     #from qecalc.qetask.qeparser.qestructure import QEStructure
