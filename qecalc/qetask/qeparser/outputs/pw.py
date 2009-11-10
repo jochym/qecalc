@@ -110,7 +110,6 @@ class Output(BaseOutput):
         for i,line in enumerate(pwscfOut[posList[-1]:]):
             if 'band energies (ev):' in line:
                 kpoints.append([float(w) for w in line.split()[2:5]])
-                lines = [for l in pwscfOut[(posList[-1] + i + 1):]] \
                 s = ''
                 for l in pwscfOut[(posList[-1] + i + 1):]
                     if 'band energies (ev):' not in l:
