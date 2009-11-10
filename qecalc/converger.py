@@ -39,6 +39,7 @@ class Converger():
         # which can be looked up in output parsers
         self.lookupTable = {
         'total energy' : (self.pwCalc, 'total energy'),
+        'fermi energy' : (self.pwCalc, 'fermi energy'),
         'single phonon': (self.singlePhononCalc, 'single phonon'),
         'geometry'     : (self.pwCalc, 'lattice parameters')
         }
