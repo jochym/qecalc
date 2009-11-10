@@ -104,7 +104,7 @@ class Output(BaseOutput):
     def getBands(self, setting):
         kpoints = []
         bands = []
-        pwscfOut = file.open(setting.pwscfOutput).readlines()
+        pwscfOut = open(setting.pwscfOutput).readlines()
         posList =  [i for i,line in enumerate(pwscfOut) \
                             if 'End of self-consistent calculation' in line or \
                             'End of band structure calculation' in line ]
