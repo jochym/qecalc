@@ -26,6 +26,7 @@ setup(
         description = "wrapper for Quantum Espresso",
         license = 'BSD',
         keywords = "quantum espresso",
+        url = "http://docs.danse.us/AbInitio/espresso/qecalc/index.html", 
         classifiers = [
             # List of possible values at
             # http://pypi.python.org/pypi?:action=list_classifiers

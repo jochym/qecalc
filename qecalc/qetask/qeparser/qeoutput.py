@@ -17,7 +17,6 @@ class QEOutput(object):
     def __init__(self, setting, type='pw'):
         self.setting   = setting
         self.type       = type
-        self.parsers    = None
         self._properties = None
         outModule = __import__("outputs." + self.type, globals(), \
                                 locals(), ['Output'], -1)

@@ -25,8 +25,9 @@ class Output(BaseOutput):
         self.parsers = {
                     'total energy'       : self.getTotalEnergy,
                     'lattice parameters' : self.getLatticeParameters,
+                    'fermi'              : self.getFermiEnergy,                    
                     'stress'             : self.getStress,
-                    'forces'             : self.getForces,
+                    'forces'             : self.getForces
                    }
 
     def getTotalEnergy(self, setting):
@@ -43,6 +44,16 @@ class Output(BaseOutput):
         #key = find_key_from_marker_string(pwscfOut, '!', 'total energy')
         #words = string.split(pwscfOut[key])
         #return [([float(words[4])], 'Ry')]
+        
+    def getFermiEnergy(self, setting):
+        """
+        Extract Fermi energy value from pwscf output
+        """
+        #read Espresso output into memory:
+        file = open(setting.pwscfOutput)
+        pwscfOut = file.readlines()
+        posList =  [i for i,line in enumerate(pwscfOut) if 'the Fermi energy is' in line]
+        return [([float(pwscfOut[posList[-1]].split()[4])], 'eV')]   
 
     def getLatticeParameters(self, setting):
         """
