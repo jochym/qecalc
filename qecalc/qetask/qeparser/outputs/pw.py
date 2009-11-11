@@ -124,6 +124,7 @@ class Output(BaseOutput):
                 for l in pwscfOut[(posList[-1] + i + 1):]:
                     if 'band energies (ev):' not in l and \
                        'the Fermi energy is' not in l and \
+                       'highest occupied, lowest unoccupied level' not in l and \
                        'bands (ev):' not in  l:
                         s = s + l
                     else:
