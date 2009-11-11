@@ -38,6 +38,7 @@ class QEOutput(object):
             except KeyError: pass
             except IOError: pass
             except TypeError: pass
+            except IndexError: pass
             except ValueError:
                 properties[parserName] = [(None, None)]
         self._properties = properties

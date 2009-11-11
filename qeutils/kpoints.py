@@ -22,7 +22,7 @@ class Kpoints:
         data = numpy.transpose(data.reshape(3,nkx*nky*nkz))
         return data
 
-    def kMeshCart(self, nq1, nq2, nq3):
+    def kMeshCart(self, nq1, nq2, nq3, structure):
         """Will generate k-point mesh in cartesian coordinates
         Lattice symmetry is not taken into account."""
         kpts = self._kMesh(nq1, nq2, nq3)
