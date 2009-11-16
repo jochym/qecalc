@@ -25,7 +25,7 @@ class Output(BaseOutput):
         self.parsers = {
                     'total energy'       : self.getTotalEnergy,
                     'lattice parameters' : self.getLatticeParameters,
-                    'fermi'              : self.getFermiEnergy,                    
+                    'fermi energy'       : self.getFermiEnergy,
                     'stress'             : self.getStress,
                     'forces'             : self.getForces,
                     'bands'              : self.getBands,
@@ -123,6 +123,7 @@ class Output(BaseOutput):
                 s = ''
                 for l in pwscfOut[(posList[-1] + i + 1):]:
                     if 'band energies (ev):' not in l and \
+                       'occupation numbers'  not in l and \
                        'the Fermi energy is' not in l and \
                        'highest occupied, lowest unoccupied level' not in l and \
                        'bands (ev):' not in  l:
