@@ -3,7 +3,7 @@
    # this is a Band-XCRYSDEN-Structure-File
    # aimed at Visualization of Fermi Surface
    #
- Fermi Energy:        7.8137
+ Fermi Energy:        7.8
  END_INFO
  BEGIN_BLOCK_BANDGRID_3D
  band_energies
@@ -13,7 +13,7 @@
   0.00000000 0.00000000 0.00000000
   1.00000000 0.57735027 0.00000000
   0.00000000 1.15470054 0.00000000
-  0.00000000 0.00000000 0.88044109
+  0.00000000 0.00000000 0.87962869
 BAND:    1
 BAND:    2
 BAND:    3

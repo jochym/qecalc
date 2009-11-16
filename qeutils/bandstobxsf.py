@@ -21,12 +21,13 @@ def bandstobxsf(energy, kpoints, recipLatticeVectors, bands, fname):
 
     file = open(fname,'w')
 
+    kpoints = [bands.shape[]]
     s =  """ BEGIN_INFO
    #
    # this is a Band-XCRYSDEN-Structure-File
    # aimed at Visualization of Fermi Surface
    #"""
-    s = s + '\n' + ' Fermi Energy:        ' + str(energy) + '\n'
+    s = s + '\n' + '   Fermi Energy:        ' + str(energy) + '\n'
     s = s + """ END_INFO
  BEGIN_BLOCK_BANDGRID_3D
  band_energies
@@ -39,6 +40,12 @@ def bandstobxsf(energy, kpoints, recipLatticeVectors, bands, fname):
                             recipLatticeVectors[i,1], recipLatticeVectors[i,2])
     for iband in range(bands.shape[1]):
         s = s + 'BAND:%5u\n'%(iband+1)
+
+        for kz in range(kpoints[2]):
+            for ky in range(kpoints[1]):
+                for kx in range(kpoints[0]):
+                    s = s + '   %#.8f %#.8f %#.8f %#.8f %#.8f\n'%(bands[])
+
     s = s + ' END_BANDGRID_3D\n END_BLOCK_BANDGRID_3D'
     file.write(s)
     file.close()
@@ -50,9 +57,10 @@ if __name__ == "__main__":
     pw = PWTask('config.ini')
     pw.input.parse()
     pw.output.parse()
-    print pw.output.property('fermi energy')
+    #print pw.output.property('fermi energy')
     print pw.output.property('bands')
-    bandstobxsf(pw.output.property('fermi energy')[0], [17, 17, 17], \
+    #pw.output.property('fermi energy')[0]
+    bandstobxsf(7.8, [17, 17, 17], \
                 pw.input.structure.lattice.diffpy().reciprocal().base* \
                 pw.input.structure.lattice.a, \
                 pw.output.property('bands')[1], 'test.bxsf')
