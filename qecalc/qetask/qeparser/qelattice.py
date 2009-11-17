@@ -472,6 +472,9 @@ class QELattice(object):
         recip_base = self.diffpy().reciprocal().base*self._a
         return numpy.dot( kPoint, recip_base)
 
+    def reciprocalBase(self):
+        return self.diffpy().reciprocal().base*self._a
+
 
     def _getQEBaseFromParCos( self, ibrav = 1, a = 1., b = 1., c = 1.,
                                     cBC = 0.,cAC = 0. ,cAB = 0.):

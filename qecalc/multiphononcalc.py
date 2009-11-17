@@ -81,6 +81,7 @@ class MultiPhononCalc(QECalc):
         self.ph.input.namelist('input').add('outdir', \
                              self.pw.input.namelist('control').param('outdir'))
 
+
     def loadPhonons(self, fname = None):
         self._modes, self._freqs, self._qpts =  \
                                     self.matdyn.output.property('multi phonon')

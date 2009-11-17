@@ -56,28 +56,30 @@ def bandstobxsf(energy, recipLatticeVectors, bands, fname):
 
 if __name__ == "__main__":
     from qecalc.qetask.pwtask import PWTask
+    from qeutils import kmesh
     pw = PWTask('config.ini')
     pw.input.parse()
     pw.output.parse()
     #print pw.output.property('fermi energy')
     kpoints = [17,17,17]
-    bands = numpy.zeros((pw.output.property('bands')[1].shape[1], kpoints[0], kpoints[1], kpoints[2]))
-    print bands
-    for iband in range(pw.output.property('bands')[1].shape[1]):
-        for kz in range(kpoints[2]):
-            for ky in range(kpoints[1]):
-                for kx in range(kpoints[0]):
-                    bands[iband,kx,ky,kz] = \
-                      pw.output.property('bands')[1][\
-                      kpoints[2]*kpoints[1]*kz + kpoints[1]*ky + kx,iband]
+
+    bands = kmesh.packBands(kpoints,pw.output.property('bands')[1])
+#    numpy.zeros((pw.output.property('bands')[1].shape[1], kpoints[0], kpoints[1], kpoints[2]))
+#    print bands
+#    for iband in range(pw.output.property('bands')[1].shape[1]):
+#        for kz in range(kpoints[2]):
+#            for ky in range(kpoints[1]):
+#                for kx in range(kpoints[0]):
+#                    bands[iband,kx,ky,kz] = \
+#                      pw.output.property('bands')[1][\
+#                      kpoints[2]*kpoints[1]*kz + kpoints[1]*ky + kx,iband]
     #bands = pw.output.property('bands')[1].transpose().reshape(\
     #                             -1, kpoints[0],kpoints[1],kpoints[2])
     print bands
     print bands.shape
     #pw.output.property('fermi energy')[0]
     bandstobxsf(7.8071, \
-                pw.input.structure.lattice.diffpy().reciprocal().base* \
-                pw.input.structure.lattice.a, \
+                pw.input.structure.lattice.reciprocalBase(), \
                 bands, 'test.bxsf')
     print "Hello World";
 
