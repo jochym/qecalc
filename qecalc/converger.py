@@ -92,6 +92,10 @@ class Converger():
                 value = value*numpy.array(multiply)
             else:
                 value = value + step
+            # if the run includes geometry optimization - import optimized
+            # structure othervise it will reimport existing structure:
+            calc.pw.input.structure.parseOutput(calc.pw.setting.pwscfOutput)
+            calc.pw.input.structure.save()
 
         print 'optimized ' + what + ' value : ', value, '\n'
         print "Printing run history:\n", runHistory, '\n'
