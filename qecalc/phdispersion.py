@@ -16,8 +16,8 @@
 from qedispersion import QEDispersion
 
 class PHDispersion(QEDispersion):
-    def __init__(self, structure , matdynTask):
-        QEDispersion.__init__(self,structure)
+    def __init__(self, lattice , matdynTask):
+        QEDispersion.__init__(self,lattice)
         self.matdynTask = matdynTask
 
     def launch(self, *pathNPoints):

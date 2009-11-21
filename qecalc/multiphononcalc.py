@@ -61,7 +61,7 @@ class MultiPhononCalc(QECalc):
         self.q2r = Q2RTask(filename)
         self.matdyn = MatdynTask(filename)
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
-        self.dispersion = PHDispersion(self.pw.input.structure, self.matdyn)
+        self.dispersion = PHDispersion(self.pw.input.structure.lattice, self.matdyn)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
 
 
