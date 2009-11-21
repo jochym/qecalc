@@ -18,8 +18,8 @@ from qeparser.matdyninput import MatdynInput
 from qeparser.qeoutput import QEOutput
 
 class MatdynTask(QETask):
-    def __init__(self, filename, cleanOutDir = None):
-        QETask.__init__(self, filename, cleanOutDir)
+    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+        QETask.__init__(self, filename, configString, cleanOutDir)
 
         self.name = 'matdyn.x'
         

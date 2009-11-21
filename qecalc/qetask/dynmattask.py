@@ -18,8 +18,8 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class DynmatTask(QETask):
-    def __init__(self, filename, cleanOutDir = None):
-        QETask.__init__(self, filename, cleanOutDir)
+    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+        QETask.__init__(self, filename, configString, cleanOutDir)
 
         self.name = 'dynmat.x'
 
