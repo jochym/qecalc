@@ -13,7 +13,7 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import string
-from qe_io_dict import *
+import qe_io_dict as io_dict
 import numpy
 from baseoutput import BaseOutput
 
