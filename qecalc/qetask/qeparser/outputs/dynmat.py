@@ -16,7 +16,6 @@ import string
 from qe_io_dict import *
 import numpy
 from baseoutput import BaseOutput
-from matdyn
 
 
 class Output(BaseOutput):
