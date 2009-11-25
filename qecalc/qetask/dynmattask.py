@@ -31,8 +31,9 @@ class DynmatTask(QETask):
         
         self.input = QEInput(filename = self.setting.dynmatInput, type = 'dynmat')
         self.output = QEOutput(self.setting, type = 'dynmat')
-        self._cmdStr = "dynmat.x < " + self.setting.dynmatInput + " > " + \
-                       self.setting.dynmatOutput
+        self._cmdStr = "dynmat.x < " + self.setting.dynmatInput
+        #+ " > " + \
+        #               self.setting.dynmatOutput
 
 
 
