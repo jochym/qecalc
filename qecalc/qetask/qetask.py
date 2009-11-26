@@ -29,7 +29,7 @@ class QETask(object):
     def __init__(self, filename = None, configString = None, cleanOutDir = None):
        # parallelization parameters
        # Default values, see explanations below:
-        self.name = 'Launcher'
+        #self.name = 'Launcher'
         configDic = {
         'useTorque' : 'False',
         'torqueResourceList': '-l nodes=1:ppn=1',
@@ -37,7 +37,7 @@ class QETask(object):
         'paraPostfix': ''
         }
         self.setting = Setting(filename, configString)
-        self.setting.section(self.name, configDic)
+        self.setting.section(self.name(), configDic)
 
         self.cleanOutDir = cleanOutDir
 
@@ -50,6 +50,10 @@ class QETask(object):
             self._torque = QETorque(self.setting.torqueResourceList)
 
 
+    def name(self):
+        return 'Launcher'
+
+
     def _check(self, x):
         """
         Will check the exit status of the program to be executed
@@ -57,7 +61,7 @@ class QETask(object):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self.cmdLine)
+            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine)
 
     def _run(self):
         if os.path.exists('CRASH'):
@@ -70,7 +74,7 @@ class QETask(object):
         else:
             self._check(os.system(self.cmdLine))
         if os.path.exists('CRASH'):
-            raise Exception("Task " + self.name + " crashed: 'CRASH' file was discovered")
+            raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
 
 
     def _syncSetting(self):
