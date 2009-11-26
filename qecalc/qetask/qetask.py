@@ -61,18 +61,18 @@ class QETask(object):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine)
+            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine())
 
     def _run(self):
         if os.path.exists('CRASH'):
             os.remove('CRASH')
-        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine:
+        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
             if self.setting.useTorque:
-                self._torque.serial(self.cmdLine)
+                self._torque.serial(self.cmdLine())
             else:
-                self._check(os.system(self.cmdLine))
+                self._check(os.system(self.cmdLine()))
         else:
-            self._check(os.system(self.cmdLine))
+            self._check(os.system(self.cmdLine()))
         if os.path.exists('CRASH'):
             raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
 
