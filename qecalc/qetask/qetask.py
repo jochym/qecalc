@@ -73,6 +73,15 @@ class QETask(object):
             raise Exception("Task " + self.name + " crashed: 'CRASH' file was discovered")
 
 
+    def _syncSetting(self):
+        """
+        Will syncronise QE input file with class Setting for given task (QE input
+        files may contain multiple input/ouput file names  definitions which
+        can be overriden in this method)
+        """
+        pass
+
+
     def cleanOutputDir(self, cleanOutDir = None):
         """
         Cleans the output directory (directory, where large files, used
@@ -105,6 +114,8 @@ class QETask(object):
         if cleanOutDir != None:
             self.cleanOutputDir(cleanOutDir)
         self.input.parse()
+        self._syncSetting() # sync setting with QE input file
+        self.input.save()
         self._run()
         self.output.parse(parserList = 'all')
 

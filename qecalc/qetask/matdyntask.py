@@ -37,6 +37,24 @@ class MatdynTask(QETask):
         self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
                         self.setting.matdynOutput
 
+
+    def _syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        self.input.namelist('input').remove('flfrq')
+        self.input.namelist('input').add('flfrq', self.setting.matdynFreqs)
+
+        self.input.namelist('input').remove('flvec')
+        self.input.namelist('input').add('flvec', self.setting.matdynModes)
+
+        self.input.namelist('input').remove('fldos')
+        self.input.namelist('input').add('fldos',self.setting.matdynfldos)
+
+
+                
+        
 if __name__ == "__main__":
     print "Hello World";
 

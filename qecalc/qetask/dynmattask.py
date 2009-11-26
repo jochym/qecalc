@@ -25,7 +25,7 @@ class DynmatTask(QETask):
 
         configDic = {
         'dynmatInput': 'dynmat.in',
-        'dynmatOutput': 'dynmat.out'
+        'dynmatflout': 'dynmat.out'
         }
         self.setting.section(self.name, configDic)
         
@@ -34,7 +34,13 @@ class DynmatTask(QETask):
         self._cmdStr = "dynmat.x < " + self.setting.dynmatInput
         #+ " > " + \
         #               self.setting.dynmatOutput
-
+    def _syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        self.input.namelist('input').remove('filout')
+        self.input.namelist('input').add('filout', self.setting.dynmatOutput)
 
 
 if __name__ == "__main__":
