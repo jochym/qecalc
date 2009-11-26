@@ -25,7 +25,7 @@ class DynmatTask(QETask):
 
         configDic = {
         'dynmatInput': 'dynmat.in',
-        'dynmatflout': 'dynmat.out'
+        'dynmatOutput': 'dynmat.out'
         }
         self.setting.section(self.name, configDic)
         
