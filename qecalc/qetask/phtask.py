@@ -21,17 +21,28 @@ class PHTask(QETask):
     def __init__(self, filename = None,configString = None, cleanOutDir = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        self.name = 'ph.x'
+        #self.name = 'ph.x'
         
         configDic = {
         'phInput': 'ph.in',
         'phOutput': 'ph.out'
         }
-        self.setting.section(self.name, configDic)
+        self.setting.section(self.name(), configDic)
 
         self.input = QEInput(filename = self.setting.phInput, type = 'ph')
         self.output = QEOutput(self.setting, type='ph')
-        self._cmdStr = self.setting.paraPrefix + " ph.x " +  \
+#        self._cmdStr = self.setting.paraPrefix + " ph.x " +  \
+#                       self.setting.paraPostfix + " -inp " + \
+#                       self.setting.phInput + " > " + \
+#                       self.setting.phOutput + "< /dev/null"
+
+
+    def cmdLine(self):
+        return  self.setting.paraPrefix + " ph.x " +  \
                        self.setting.paraPostfix + " -inp " + \
                        self.setting.phInput + " > " + \
                        self.setting.phOutput + "< /dev/null"
+
+
+    def name(self):
+        return 'ph.x'

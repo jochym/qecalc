@@ -19,12 +19,26 @@ class TaskMerger(QETask):
     def __init__(self, filename, tasks, cleanOutDir = None):
         QETask.__init__(self, filename, cleanOutDir)
         self.tasks = tasks
-        self._cmdStr = tasks[0].cmdLine()
-        self.name = tasks[0].name
+#        self._cmdStr = tasks[0].cmdLine()
+#        self.name = tasks[0].name
+#        for task in tasks[1:]:
+#            self._cmdStr = self._cmdStr + ' ; ' + task.cmdLine()
+#            self.name = self.name + ' -> ' + self._cmdStr
+
+
+    def cmdLine(self):
+        cmd = self.tasks[0].cmdLine()
+        for task in self.tasks[1:]:
+            cmd = cmd + ' ; ' + task.cmdLine()
+        return cmd
+
+
+    def name(self):
+        name = tasks[0].name()
         for task in tasks[1:]:
-            self._cmdStr = self._cmdStr + ' ; ' + task.cmdLine()
-            self.name = self.name + ' -> ' + self._cmdStr
-    
+            name = name + ' -> ' + task.name()
+        return name
+
     def launch(self, cleanOutDir = None):
         if cleanOutDir != None:
             clean = cleanOutDir

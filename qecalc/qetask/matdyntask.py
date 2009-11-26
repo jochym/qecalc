@@ -21,7 +21,7 @@ class MatdynTask(QETask):
     def __init__(self, filename = None,configString = None, cleanOutDir = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        self.name = 'matdyn.x'
+        #self.name = 'matdyn.x'
         
         configDic = {
         'matdynInput': 'matdyn.in',
@@ -30,12 +30,22 @@ class MatdynTask(QETask):
         'matdynFreqs': 'matdyn.freq',
         'matdynfldos': 'matdyn.phdos'
         }
-        self.setting.section(self.name, configDic)
+        self.setting.section(self.name(), configDic)
 
         self.input = MatdynInput(filename = self.setting.matdynInput)
         self.output = QEOutput(self.setting, type = 'matdyn')
-        self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
-                        self.setting.matdynOutput
+        
+#        self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
+#                        self.setting.matdynOutput
+
+                        
+    def cmdLine(self):
+        return "matdyn.x -inp " + self.setting.matdynInput + " > " + \
+                self.setting.matdynOutput
+
+
+    def name(self):
+        return 'matdyn.x'
 
 
     def _syncSetting(self):
@@ -52,9 +62,7 @@ class MatdynTask(QETask):
         self.input.namelist('input').remove('fldos')
         self.input.namelist('input').add('fldos',self.setting.matdynfldos)
 
-
-                
-        
+                    
 if __name__ == "__main__":
     print "Hello World";
 

@@ -23,7 +23,7 @@ class DOSTask(QETask):
     def __init__(self, filename = None,configString = None, cleanOutDir = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        self.name = 'dos.x'
+        #self.name = 'dos.x'
 
         # pwscf input and output
         configDic = {
@@ -31,14 +31,24 @@ class DOSTask(QETask):
         'dosOutput': 'dos.out',
         'fldos'      : 'fldos.dos'
         }
-        self.setting.section(self.name, configDic)
+        self.setting.section(self.name(), configDic)
         self.input = QEInput(self.setting.dosInput, type = 'dos')
         self.output = QEOutput(self.setting, type='dos')
-        self._cmdStr = self.setting.paraPrefix + " dos.x " +  \
+#        self._cmdStr = self.setting.paraPrefix + " dos.x " +  \
+#                       " -inp " + \
+#                       self.setting.dosInput + " > " + \
+#                       self.setting.dosOutput + "< /dev/null"
+
+
+    def cmdLine(self):
+        return self.setting.paraPrefix + " dos.x " +  \
                        " -inp " + \
                        self.setting.dosInput + " > " + \
                        self.setting.dosOutput + "< /dev/null"
 
+
+    def name(self):
+        return 'dos.x'
 
 
 if __name__ == "__main__":

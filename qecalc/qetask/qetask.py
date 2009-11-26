@@ -57,18 +57,18 @@ class QETask(object):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self._cmdStr)
+            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self.cmdLine)
 
     def _run(self):
         if os.path.exists('CRASH'):
             os.remove('CRASH')
-        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self._cmdStr:
+        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine:
             if self.setting.useTorque:
-                self._torque.serial(self._cmdStr)
+                self._torque.serial(self.cmdLine)
             else:
-                self._check(os.system(self._cmdStr))
+                self._check(os.system(self.cmdLine))
         else:
-            self._check(os.system(self._cmdStr))
+            self._check(os.system(self.cmdLine))
         if os.path.exists('CRASH'):
             raise Exception("Task " + self.name + " crashed: 'CRASH' file was discovered")
 
@@ -99,11 +99,11 @@ class QETask(object):
             shutil.rmtree(cleanOutDir)
             os.mkdir(cleanOutDir)
     
-    def cmdLine(self):
-        """
-        returns command string of a given task
-        """
-        return self._cmdStr
+#    def cmdLine(self):
+#        """
+#        returns command string of a given task
+#        """
+#        return self._cmdStr
 
     def launch(self, cleanOutDir = None):
         """
