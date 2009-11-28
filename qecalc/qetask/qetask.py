@@ -37,7 +37,7 @@ class QETask(object):
         'paraPostfix': ''
         }
         self.setting = Setting(filename, configString)
-        self.setting.section(self.name(), configDic)
+        self.setting.section(QETask.name(self), configDic)
 
         self.cleanOutDir = cleanOutDir
 
