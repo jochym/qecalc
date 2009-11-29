@@ -64,5 +64,104 @@ Execute your python script which uses qecalc API from your working dir.
 
 See examples directory as well as API documentation for more details
 
+Examples
+------------
+
+PWCalc
+^^^^^^^
+
+PWCalc consists of one task, launching pw.x. Before running the example, one needs
+to create config.ini file in the current dir as well as scf.in input file for pw.x.
+Example of config.ini is provided below::
+
+    [Launcher]
+    # parallelization parameters
+    # if this section is empty - serial mode is used
+    paraPrefix:   mpiexec -n 8
+    paraPostfix: -npool 8
+
+    #useTorque: True
+    #paraPrefix: mpirun --mca btl openib,sm,self
+    #paraPostfix: -npool 900
+
+    # this string will be passed to qsub, -d workingDir -V are already there:
+    #torqueResourceList: -l nodes=16:ppn=12 -N MyJobName -j oe
 
 
+    [pw.x]
+    # pwscf input/output files
+    pwscfInput:  scf.in
+    pwscfOutput: scf.out
+
+
+lookupProperty() goes through the all hte  output files of given qalc::
+
+    # PWCalc
+    from qecalc.pwcalc import PWCalc
+    pwcalc = PWCalc('config.ini')
+    pwcalc.launch()
+    pwcalc.lookupProperty('total energy')
+    pwcalc.lookupProperty('total energy', withUnits = True)
+    pwcalc.lookupProperty('stress', withUnits = True)
+    pwcalc.lookupProperty('forces', withUnits = True)
+
+
+MultiPhononCalc
+^^^^^^^^^^^^^^^^
+
+config.ini, pw.x, ph.x, q2r.x, and matdyn.x input files should be in the
+current dir. config.ini should have additional sections corresponding to
+additional tasks::
+
+    [ph.x]
+    #ph.x input/ouput, relevant to all phonon calculations:
+    phInput:  ph.in
+    phOutput: ph.out
+
+
+    [dynmat.x]
+    #dynmat.x input/output files relevant to single phonon calculation
+    dynmatInput:  dynmat.in
+    dynmatOutput: dynmat.out
+
+
+    [q2r.x]
+    # input/output files relevant to multiple phonon calculation
+    q2rInput:      q2r.in
+    q2rOutput:     q2r.out
+
+
+    [matdyn.x]
+    # input/output files relevant to multiple phonon calculation
+    matdynInput:   matdyn.in
+    matdynOutput:  matdyn.out
+    matdynModes:   matdyn.modes
+    matdynFreqs:   matdyn.freq
+    matdynfldos:   matdyn.phdos
+
+In the following example it is also assumed outputs are laready there
+after a succesfull run::
+
+    from qecalc.multiphononcalc import MultiPhononCalc
+    mphon = MultiPhononCalc('config.ini')
+    for task in mphon.taskList:
+        task.output.parse()
+    mphon.lookupProperty('total energy', withUnits = True)
+    # this will output out qpoints, frequencies and eigen modes
+    mphon.lookupProperty('multi phonon', withUnits = True)
+    mphon.dispersion.launch('M', 'Gamma', 'A','L', 50, 50, 50)
+    mphon.dispersion.plot()
+    
+Converger
+^^^^^^^^^^^
+
+Class converger will converge a value  with respect to k-points or different parameters in 'system'
+namelist of pw.x input file. Currently, the value can be 'total energy',
+'fermi energy' or 'single phonon'::
+
+    from qecalc.converger import Converger
+    opt = Converger('config.ini','total energy', tolerance = 0.1)
+    ecut = opt.converge(what = 'ecutwfc', startValue = 18, step = 4)
+    conv_thr = opt.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.1)
+
+    
