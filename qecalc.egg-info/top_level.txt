@@ -1,0 +1,2 @@
+qeutils
+qecalc

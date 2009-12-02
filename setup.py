@@ -14,6 +14,13 @@ setup(
         #namespace_packages = ['matter'],
         packages = find_packages(exclude=['DOC','examples']),
         test_suite = 'examples',
+        install_requires = [
+            'diffpy.Structure',
+            'numpy',
+        ],
+        dependency_links = [
+            'http://www.diffpy.org/packages/',
+        ],
 #        install_requires = [
 #            'PyCifRW',
 #        ],

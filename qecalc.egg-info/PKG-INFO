@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: qecalc
+Version: 0.2
+Summary: wrapper for Quantum Espresso
+Home-page: http://docs.danse.us/AbInitio/espresso/qecalc/index.html
+Author: Nikolay Markovskiy
+Author-email: markovskiy@gmail.com
+License: BSD
+Description: UNKNOWN
+Keywords: quantum espresso
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python :: 2.5
+Classifier: Topic :: Scientific/Engineering :: Physics

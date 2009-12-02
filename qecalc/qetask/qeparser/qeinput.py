@@ -140,7 +140,7 @@ class QEInput(object):
                 filename = default
 
         f = open(filename, "w")
-        f.write(self.toString())
+        f.write('\n' + self.toString())
         f.close()
 
     def type(self):
