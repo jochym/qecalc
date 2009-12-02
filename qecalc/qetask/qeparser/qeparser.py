@@ -24,7 +24,9 @@ NAMELIST        = """%s&%s%s([^&]*)/""" % (SPACES, SPACES, NAME)        # Nameli
 OPEN_BRACKET    = '[({]?'               # Open bracket
 CLOSE_BRACKET   = '[)}]?'               # Close bracket
 CARD            = '(%s[\w]+)%s%s(%s[\w]*%s)%s' % (SPACES, SPACES, OPEN_BRACKET, SPACES, SPACES, CLOSE_BRACKET)  # Card name
-EMPTY_LINE  = r'^\s*'                # Empty line
+EMPTY_LINE      = r'^\s*'               # Empty line
+ATTACHSIM       = ['matdyn', 'ph']      # Simulation types that have attachments
+
 
 import re
 from orderedDict import OrderedDict
@@ -38,7 +40,7 @@ class QEParser:
     attachment (specific for matdyn) data structures that later on can be used in
     parameters' manipulations
     """
-    
+
     def __init__(self, filename=None, configText=None, type='pw'):
         self.namelists  = OrderedDict()
         self.cards      = OrderedDict()
@@ -58,7 +60,7 @@ class QEParser:
             text = self._getText(self.filename)
         else:
             raise NameError('Dude, set config text or filename')  # Compalain
-        
+
         self._parseNamelists(text)
         self._parseCards(text)
         return (self.namelists, self.cards, self.attach)
@@ -82,7 +84,7 @@ class QEParser:
         self.cardRef       = getattr(module, "cards")
         return (self.namelistRef, self.cardRef)
 
-        
+
     def _parseNamelists(self, text):
         namelists  = OrderedDict()
         p   = re.compile(COMMENT)
@@ -104,7 +106,7 @@ class QEParser:
             nl      = Namelist(name)
             for p in namelists[name]:
                 nl.add(p[0], p[1])
-                
+
             self.namelists[name] = nl
 
 
@@ -138,11 +140,11 @@ class QEParser:
         p2  = re.compile(NAMELIST)
         s2  = re.sub(p2, '', s1)        # Remove namelists
 
-        # Special case for 'matdyn'
-        if self.type == 'matdyn': 
+        # Special case for simulations that have attachments
+        if self.type in ATTACHSIM:
             self.attach = s2.strip()
             return
-        
+
         rawlist = []
 
         p   = re.compile(EMPTY_LINE)
@@ -153,6 +155,9 @@ class QEParser:
                 rawlist.append(line)    # rawlist contains both cardnames and card lines in order
 
         self._convertCards(self._getCards(rawlist))
+
+    def _getAttach(self, str):
+        pass
 
     def _getCards(self, rawlist):
         cards       = OrderedDict()
@@ -302,14 +307,19 @@ textPh  = """
 
 """
 
-if __name__ == "__main__":
-    qeparserText    = QEParser(configText = textMatdyn, type="matdyn") #textProblem) #
+def testMatdyn():
+    qeparserText    = QEParser(configText = textMatdyn, type="matdyn")
     qeparserText.parse()
     qeparserText.toString()
-#    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
-#    qeparserFile.parse()
-#    qeparserFile.toString()
 
+def testFile():
+    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
+    qeparserFile.parse()
+    qeparserFile.toString()
+
+
+if __name__ == "__main__":
+    pass
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"
 
