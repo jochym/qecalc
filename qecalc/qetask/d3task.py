@@ -41,7 +41,7 @@ class D3Task(QETask):
     def cmdLine(self):
         return  "d3.x < " +  \
                        self.setting.d3Input + " > " + \
-                       self.setting.d3Output + "< /dev/null"
+                       self.setting.d3Output
 
 
     def name(self):
