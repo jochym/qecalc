@@ -20,7 +20,8 @@ numpy, scipy, and matplotlib. One such example can be the class Converger from
 qecalc/converger.py which can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
 any iteratable variable of PW config file. More examples can be seen in examples
-directory.
+directory. Sources can be checked out following the installation instructions
+or can be looked up here <http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc`_
 
 Installation
 ------------
