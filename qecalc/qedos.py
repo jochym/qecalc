@@ -17,7 +17,7 @@
 
 
 class QEDOS:
-    def __init__(self):
+    def __init__(self): pass
 
 #    def loadPhonons(self, fname = None):
 #        self._modes, self._freqs, self._qpts =  \

@@ -18,14 +18,15 @@ from qedos import QEDOS
 
 class PhononDOS(QEDOS):
 
-    self._freqs = None
-    self._modes = None
-    self._qpts = None
-    self.axis = []
-    self.dos = []
-
     def __init__(self, matdynTask):
         QEDOS.__init__(self)
+
+        self._freqs = None
+        self._modes = None
+        self._qpts = None
+        self.axis = []
+        self.dos = []
+
         self.matdynTask = matdynTask
 
 
