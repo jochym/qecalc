@@ -1,0 +1,17 @@
+This code was developed as part of the Neutron Virtual Facility
+project to create python bindings to Quantum Espresso.
+The main contributors to this package are
+
+    Nikolay Markovskiy
+    Alexander Dementsov
+
+QECalc was initiated as part of the Distributed Data Analysis of Neutron
+Scattering Experiments (DANSE) project, funded by the National Science
+Foundation under grant DMR-0520547.  More information on DANSE can be
+found at http://danse.us.
+
+
+Please see the header of each source file for a detailed list of
+contributors.  This is an open-source project and we hope and expect
+that the list of contributors will expand with time.  Many thanks to
+all current and future contributors.

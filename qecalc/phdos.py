@@ -2,7 +2,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # QEcalc              by DANSE Inelastic group
-#                     Brent Fultz
+#                     Nikolay Markovskiy
 #                     California Institute of Technology
 #                     (C) 2009  All Rights Reserved
 #
@@ -12,22 +12,42 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
+
+import numpy
+from qedos import QEDOS
+
+class PhononDOS(QEDOS):
+
+    self._freqs = None
+    self._modes = None
+    self._qpts = None
+
+    def __init__(self, matdynTask):
+        QEDOS.__init__(self)
+        self.matdynTask = matdynTask
 
 
-class PhononDos:
-    def __init__(self):
-        self._freqs = None
-        self._modes = None
-        self._qpts = None
+    def launch(self, *nqpoints,  useHistogram = True):
+        """
+        launches matdyn task with a grid provided through list 'nqpoints'
+        """
+        self.matdynTask.qpoints.setAutomatic(nqpoints)
+        self.matdynTask.input.save()
+
+        self.matdynTask.launch()
+        self.loadPhonons()
+        axis, dos = self.matdynTask.output.property('phonon dos')
 
 
-#    def loadPhonons(self, fname = None):
-#        self._modes, self._freqs, self._qpts =  \
-#                                    self.matdyn.output.property('multi phonon')
+    def loadPhonons(self, fname = None):
+        self._modes, self._freqs, self._qpts =  \
+                                    self.matdyn.output.property('multi phonon')
 
-    def getPhonons(self):
+
+    def setPhonons(self, modes, freqs, qpts):
+        self._modes, self._freqs, self._qpts =   modes, freqs, qpts
+
+    def get(self):
         return self._modes, self._freqs, self._qpts
 
     def qpoints(self):
@@ -39,7 +59,6 @@ class PhononDos:
     def modes(self):
         return self._modes
 
-
     def setRange(self, minOmega, maxOmega, deltaOmega):
         if minOmega == None:
             minOmega = numpy.min(self._freqs)
@@ -49,9 +68,6 @@ class PhononDos:
         if deltaOmega == None:
             deltaOmega = (maxOmega - minOmega)/200.0
         return minOmega, maxOmega, deltaOmega
-
-    def set(self, modes, freqs, qpts):
-        self._modes, self._freqs, self._qpts =   modes, freqs, qpts
 
 
     def DOS(self, minOmega = None, maxOmega = None, deltaOmega = None):
@@ -89,8 +105,11 @@ class PhononDos:
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
         return histPartOmega/norm, axis
 
+
+    def plot(self): pass
+
 if __name__ == "__main__":
     print "Hello World";
 
 __author__="Nikolay Markovskiy"
-__date__ ="$Nov 16, 2009 1:27:22 PM$"
+__date__ ="$Dec 2, 2009 12:14:12 PM$"

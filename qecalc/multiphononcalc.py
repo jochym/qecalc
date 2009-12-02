@@ -15,6 +15,7 @@
 import numpy
 
 from phdispersion import PHDispersion
+from phdos import PhononDOS
 
 from qecalc import QECalc
 
@@ -62,6 +63,7 @@ class MultiPhononCalc(QECalc):
         self.matdyn = MatdynTask(filename)
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
         self.dispersion = PHDispersion(self.pw.input.structure.lattice, self.matdyn)
+        self.dos = PhononDOS(self.matdyn)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
 
 
@@ -81,68 +83,6 @@ class MultiPhononCalc(QECalc):
         self.ph.input.namelist('input').add('outdir', \
                              self.pw.input.namelist('control').param('outdir'))
 
-
-    def loadPhonons(self, fname = None):
-        self._modes, self._freqs, self._qpts =  \
-                                    self.matdyn.output.property('multi phonon')
-
-    def getPhonons(self):
-        return self._modes, self._freqs, self._qpts
-
-    def qpoints(self):
-        return self._qpts
-
-    def freqs(self):
-        return self._freqs
-
-    def modes(self):
-        return self._modes
-
-    def setRange(self, minOmega, maxOmega, deltaOmega):
-        if minOmega == None:
-            minOmega = numpy.min(self._freqs)
-        if maxOmega == None:
-            maxOmega = numpy.max(self._freqs)
-        if minOmega > maxOmega: minOmega, maxOmega = maxOmega, minOmega
-        if deltaOmega == None:
-            deltaOmega = (maxOmega - minOmega)/200.0
-        return minOmega, maxOmega, deltaOmega
-
-
-    def DOS(self, minOmega = None, maxOmega = None, deltaOmega = None):
-        minOmega, maxOmega, deltaOmega =  \
-                                self.setRange(minOmega, maxOmega, deltaOmega)
-        nPoints = int((maxOmega - minOmega)/deltaOmega)
-        histOmega = numpy.zeros(nPoints)
-        norm = 0.0
-        for cell_freqs in self._freqs:
-            for omega in cell_freqs:
-                idx = int( (abs(omega) - minOmega)/deltaOmega )
-                if idx < len(histOmega):
-                    histOmega[idx] = histOmega[idx] + 1.0
-                    norm = norm + 1.0
-
-        axis = numpy.linspace(minOmega, maxOmega, nPoints)
-        return histOmega/norm, axis
-
-    def partDOS(self, atomSymbol, minOmega = None, maxOmega = None, deltaOmega = None):
-        from numpy import real
-        minOmega, maxOmega, deltaOmega   =      \
-                                self.setRange(minOmega, maxOmega, deltaOmega)
-        nPoints = int((maxOmega - minOmega)/deltaOmega)
-        histPartOmega = numpy.zeros(nPoints)
-        norm = 0.0
-        for iAtom, atom in enumerate(self.structure.diffpy()):
-            if atomSymbol == atom.element:
-                for cell_freqs, vectors in zip(self._freqs, self._modes):
-                    for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
-                        idx = int( (abs(omega) - minOmega)/deltaOmega )
-                        if idx < len(histPartOmega):
-                            weight = (real(vector*vector.conjugate())).sum()
-                            histPartOmega[idx] = histPartOmega[idx] + weight
-                            norm = norm + weight
-        axis = numpy.linspace(minOmega, maxOmega, nPoints)
-        return histPartOmega/norm, axis
 
 if __name__ == "__main__":
     print "Hello World";
