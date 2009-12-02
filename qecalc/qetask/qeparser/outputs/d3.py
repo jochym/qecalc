@@ -91,9 +91,9 @@ class Output(BaseOutput):
         #print 'ntype is ', ntype
         #print 'natom is ', natom
         #print 'd3 tensor is ', d3tensor
-        return (np.array(qpoints),None), \
-        (np.rollaxis(np.array(d3tensor).reshape(\
-                                    numberq,natom,3,natom,natom,3,3),2,5), None)
+        return  (np.rollaxis(np.array(d3tensor).reshape(\
+                                 numberq,natom,3,natom,natom,3,3),2,5), None), \
+                (np.array(qpoints),None),
 
 if __name__ == "__main__":
     print "Hello World";

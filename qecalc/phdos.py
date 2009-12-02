@@ -21,13 +21,15 @@ class PhononDOS(QEDOS):
     self._freqs = None
     self._modes = None
     self._qpts = None
+    self.axis = []
+    self.dos = []
 
     def __init__(self, matdynTask):
         QEDOS.__init__(self)
         self.matdynTask = matdynTask
 
 
-    def launch(self, *nqpoints,  useHistogram = True):
+    def launch(self, *nqpoints):
         """
         launches matdyn task with a grid provided through list 'nqpoints'
         """
@@ -36,7 +38,7 @@ class PhononDOS(QEDOS):
 
         self.matdynTask.launch()
         self.loadPhonons()
-        axis, dos = self.matdynTask.output.property('phonon dos')
+        self.axis, self.dos = self.matdynTask.output.property('phonon dos')
 
 
     def loadPhonons(self, fname = None):
@@ -84,7 +86,7 @@ class PhononDOS(QEDOS):
                     norm = norm + 1.0
 
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
-        return histOmega/norm, axis
+        return  axis, histOmega/norm
 
     def partDOS(self, atomSymbol, minOmega = None, maxOmega = None, deltaOmega = None):
         from numpy import real
@@ -103,7 +105,7 @@ class PhononDOS(QEDOS):
                             histPartOmega[idx] = histPartOmega[idx] + weight
                             norm = norm + weight
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
-        return histPartOmega/norm, axis
+        return axis, histPartOmega/norm
 
 
     def plot(self): pass
