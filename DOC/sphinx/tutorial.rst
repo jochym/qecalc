@@ -21,7 +21,7 @@ qecalc/converger.py which can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
 any iteratable variable of PW config file. More examples can be seen in examples
 directory. Sources can be checked out following the installation instructions
-or can be looked up here <http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc>`_
+or can be looked up `here <http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc>`_
 
 Installation
 ------------
