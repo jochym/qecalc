@@ -1,13 +1,11 @@
+AUTHORS
+LICENSE
 __init__.py
 setup.py
-DOC/QECalc_diagram.dia
 DOC/QECalc_diagram.png
-DOC/QECalc_diagram.svg
 DOC/calcs.gif
 DOC/input.gif
-DOC/overview.png
 DOC/overview_2.png
-DOC/tasks.png
 DOC/tasks_2.png
 DOC/sphinx/Makefile
 DOC/sphinx/api.rst
@@ -18,7 +16,6 @@ DOC/sphinx/transfer.sh
 DOC/sphinx/tutorial.rst
 DOC/sphinx/_static/default.css
 DOC/sphinx/_templates/layout.html
-dist/qecalc-0.2-py2.5.egg
 examples/converger/B.pbe-n-van_ak.UPF
 examples/converger/config.ini
 examples/converger/dynmat.in
@@ -65,9 +62,11 @@ qecalc/__init__.py
 qecalc/converger.py
 qecalc/multiphononcalc.py
 qecalc/phdispersion.py
+qecalc/phdos.py
 qecalc/pwcalc.py
 qecalc/qecalc.py
 qecalc/qedispersion.py
+qecalc/qedos.py
 qecalc/singlephononcalc.py
 qecalc.egg-info/PKG-INFO
 qecalc.egg-info/SOURCES.txt

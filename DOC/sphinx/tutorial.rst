@@ -21,23 +21,41 @@ qecalc/converger.py which can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
 any iteratable variable of PW config file. More examples can be seen in examples
 directory. Sources can be checked out following the installation instructions
-or can be looked up `here <http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc>`_
+or can be browsed `here <http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc>`_
 
 Installation
 ------------
-Currently there is no easy_install option for qecalc.
-You should have svn client installed
+
+There are two ways of installing qecalc. One is easy_install and another is
+checking out current development version from our svn repository.
+
+
+For easy_install option make sure  setuptools is installed and type::
+
+    easy_install qecalc
+
+or for custom location (which has to be in $PYTHONPATH) type::
+
+    easy_install -d $INSDIR qecalc
+
+
+
+For svn option, you should have svn client installed
 and go through the following steps:
 
-1. Go to your installation dir ($INSDIR), for example, ~/apps and type:
-   svn co svn://svn@danse.us/AbInitio/espresso/qecalc
+1. Go to your installation dir ($INSDIR), for example, ~/apps and type::
+
+       svn co svn://svn@danse.us/AbInitio/espresso/qecalc
+
    qecalc project tree will be created
 
-2. Add qecalc to your PYTHONPATH variable:
-   export PYTHONPATH=$INSDIR/qecalc:$PYTHONPATH
+2. Add qecalc to your PYTHONPATH variable::
 
-3. This module also depends on `diffpy.Structure <http://pypi.python.org/pypi/diffpy.Structure>`_  package. Make sure  setuptools is installed and type:
-   easy_install diffpy.Structure
+       export PYTHONPATH=$INSDIR/qecalc:$PYTHONPATH
+
+3. This module also depends on `diffpy.Structure <http://pypi.python.org/pypi/diffpy.Structure>`_  package. Make sure  setuptools is installed and type::
+
+    easy_install diffpy.Structure
 
 Usage
 ------------
@@ -63,7 +81,8 @@ Quantum Espresso is in your $PATH environment variable.
 
 Execute your python script which uses qecalc API from your working dir.
 
-See examples directory as well as API documentation for more details
+Please, see examples directory as well as API documentation for more details.
+IPython is a nice tool to play with the examples.
 
 Examples
 ------------
