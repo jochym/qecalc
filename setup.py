@@ -21,19 +21,14 @@ setup(
         dependency_links = [
             'http://www.diffpy.org/packages/',
         ],
-#        install_requires = [
-#            'PyCifRW',
-#        ],
-#        dependency_links = [
-#            'http://www.diffpy.org/packages/',
-#        ],
 
         author = 'Nikolay Markovskiy',
         author_email = 'markovskiy@gmail.com',
         description = "wrapper for Quantum Espresso",
         license = 'BSD',
         keywords = "quantum espresso",
-        url = "http://docs.danse.us/AbInitio/espresso/qecalc/index.html", 
+        url = "http://docs.danse.us/AbInitio/espresso/qecalc/index.html",
+        download_url = 'http://danse.cacr.caltech.edu/packages/dev_danse_us/',
         classifiers = [
             # List of possible values at
             # http://pypi.python.org/pypi?:action=list_classifiers
