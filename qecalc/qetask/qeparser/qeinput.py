@@ -45,6 +45,7 @@ class QEInput(object):
 
     # Either filename or config (not both) can be specified
     def __init__(self, filename=None, config=None, type='pw'):
+        self.header     = None
         self.filename   = filename
         self.config     = config
         self.parser     = QEParser(filename, config, type)
@@ -54,11 +55,11 @@ class QEInput(object):
         self.attach     = None          # Specific for 'matdyn'
         self.namelistRef    = None
         self.cardRef        = None
-        self.qe         = [self.namelists, self.cards, self.attach]
+        self.qe         = [self.header, self.namelists, self.cards, self.attach]
 
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary """
-        (self.namelists, self.cards, self.attach) = self.parser.parse()
+        (self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
 
     def createNamelist(self, name):
         """Creates namelist and adds to QEInput. """
@@ -104,22 +105,26 @@ class QEInput(object):
             raise
 
     def toString(self):
-        (self.namelistRef, self.cardRef)    = self.parser.getReferences()
+        (self.namelistRef, self.cardRef)    = self.parser.setReferences()
         s = ''
-        for name in self.namelistRef:
+        if self.header:             # Add header
+            s   += self.header
+
+        for name in self.namelistRef:   # Add namelists
             nl  = self.getObject(name, self.namelists)
             if nl is not None:
                 s   += nl.toString()
 
-        for name in self.cardRef:
+        for name in self.cardRef:   # Add cards
             c  = self.getObject(name, self.cards)
             if c is not None:
                 s   += c.toString()
 
-        if self.attach:     # Special attribute for matdyn
+        if self.attach:             # Add attribute (e.g. for type='matdyn')
             s   += self.attach
 
         return s
+
 
     def getObject(self, name, dict):
         """Returns object that corresponds to 'name'"""
@@ -128,6 +133,7 @@ class QEInput(object):
                 return dict[name]
 
         return None
+
 
     def save(self, filename=None):
         """ Saves the QEInput to the configuration file"""
@@ -140,7 +146,7 @@ class QEInput(object):
                 filename = default
 
         f = open(filename, "w")
-        f.write('\n' + self.toString())
+        f.write(self.toString())
         f.close()
 
     def type(self):
@@ -150,6 +156,8 @@ class QEInput(object):
 def _import(package):
     return __import__(package, globals(), locals(), [''], -1)
 
+
+# Tests
 def testCreateConfig():
     print "Testing creation of config file"
     qe  = QEInput()
@@ -168,6 +176,7 @@ def testCreateConfig():
     print "Adding card to QEInput:\n%s" % qe.toString()
     #qe.save()
 
+
 def testParseConfig():
     print "Testing parsing config file"
     qe  = QEInput("../tests/ni.scf.in")
@@ -181,11 +190,18 @@ def testParseConfig():
     c = qe.card('atomic_positions')
     c.editLines(['Say Hi! :)'])
     print qe.toString()
-    #qe.save("ni.scf.in.mod")
+    #qe.save("../tests/ni.scf.in.mod")
+
+def testAttach():
+    qe  = QEInput("../tests/si.ph.in", type="ph")
+    qe.parse()
+    qe.save("../tests/si.ph.in.mod")
+
 
 if __name__ == "__main__":
-    testCreateConfig()
-    testParseConfig()
+    #testCreateConfig()
+    #testParseConfig()
+    testAttach()
 
 
 
