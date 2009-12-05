@@ -22,7 +22,7 @@ and go through the following steps:
 
    qecalc project tree will be created
 
-2. Add qecalc to your PYTHONPATH variable::
+2. Add qecalc to your PYTHONPATH variable:
 
        export PYTHONPATH=$INSDIR/qecalc:$PYTHONPATH
 
