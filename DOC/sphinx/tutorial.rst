@@ -58,7 +58,7 @@ and go through the following steps:
     easy_install diffpy.Structure
 
 
-If you already have *.tar.gz source distribution, you may as well just
+If you already have .tar.gz source distribution, you may as well just
 decompress it and add qecalc to PYTHONPATH
 
 Usage
@@ -80,7 +80,7 @@ The default values are located in qecalc/qecalc/settings.py
 
 
 Before the run, check that all the pseudopotentials from the pw config file
-are available and your output dir existsts (e.g. temp/ ). Also make sure
+are available and your output dir exists (e.g. temp/ ). Also make sure
 Quantum Espresso is in your $PATH environment variable.
 
 Execute your python script which uses qecalc API from your working dir.
@@ -118,7 +118,7 @@ Example of config.ini is provided below::
     pwscfOutput: scf.out
 
 
-lookupProperty() goes through the all hte  output files of given qalc::
+lookupProperty() goes through the all the  output files of given calc::
 
     # PWCalc
     from qecalc.pwcalc import PWCalc
@@ -163,8 +163,8 @@ additional tasks::
     matdynFreqs:   matdyn.freq
     matdynfldos:   matdyn.phdos
 
-In the following example it is also assumed outputs are laready there
-after a succesfull run::
+In the following example it is also assumed outputs are already there
+after a successful run::
 
     from qecalc.multiphononcalc import MultiPhononCalc
     mphon = MultiPhononCalc('config.ini')
@@ -189,3 +189,4 @@ namelist of pw.x input file. Currently, the value can be 'total energy',
     conv_thr = opt.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.1)
 
     
+
