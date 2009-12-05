@@ -57,6 +57,10 @@ and go through the following steps:
 
     easy_install diffpy.Structure
 
+
+If you already have *.tar.gz source distribution, you may as well just
+decompress it and add qecalc to PYTHONPATH
+
 Usage
 ------------
 It is essential the user knows how to use Quantum Espresso for the basic tasks.

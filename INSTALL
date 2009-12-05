@@ -32,3 +32,7 @@ http://pypi.python.org/pypi/diffpy.Structure.
 Make sure  setuptools is installed and type:
 
     easy_install diffpy.Structure
+
+
+If you already have *.tar.gz source distribution, you may as well just
+decompress it and add qecalc to PYTHONPATH

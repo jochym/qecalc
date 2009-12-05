@@ -17,6 +17,10 @@ numpy, scipy, and matplotlib.
 Please read INSTALL file for installation instruction and/ or go to the project's
 documentation at http://docs.danse.us/AbInitio/espresso/qecalc
 
+You may also check for new QECalc version at
+
+    http://pypi.python.org/pypi/qecalc
+
 CONTACTS
 
 For more information on the QECalc please visit the project web-page:
