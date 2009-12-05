@@ -19,7 +19,7 @@ matdyn.input.save()
 
 matdyn.launch()
 
-matdyn.output.parse()
+#matdyn.output.parse()
 
 modes, freqs, qpts = matdyn.output.property('multi phonon')
 
