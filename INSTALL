@@ -1,0 +1,34 @@
+
+There are two ways of installing qecalc. One is easy_install and another is
+checking out current development version from our svn repository.
+
+
+For easy_install option make sure  setuptools is installed and type:
+
+    easy_install qecalc
+
+or for custom location (which has to be in $PYTHONPATH) type:
+
+    easy_install -d $INSDIR qecalc
+
+
+
+For svn option, you should have svn client installed
+and go through the following steps:
+
+1. Go to your installation dir ($INSDIR), for example, ~/apps and type:
+
+       svn co svn://svn@danse.us/AbInitio/espresso/qecalc
+
+   qecalc project tree will be created
+
+2. Add qecalc to your PYTHONPATH variable::
+
+       export PYTHONPATH=$INSDIR/qecalc:$PYTHONPATH
+
+3. This module also depends on diffpy.Structure package, located at
+http://pypi.python.org/pypi/diffpy.Structure.
+
+Make sure  setuptools is installed and type:
+
+    easy_install diffpy.Structure
