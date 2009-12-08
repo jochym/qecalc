@@ -19,7 +19,25 @@ class Output(BaseOutput):
 
     def __init__(self):
         BaseOutput.__init__(self)
-        self.parsers = {}
+        self.parsers = {
+                        'qpoints'       : self.getQpoints,
+                        }
+
+    def getQpoints(self, setting):
+        """
+        Extract ireducible qpoints from  ph output
+        """
+        #read Espresso output into memory:
+        file = open(setting.phOutput)
+        phOut = file.readlines()
+        posList =  \
+        [i for i,line in enumerate(phOut) if 'Dynamical matrices for (' in line]
+        i = posList[-1] + 3
+        qpoints = []
+        while len(phOut[i].split()) == 4:
+            qpoints.append([ float(w) for w in phOut[i].split()[1:]])
+            i = i + 1
+        return [(qpoints, None)]
 
 
 if __name__ == "__main__":
