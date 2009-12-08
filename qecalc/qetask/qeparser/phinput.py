@@ -13,17 +13,24 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qecalc.multiphononcalc import MultiPhononCalc
+from qeinput import QEInput
+from phqpoints import PHQpoints
+
+class PHInput(QEInput):
+    def __init__(self, filename=None, config=None):
+        QEInput.__init__(self,filename, config, type='ph')
+        self.qpoints = PHQpoints(self)
 
 
-
-mphon = MultiPhononCalc('config.ini')
-mphon.launch()
-mphon.ph.output.property('qpoints')
+    def parse(self):
+        """ Parses the configuration file and stores the values in qe dictionary
+            Initializes structure as well"""
+        (self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
+        self.qpoints.parse()
 
 
 if __name__ == "__main__":
     print "Hello World";
 
 __author__="Nikolay Markovskiy"
-__date__ ="$Dec 8, 2009 11:20:41 AM$"
+__date__ ="$Dec 8, 2009 12:39:52 PM$"

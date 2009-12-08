@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.phinput import PHInput
 from qeparser.qeoutput import QEOutput
 
 class PHTask(QETask):
@@ -29,12 +29,8 @@ class PHTask(QETask):
         }
         self.setting.section(self.name(), configDic)
 
-        self.input = QEInput(filename = self.setting.phInput, type = 'ph')
+        self.input = PHInput(filename = self.setting.phInput)
         self.output = QEOutput(self.setting, type='ph')
-#        self._cmdStr = self.setting.paraPrefix + " ph.x " +  \
-#                       self.setting.paraPostfix + " -inp " + \
-#                       self.setting.phInput + " > " + \
-#                       self.setting.phOutput + "< /dev/null"
 
 
     def cmdLine(self):

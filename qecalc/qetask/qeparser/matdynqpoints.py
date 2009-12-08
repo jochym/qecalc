@@ -30,6 +30,7 @@ class MatdynQpoints(object):
         self.qeInput.namelist('input').remove('fldos')
         self.qeInput.namelist('input').remove('dos')
         self.coords = qpoints
+        self.grid = None
         # axis == None for custom generated q-point grid
         if axis == None:
             axis = numpy.zeros(qpoints.shape[0])
@@ -46,8 +47,9 @@ class MatdynQpoints(object):
         grid - list with dimensions of q-point grid
         """
         self.isAutomatic = True
+        self.coords = None
         self.grid = numpy.array(grid)
-        self.qeInput.attachment = ''
+        self.qeInput.attach = ''
         self.qeInput.namelist('input').add('nk1', str(grid[0]))
         self.qeInput.namelist('input').add('nk2', str(grid[1]))
         self.qeInput.namelist('input').add('nk3', str(grid[2]))
@@ -58,7 +60,7 @@ class MatdynQpoints(object):
         self.axis = []
         if 'nk1' in self.qeInput.namelist('input').params:
             self.isAutomatic = True
-            self.coords = [int(self.qeInput.namelist('input').param('nk1')),
+            self.grid = [int(self.qeInput.namelist('input').param('nk1')),
                             int(self.qeInput.namelist('input').param('nk2')),
                             int(self.qeInput.namelist('input').param('nk3'))]
         else:
