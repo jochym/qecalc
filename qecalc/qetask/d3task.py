@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.d3input import D3Input
 from qeparser.qeoutput import QEOutput
 
 class D3Task(QETask):
@@ -30,12 +30,8 @@ class D3Task(QETask):
         }
         self.setting.section(self.name(), configDic)
 
-        self.input = QEInput(filename = self.setting.d3Input, type = 'd3')
+        self.input = D3Input(filename = self.setting.d3Input)
         self.output = QEOutput(self.setting, type='d3')
-#        self._cmdStr = self.setting.paraPrefix + " ph.x " +  \
-#                       self.setting.paraPostfix + " -inp " + \
-#                       self.setting.phInput + " > " + \
-#                       self.setting.phOutput + "< /dev/null"
 
 
     def cmdLine(self):

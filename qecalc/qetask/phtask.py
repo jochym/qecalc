@@ -25,7 +25,8 @@ class PHTask(QETask):
         
         configDic = {
         'phInput': 'ph.in',
-        'phOutput': 'ph.out'
+        'phOutput': 'ph.out',
+        'phFildyn'  : 'matdyn'
         }
         self.setting.section(self.name(), configDic)
 
@@ -39,6 +40,13 @@ class PHTask(QETask):
                        self.setting.phInput + " > " + \
                        self.setting.phOutput + "< /dev/null"
 
+    def _syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        self.input.namelist('inputph').remove('fildyn')
+        self.input.namelist('inputph').add('fildyn', self.setting.phFildyn)
 
     def name(self):
         return 'ph.x'

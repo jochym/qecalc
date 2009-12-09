@@ -23,6 +23,7 @@ class PHQpoints(object):
         self.coords = None
 
     def set(self, qpoint):
+        qpoint = numpy.array(qpoint)
         self.isAutomatic = False
         self.coords = qpoint
         self.grid = None
@@ -55,11 +56,12 @@ class PHQpoints(object):
             self.grid = [int(self.qeInput.namelist('inputph').param('nq1')),
                             int(self.qeInput.namelist('inputph').param('nq2')),
                             int(self.qeInput.namelist('inputph').param('nq3'))]
+            self.grid = numpy.array(self.grid)
         else:
             # create a list and get rid of empty lines
             qStrList = [line for line in self.qeInput.attach.split('\n') \
-                                                          if not line.isspace()]
-            for line in qStrList[1:]:
+                                        if len(line.split()) == 3]            
+            for line in qStrList[:]:
                 points = [float(w) for w in line.split()]
                 if len(points) == 3:
                     self.coords.append(points)

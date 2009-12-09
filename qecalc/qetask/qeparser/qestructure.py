@@ -181,7 +181,7 @@ class QEStructure():
                 coords = self.formatString%(coords[0], coords[1], coords[2])
             else:
                 if self.atomicPositionsType == 'crystal':
-                    coords = self.formatString%(v[0], v[1], v[2])%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                    coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
             s = s + '%-3s'%atom.element + '    ' + coords + '  ' \

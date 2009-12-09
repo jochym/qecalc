@@ -23,6 +23,7 @@ class MatdynQpoints(object):
         self.axis = None
 
     def set(self, qpoints, axis = None):
+        qpoints = numpy.array(qpoints)
         self.isAutomatic = False
         self.qeInput.namelist('input').remove('nk1')
         self.qeInput.namelist('input').remove('nk2')
@@ -63,10 +64,11 @@ class MatdynQpoints(object):
             self.grid = [int(self.qeInput.namelist('input').param('nk1')),
                             int(self.qeInput.namelist('input').param('nk2')),
                             int(self.qeInput.namelist('input').param('nk3'))]
+            self.grid = numpy.array(grid)
         else:
             # create a list and get rid of empty lines
             qStrList = [line for line in self.qeInput.attach.split('\n') \
-                                                          if not line.isspace()]
+                                                          if not line.isspace() and line != '']
             for line in qStrList[1:]:
                 points = [float(w) for w in line.split()]
                 if len(points) == 3:
