@@ -144,7 +144,8 @@ class QEParser:
     def _removeComments(self, text):
         """Removes comments from the text"""
         p   = re.compile(COMMENT)
-        return re.sub(p, '', text)           
+        s   = re.sub(p, '', text)
+        return self._removeEmptyLines(s)
         
 
     def _convertNamelists(self, namelists):
@@ -201,26 +202,32 @@ class QEParser:
 
     def _cutNamelistText(self, text):
         """Cuts the namelist text"""
-        s       = text
-        end     = self._namelistEnd(text)
+        
+        s       = self._removeComments(text)
+        end     = self._namelistEnd(s)
 
         if end is not None:
-            s   = text[end + 1:]  # Suppose that cards and attachmet starts with new line
+            s   = s[end + 1:]  # Suppose that cards and attachmet starts with new line
 
         return s
 
 
     def _rawlist(self, text):
-        """Removes empty lines"""
+        """Removes empty lines or lines with white spaces only"""
         rawlist = []
 
         s   = text.splitlines(True)
         for line in s:
-            line    = line.strip()
-            if line != '':
+            stripped    = line.strip()
+            if stripped != '':
                 rawlist.append(line)    # rawlist contains both cardnames and card lines in order
 
         return rawlist
+
+
+    def _removeEmptyLines(self, text):
+        """Joins non empty lines or lines with white spaces only in the list to one string"""
+        return ''.join(self._rawlist(text))
 
 
     def _getCards(self, rawlist):
@@ -277,8 +284,14 @@ class QEParser:
 
 
     def _namelistEnd(self, text):
-        """Returns the end character position of the last namelist in the text"""
+        """
+        Returns the end character position of the last namelist in the text
+        Notes:
+            - text should be clear from comments (filtered by _removeComments(text)).
+              Otherwise the end of the last namelist will be incorrect
+        """
         s           = self._removeComments(text)
+
         p           = re.compile(NAMELIST)
         matches     = p.finditer(s)        # Finds all namelist blocks
         ends      = []
@@ -462,6 +475,11 @@ def testHeader():
     parser.parse()
     print parser.toString()
 
+def testMgB2():
+    parser          = QEParser(filename = "../tests/ph.mgb2.in", type="ph")
+    parser.parse()
+    print parser.toString()
+
 
 if __name__ == "__main__":
     #testMatdyn()
@@ -469,7 +487,8 @@ if __name__ == "__main__":
     #testFile()
     #testCards()
     #testComma()
-    testHeader()
+    #testHeader()
+    testMgB2()
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"
 
