@@ -25,7 +25,7 @@ class Output(BaseOutput):
                 }
 
 
-    def getD3Tensor(self, setting):
+    def getD3TensorOld(self, setting):
         '''
         Obtain third order anharmonicity Aqq from QE d3.x
         '''
@@ -94,6 +94,39 @@ class Output(BaseOutput):
         return  (np.rollaxis(np.array(d3tensor).reshape(\
                                  numberq,natom,3,natom,natom,3,3),2,5), None), \
                 (np.array(qpoints),None),
+
+
+    def getD3Tensor(self, setting):
+        '''
+        Obtain third order anharmonic tensor from QE d3.x
+        '''
+
+        file = open(setting.d3fildyn, 'r')
+        lines = file.readlines()
+        ntype = int(lines[2].split()[0])
+        natom = int(lines[2].split()[1])
+        d3tensor = []
+        qpoints = []
+        numberq = 0
+        for index, line in enumerate(lines):
+            if 'q = (' in line:
+                numberq = numberq + 1
+                qpoints.append([float(f) for f in lines[index].split()[3:6]])
+                for mode in range(0,3*natom):
+                    for i in range(0,natom):
+                        for j in range(0,natom):
+                            for idir in range(0,3):
+                                _itemp = index+mode*(natom*natom*7 + 3)+\
+                                         (i*natom+j)*7 + 6 + idir*natom
+                                temp = lines[_itemp]+lines[_itemp + 1]
+                                _val = [float(f) for f in temp.split()]
+                                d3tensor.append(complex(_val[0],_val[1]))
+                                d3tensor.append(complex(_val[2],_val[3]))
+                                d3tensor.append(complex(_val[4],_val[5]))
+
+        return  \
+        (np.rollaxis(np.array(d3tensor).reshape(\
+        numberq,natom,3,natom,natom,3,3),2,5), None), (np.array(qpoints), None),
 
 if __name__ == "__main__":
     print "Hello World";

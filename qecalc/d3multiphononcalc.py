@@ -15,7 +15,7 @@
 
 from qecalc.multiphononcalc import MultiPhononCalc
 from qecalc.d3calc import D3Calc
-from qeutils import kmesh
+# from qeutils import kmesh
 
 
 qgrid = [2,2,2]
