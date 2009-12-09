@@ -34,8 +34,8 @@ class TaskMerger(QETask):
 
 
     def name(self):
-        name = tasks[0].name()
-        for task in tasks[1:]:
+        name = self.tasks[0].name()
+        for task in self.tasks[1:]:
             name = name + ' -> ' + task.name()
         return name
 
