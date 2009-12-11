@@ -42,3 +42,12 @@ class D3Task(QETask):
 
     def name(self):
         return 'd3.x'
+
+    
+   def _syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        self.input.namelist('inputph').add('outdir', \
+                                               "'" +  self.setting.outDir + "'")

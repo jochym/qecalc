@@ -46,3 +46,11 @@ class PWTask(QETask):
 
     def name(self):
         return 'pw.x'
+
+    def _syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        self.input.namelist('control').add('outdir', \
+                                               "'" +  self.setting.outDir + "'")

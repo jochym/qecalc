@@ -51,6 +51,13 @@ class DOSTask(QETask):
         return 'dos.x'
 
 
+    def _syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        self.input.namelist('inputpp').add('outdir', \
+                                               "'" +  self.setting.outDir + "'")
 if __name__ == "__main__":
     print "Hello World";
 

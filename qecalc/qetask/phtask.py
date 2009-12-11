@@ -45,8 +45,10 @@ class PHTask(QETask):
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('inputph').remove('fildyn')
-        self.input.namelist('inputph').add('fildyn', self.setting.phFildyn)
+        self.input.namelist('inputph').add('fildyn', \
+                                              "'" + self.setting.phFildyn + "'")
+        self.input.namelist('inputph').add('outdir', \
+                                               "'" +  self.setting.outDir + "'")
 
     def name(self):
         return 'ph.x'

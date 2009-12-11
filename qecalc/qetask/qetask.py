@@ -34,7 +34,8 @@ class QETask(object):
         'useTorque' : 'False',
         'torqueResourceList': '-l nodes=1:ppn=1',
         'paraPrefix': '',
-        'paraPostfix': ''
+        'paraPostfix': '',
+        'outDir': ''
         }
         self.setting = Setting(filename, configString)
         self.setting.section(QETask.name(self), configDic)
