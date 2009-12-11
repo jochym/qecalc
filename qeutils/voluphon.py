@@ -44,19 +44,19 @@ class VoluPhon():
 
     def setPhonons(self, indexRange, fitter):
         """Will read freqs from x_matdyn.modes files and fit the freqs"""
-        matdynModesName = self.mphon.matdynModes
-        self.mphon.matdynModes = str(indexRange[0]) + '_' + matdynModesName
+        matdynModesName = self.mphon.matdyn.setting.matdynModes
+        self.mphon.matdyn.setting.matdynModes = str(indexRange[0]) + '_' + matdynModesName
         self.mphon.matdyn.output.parse()
         Pol, Omega, qPoints = self.mphon.matdyn.output.property('multi phonon')
         volOmega = numpy.zeros(shape=(len(indexRange), numpy.shape(Omega)[0], \
                                                       numpy.shape(Omega)[1]  ) )
         volOmega[0] = Omega
         for i in range(1,len(indexRange)):
-            self.mphon.matdynModes = str(indexRange[i]) + '_' + matdynModesName
+            self.mphon.matdyn.setting.matdynModes = str(indexRange[i]) + '_' + matdynModesName
             self.mphon.matdyn.output.parse()
             Pol, Omega, qPoints = self.mphon.matdyn.output.property('multi phonon')
             volOmega[i] = Omega
-        self.mphon.matdynModes = matdynModesName
+        self.mphon.matdyn.setting.matdynModes = matdynModesName
         self.freqs = volufit.FreqFit(self.__prcntVolume, volOmega,fitter)
 
 

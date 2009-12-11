@@ -19,10 +19,12 @@ from qecalc.d3calc import D3Calc
 
 
 qgrid = [2,2,2]
+fildrho = "'si.drho'"
 
 mphon = MultiPhononCalc('config.ini')
 
 mphon.ph.input.parse()
+mphon.ph.input.namelist('inputph').remove('fildrho')
 mphon.ph.input.qpoints.setAutomatic(qgrid)
 mphon.ph.input.save()
 
@@ -55,8 +57,34 @@ print modes, freqs, qpoints
 d3calc = D3Calc('config.ini')
 
 d3data = []
+
 tasks = [d3calc.ph, d3calc.d3]
-for qpoint in qpoints_indep:
+
+# calculation at Gamma:
+d3calc.ph.input.parse()
+d3calc.d3.input.parse()
+#fildrho = d3calc.ph.input.namelist('inputph').param('fildrho')
+fildrhoG = "'" + fildrho.strip("'") + '_G' + "'"
+d3calc.ph.input.namelist('inputph').set('fildrho', fildrhoG)
+d3calc.d3.input.namelist('inputph').set('fild0rho', fildrhoG)
+d3calc.d3.input.namelist('inputph').set('fildrho', fildrhoG)
+d3calc.ph.input.save()
+d3calc.d3.input.save()
+d3calc.pw.launch()
+for task in tasks:
+    task.input.parse()
+    task.input.qpoints.set([0.0, 0.0, 0.0])
+    task.input.save()
+    task.launch()
+print '[0,0,0]'
+print d3calc.d3.output.property('d3 tensor')    
+
+# non Gamma points    
+d3calc.ph.input.namelist('inputph').set('fildrho', fildrho)
+d3calc.d3.input.namelist('inputph').set('fildrho', fildrho)
+d3calc.ph.input.save()
+d3calc.d3.input.save()
+for qpoint in qpoints_indep[1:]:
     for task in tasks:
         task.input.parse()
         task.input.qpoints.set(qpoint)

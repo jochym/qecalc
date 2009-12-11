@@ -31,6 +31,7 @@ class Fit():
 class PolynomialFit(Fit):
     def __init__(self, *fitDirective):
         Fit.__init__(self)
+        self.type = 'polynom'
         polyOrder = fitDirective[0]
         hasConstantTerm = fitDirective[1]
         if hasConstantTerm == True:
