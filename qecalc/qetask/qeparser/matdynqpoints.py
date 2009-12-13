@@ -64,7 +64,7 @@ class MatdynQpoints(object):
             self.grid = [int(self.qeInput.namelist('input').param('nk1')),
                             int(self.qeInput.namelist('input').param('nk2')),
                             int(self.qeInput.namelist('input').param('nk3'))]
-            self.grid = numpy.array(grid)
+            self.grid = numpy.array(self.grid)
         else:
             # create a list and get rid of empty lines
             qStrList = [line for line in self.qeInput.attach.split('\n') \
