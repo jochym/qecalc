@@ -58,11 +58,11 @@ FCCubSymPoints = {
 
 
 class QEDispersion():
-    def __init__(self, structure):
+    def __init__(self, lattice):
         self.points = []
         self.dispersion = []
         self.path = []
-        self._structure = structure
+        self._lattice = lattice
 
     def setValues(self, array):
         self.dispersion = array
@@ -99,7 +99,7 @@ class QEDispersion():
         self.points = []
 
         kPoints = []
-        if self._structure.lattice.ibrav == 4:
+        if self._lattice.ibrav == 4:
             numPoints = [0]
             for i, ipnt in enumerate(nPoints):
                 numPoints.append(ipnt + numPoints[i])
@@ -110,7 +110,7 @@ class QEDispersion():
             raise Exception("Dispersion path generator does not support this lattice symmetry")
     
         for i, kpt in enumerate(kPoints):
-            kPoints[i] = list(self._structure.lattice.recipCartesian(kPoints[i]))
+            kPoints[i] = list(self._lattice.recipCartesian(kPoints[i]))
 
         startPath = copy.deepcopy(kPoints[0])
 

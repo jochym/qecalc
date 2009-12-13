@@ -17,7 +17,6 @@ class QEOutput(object):
     def __init__(self, setting, type='pw'):
         self.setting   = setting
         self.type       = type
-        self.parsers    = None
         self._properties = None
         outModule = __import__("outputs." + self.type, globals(), \
                                 locals(), ['Output'], -1)
@@ -39,6 +38,7 @@ class QEOutput(object):
             except KeyError: pass
             except IOError: pass
             except TypeError: pass
+            except IndexError: pass
             except ValueError:
                 properties[parserName] = [(None, None)]
         self._properties = properties

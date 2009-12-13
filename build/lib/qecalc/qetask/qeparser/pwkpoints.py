@@ -33,11 +33,14 @@ class PWKpoints(object):
                 break
             else:
                 kpoints.append([float(k) for k in line.split()])
-        kpoints = numpy.array(kpoints)
+        
         if self.isAutomatic:
             shifts = numpy.array(shifts)
         else:
+            # first line was number of kpoints
+            kpoints.pop(0)
             shifts = None
+        kpoints = numpy.array(kpoints)
         self.coords = kpoints
         self.shifts = shifts
 

@@ -44,7 +44,7 @@ class D3Task(QETask):
         return 'd3.x'
 
     
-   def _syncSetting(self):
+    def _syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...

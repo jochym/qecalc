@@ -46,11 +46,11 @@ class MatdynQpoints(object):
         grid - list with dimensions of q-point grid
         """
         self.isAutomatic = True
-        self.grid = numpy.array(qpoints)
+        self.grid = numpy.array(grid)
         self.qeInput.attachment = ''
-        self.qeInput.namelist('input').add('nk1', str(qpoints[0]))
-        self.qeInput.namelist('input').add('nk2', str(qpoints[1]))
-        self.qeInput.namelist('input').add('nk3', str(qpoints[2]))
+        self.qeInput.namelist('input').add('nk1', str(grid[0]))
+        self.qeInput.namelist('input').add('nk2', str(grid[1]))
+        self.qeInput.namelist('input').add('nk3', str(grid[2]))
 
 
     def parse(self):

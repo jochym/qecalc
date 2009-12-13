@@ -26,18 +26,18 @@ class QETask(object):
 
     setting -- provides access to parallel environment and QE input/output files
     """
-    def __init__(self, filename, cleanOutDir = None):
+    def __init__(self, filename = None, configString = None, cleanOutDir = None):
        # parallelization parameters
        # Default values, see explanations below:
-        self.name = 'Launcher'
+        #self.name = 'Launcher'
         configDic = {
         'useTorque' : 'False',
         'torqueResourceList': '-l nodes=1:ppn=1',
         'paraPrefix': '',
         'paraPostfix': ''
         }
-        self.setting = Setting(filename)
-        self.setting.section(self.name, configDic)
+        self.setting = Setting(filename, configString)
+        self.setting.section(QETask.name(self), configDic)
 
         self.cleanOutDir = cleanOutDir
 
@@ -50,6 +50,10 @@ class QETask(object):
             self._torque = QETorque(self.setting.torqueResourceList)
 
 
+    def name(self):
+        return 'Launcher'
+
+
     def _check(self, x):
         """
         Will check the exit status of the program to be executed
@@ -57,20 +61,29 @@ class QETask(object):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name + " crashed: check your settings" + "Command string:" + self._cmdStr)
+            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine())
 
     def _run(self):
         if os.path.exists('CRASH'):
             os.remove('CRASH')
-        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self._cmdStr:
+        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
             if self.setting.useTorque:
-                self._torque.serial(self._cmdStr)
+                self._torque.serial(self.cmdLine())
             else:
-                self._check(os.system(self._cmdStr))
+                self._check(os.system(self.cmdLine()))
         else:
-            self._check(os.system(self._cmdStr))
+            self._check(os.system(self.cmdLine()))
         if os.path.exists('CRASH'):
-            raise Exception("Task " + self.name + " crashed: 'CRASH' file was discovered")
+            raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
+
+
+    def _syncSetting(self):
+        """
+        Will syncronise QE input file with class Setting for given task (QE input
+        files may contain multiple input/ouput file names  definitions which
+        can be overriden in this method)
+        """
+        pass
 
 
     def cleanOutputDir(self, cleanOutDir = None):
@@ -90,11 +103,11 @@ class QETask(object):
             shutil.rmtree(cleanOutDir)
             os.mkdir(cleanOutDir)
     
-    def cmdLine(self):
-        """
-        returns command string of a given task
-        """
-        return self._cmdStr
+#    def cmdLine(self):
+#        """
+#        returns command string of a given task
+#        """
+#        return self._cmdStr
 
     def launch(self, cleanOutDir = None):
         """
@@ -105,6 +118,8 @@ class QETask(object):
         if cleanOutDir != None:
             self.cleanOutputDir(cleanOutDir)
         self.input.parse()
+        self._syncSetting() # sync setting with QE input file
+        self.input.save()
         self._run()
         self.output.parse(parserList = 'all')
 

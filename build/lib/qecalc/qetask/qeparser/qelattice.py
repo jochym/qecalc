@@ -136,6 +136,8 @@ class QELattice(object):
     def setLatticeFromPWInput(self, qeConf = None):
         if qeConf == None:
             qeConf = self.qeConf
+        else:
+            self.qeConf = qeConf
         if qeConf == None:
             raise NotImplementedError("writeLatticeToPWSCF: qeConf was not properly initialized")
         if 'ibrav' in self.qeConf.namelists['system'].params:
@@ -243,25 +245,14 @@ class QELattice(object):
                 if cAB is not None:
                     self._cAB = cAB
                                     
-            # if a is not None: self._a = a
-            # if b is not None: self._b = b
-            # if c is not None: self._c = c
-            # if cBC is not None: self._cBC = cBC
-            # if cAC is not None: self._cAC = cAC
-            # if cAB is not None: self._cAB = cAB
             qeBaseTuple = self._getQEBaseFromParCos(self._ibrav, self._a, self._b,
                                                self._c, self._cBC, self._cAC, self._cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]            
-#            print 'Found "' + qeBaseTuple[2] + '" cell'
-#            print 'Setting the base vectors according to QE conventions:'
-#            print qeBase
             self._primitiveLattice.setLatBase(qeBase)
             alpha = degrees(acos(self._cBC))
             beta = degrees(acos(self._cAC))
             gamma = degrees(acos(self._cAB))
             self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)
-#            print "Standard Lattice:"
-#            print self._standardLattice.base
         self._base = qeBase
 
     def toString(self):
@@ -472,6 +463,9 @@ class QELattice(object):
         recip_base = self.diffpy().reciprocal().base*self._a
         return numpy.dot( kPoint, recip_base)
 
+    def reciprocalBase(self):
+        return self.diffpy().reciprocal().base*self._a
+
 
     def _getQEBaseFromParCos( self, ibrav = 1, a = 1., b = 1., c = 1.,
                                     cBC = 0.,cAC = 0. ,cAB = 0.):
@@ -671,25 +665,4 @@ class QELattice(object):
     'traditional' or 'generic cubic', 'generic hexagonal'(implies ibrav = 0""")
 
 if __name__ == '__main__':
-
-    pwInput = QEInput('scf.in', type = 'pw')
-    pwInput.parse()
-    qeLattice = QELattice(qeConf = pwInput)
-    print qeLattice.latticeParams()
-#    qeLattice = QELattice(fname = 'qwe.in')
- #   qeLattice.setLatticeFromPrimitiveVectors(12,qeLattice.lattice().base)
- #   print qeLattice.latticeParams()
-#    qeLattice.latticeType = 'generic hexagonal'
-#    qeLattice.bb = 12
-    qeLattice.a = 13.0
-    qeLattice.b = 24.0
-    qeLattice.c = 3.
-    qeLattice.ibrav = 4
-    print qeLattice.b, qeLattice.c,
-    print qeLattice.latticeParams()
-    qeLattice.saveLatticeToPWSCF('./scf_2.in')
-#    qeLattice2 = QELattice()
-#    qeLattice2.setLatticeFromPrimitiveVectors(qeLattice.ibrav, qeLattice.lattice().base )
-    #print qeLattice.lattice().base
-    #testLattice = Lattice(5,5,5,90,90,90)
-    #print testLattice.base
+    print "Hello";

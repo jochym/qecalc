@@ -25,7 +25,7 @@ class MatdynInput(QEInput):
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
-        (self.namelists, self.cards, self.attach) = self.parser.parse()
+        (self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
         self.qpoints.parse()
 
 

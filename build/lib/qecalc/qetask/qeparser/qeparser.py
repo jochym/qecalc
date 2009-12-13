@@ -16,15 +16,19 @@ COMMENT         = '!.*'                 # Comment
 NAME            = '([a-zA-Z_]*)[^/]'    # Extracts namelist name ()
 SPACES          = '[ \t]*'              # Spaces and tabs
 NO_SPACES       = '[^\s]*'              # No spaces
-NEWLINE         = '[\n\r]*'             # New line ()
-PARAMTER        = '[\w,()]+'            # Parameter characters (space is not allowed)
+NEWLINE         = '[\n\r]*'             # New line (for Windows), not used at this point
+PARAMETER       = '[\w,()]+'            # Parameter characters (space is not allowed)
 VALUE           = '[^\s,]+'             # Parameter's value (numerate all possible characters)
-EXPRESSION      = '(%s%s=%s%s)' % (PARAMTER, SPACES, SPACES, VALUE)     # Parameter's expression
-NAMELIST        = """%s&%s%s([^&]*)/""" % (SPACES, SPACES, NAME)        # Namelist block (handles directory slashes)
+EXPRESSION      = '(%s%s=%s%s)' % (PARAMETER, SPACES, SPACES, VALUE)     # Parameter's expression
+NLHEADER        = '%s&%s%s'  % (SPACES, SPACES, NAME) # Namelist header
+NAMELIST        = '%s([^&]*)/' % NLHEADER  # Namelist block (handles directory slashes)
+NLSCOPE         = '(%s)' % NAMELIST     # Namelist scope
 OPEN_BRACKET    = '[({]?'               # Open bracket
 CLOSE_BRACKET   = '[)}]?'               # Close bracket
 CARD            = '(%s[\w]+)%s%s(%s[\w]*%s)%s' % (SPACES, SPACES, OPEN_BRACKET, SPACES, SPACES, CLOSE_BRACKET)  # Card name
-EMPTY_LINE  = r'^\s*'                # Empty line
+EMPTY_LINE      = r'^\s*'               # Empty line
+
+ATTACHSIM       = ['matdyn', 'ph', 'd3']      # Simulation types that have attachments
 
 import re
 from orderedDict import OrderedDict
@@ -33,15 +37,25 @@ from card import Card
 
 class QEParser:
     """
-    Flexible Parser for Quantum Espresso (QE) configuration files. It parses the file specified
-    by filename or configuration string and stores parameters in namelists, cards and
-    attachment (specific for matdyn) data structures that later on can be used in
-    parameters' manipulations
+    Flexible Parser for Quantum Espresso (QE) configuration files.
+    
+    It parses the file specified by filename or configuration string and stores
+    parameters in namelists, cards and attachment data
+    structures that later on can be used in parameters' manipulations
     """
     
-    def __init__(self, filename=None, configText=None, type='pw'):
-        self.namelists  = OrderedDict()
-        self.cards      = OrderedDict()
+    def __init__(self, filename = None, configText = None, type = 'pw'):
+        """
+        Parameters:
+            filename    -- absolute or relative filename to be parsed
+            configText  -- configuration text to be parsed
+            type        -- type of the simulation
+            os          -- operating system defined for carriage return
+        """
+        
+        self.header     = None
+        self.namelists  = OrderedDict()     # Namelist dictionary
+        self.cards      = OrderedDict()     # Cards dictionary
         self.attach     = None
         self.filename   = filename
         self.configText = configText
@@ -49,8 +63,10 @@ class QEParser:
         self.cardRef        = None
         self.type           = type
 
+
     def parse(self):
-        self.getReferences()
+        """Parses string and returns namelists, cards, attachment and header"""
+        self.setReferences()
 
         if self.configText is not None: # First try use configText
             text = self.configText
@@ -58,37 +74,64 @@ class QEParser:
             text = self._getText(self.filename)
         else:
             raise NameError('Dude, set config text or filename')  # Compalain
-        
+
+        self._parseHeader(text)
         self._parseNamelists(text)
+        self._parseAttach(text)
         self._parseCards(text)
-        return (self.namelists, self.cards, self.attach)
+        
+        return (self.header, self.namelists, self.cards, self.attach)
 
 
     def toString(self):
+        """Returns string of parsed values"""
+        
+        s   = ''
+        if self.header:
+            s   += self.header
+
         for n in self.namelists.keys():
-            print self.namelists[n].toString()
+            s   += self.namelists[n].toString()
 
         for c in self.cards.keys():
-            print self.cards[c].toString()
+            s   += self.cards[c].toString()
 
         if self.attach:
-            print self.attach
+            s   += self.attach
+
+        return s
 
 
-    def getReferences(self):
+    def setReferences(self):
+        """Sets reference names for namelists and cards for specified simulation type"""
+        
         input   = "input%s" % self.type
         module  = _import("inputs.%s" % input)
         self.namelistRef   = getattr(module, "namelists")
         self.cardRef       = getattr(module, "cards")
-        return (self.namelistRef, self.cardRef)
 
-        
+        return (self.namelistRef, self.cardRef)
+    
+
+    def _parseHeader(self, text):
+        """Cuts the first line if it header"""
+        start   = self._namelistStart(text)
+        if start is not None and start == 0:
+            return  # There is no header 
+
+        lines   = text.splitlines(True)
+        if lines:
+            self.header   = lines[0]
+
+
     def _parseNamelists(self, text):
-        namelists  = OrderedDict()
-        p   = re.compile(COMMENT)
-        s1  = re.sub(p, '', text)           # Remove comments
-        p2  = re.compile(NAMELIST)
+        """Parses text and populates namelist dictionary"""
+
+        namelists   = OrderedDict()
+        s1          = self._removeComments(text)
+        p2          = re.compile(NAMELIST)
         matches     = p2.findall(s1)        # Finds all namelist blocks
+        
         for m in matches:
             name    = m[0].lower()
             if name in self.namelistRef:
@@ -98,8 +141,14 @@ class QEParser:
         self._convertNamelists(namelists)
 
 
-    # Converts from dictionary to Namelist
+    def _removeComments(self, text):
+        """Removes comments from the text"""
+        p   = re.compile(COMMENT)
+        return re.sub(p, '', text)           
+        
+
     def _convertNamelists(self, namelists):
+        """Converts dictionary to Namelist"""
         for name in namelists.keys():
             nl      = Namelist(name)
             for p in namelists[name]:
@@ -108,16 +157,17 @@ class QEParser:
             self.namelists[name] = nl
 
 
-    # Parses parameters
     def _parseParams(self, text):
+        """Parses parameters"""
         params  = []
-        p   = re.compile(EXPRESSION)        # Match expression
+        p       = re.compile(EXPRESSION)        # Match expression
         matches = p.findall(text)
         for m in matches:
             pl  = self._getParams(m)         # Parameters list
             params.append(pl)
 
         return params
+
 
     def _getParams(self, text):
         """ Takes string like 'a = 2' and returns tuple ('a', 2) """
@@ -132,27 +182,46 @@ class QEParser:
 
         return (param, val)
 
-    def _parseCards(self, text):
-        p   = re.compile(COMMENT)
-        s1  = re.sub(p, '', text)       # Remove comments
-        p2  = re.compile(NAMELIST)
-        s2  = re.sub(p2, '', s1)        # Remove namelists
 
-        # Special case for 'matdyn'
-        if self.type == 'matdyn': 
-            self.attach = s2.strip()
+    def _parseAttach(self, text):
+        """Special case for simulations that have attachments"""
+
+        if self.type in ATTACHSIM:
+            self.attach = self._cutNamelistText(text)
+
+
+    def _parseCards(self, text):
+        """Parses text and populates cards dictionary"""
+        if self.type in ATTACHSIM:  # There should not be cards for simulations with attachment
             return
-        
+
+        s   = self._cutNamelistText(text)
+        self._convertCards(self._getCards(self._rawlist(s) ))
+
+
+    def _cutNamelistText(self, text):
+        """Cuts the namelist text"""
+        s       = text
+        end     = self._namelistEnd(text)
+
+        if end is not None:
+            s   = text[end + 1:]  # Suppose that cards and attachmet starts with new line
+
+        return s
+
+
+    def _rawlist(self, text):
+        """Removes empty lines"""
         rawlist = []
 
-        p   = re.compile(EMPTY_LINE)
-        s   = s2.split('\n')
+        s   = text.splitlines(True)
         for line in s:
             line    = line.strip()
             if line != '':
                 rawlist.append(line)    # rawlist contains both cardnames and card lines in order
 
-        self._convertCards(self._getCards(rawlist))
+        return rawlist
+
 
     def _getCards(self, rawlist):
         cards       = OrderedDict()
@@ -180,6 +249,7 @@ class QEParser:
 
         return cards
 
+
     def _convertCards(self, cards):
         for cname in cards.keys():
             c   = Card(cname)
@@ -188,6 +258,39 @@ class QEParser:
                 c.addLine(l)
 
             self.cards[cname]    = c
+
+
+    def _namelistStart(self, text):
+        """Returns the start character position of the first namelist in the text"""
+        s           = self._removeComments(text)
+        p           = re.compile(NAMELIST)
+        matches     = p.finditer(s)        # Finds all namelist blocks
+        starts      = []
+
+        for m in matches:
+            starts.append(m.start())
+
+        if len(starts):
+            return starts[0]    # Get first value
+
+        return None
+
+
+    def _namelistEnd(self, text):
+        """Returns the end character position of the last namelist in the text"""
+        s           = self._removeComments(text)
+        p           = re.compile(NAMELIST)
+        matches     = p.finditer(s)        # Finds all namelist blocks
+        ends      = []
+
+        for m in matches:
+            ends.append(m.end())
+
+        size    = len(ends)
+        if size:
+            return ends[size-1]    # Get last position value
+
+        return None
 
 
     def _getText(self, filename):
@@ -302,15 +405,74 @@ textPh  = """
 
 """
 
-if __name__ == "__main__":
-    qeparserText    = QEParser(configText = textMatdyn, type="matdyn") #textProblem) #
-    qeparserText.parse()
-    qeparserText.toString()
-#    qeparserFile    = QEParser(filename = "../tests/ni.scf.in")
-#    qeparserFile.parse()
-#    qeparserFile.toString()
+textHeader  = """
+&INPUTPH
+   tr2_ph = 1.0d-12,
+   prefix = 'si',
+   epsil = .false.,
+   trans = .true.,
+   zue = .false.,
+   outdir = '/scratch/si',
+   amass(1) = 28.0855,
+   fildyn = 'si.dyn_G',
+   fildrho = 'si.drho_G',
+/
+0.0 0.0 0.0
+"""
 
+# This is not a problem text (just add spaces between commas)
+textComma   = """&input
+   asr='crystal',  dos=.true.
+   amass(1)=26.982538, amass(2)=11.000,
+   flfrc='mgalb4666.fc', fldos='mgalb4.666.phdos', nk1=28,nk2=28,nk3=28
+/
+"""
+
+def testMatdyn():
+    parser    = QEParser(configText = textMatdyn, type="matdyn")
+    parser.parse()
+    print parser.toString()
+
+
+def testDynmat():
+    parser    = QEParser(configText = textDynmat, type="dynmat")
+    parser.parse()
+    print parser.toString()
+
+
+def testFile():
+    parser    = QEParser(filename = "../tests/ni.scf.in")
+    parser.parse()
+    print parser.toString()
+
+def testCards():
+    parser    = QEParser(configText = textCards)
+    parser.parse()
+    print parser.toString()
+
+
+def testComma():
+    parser          = QEParser(configText = textComma, type="matdyn")
+    parser.parse()
+    print parser.toString()
+
+
+def testHeader():
+    parser          = QEParser(configText = textHeader, type="ph")
+    parser.parse()
+    print parser.toString()
+
+
+if __name__ == "__main__":
+    #testMatdyn()
+    #testDynmat()
+    #testFile()
+    #testCards()
+    #testComma()
+    testHeader()
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"
+
+
 
 

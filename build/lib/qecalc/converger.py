@@ -39,6 +39,7 @@ class Converger():
         # which can be looked up in output parsers
         self.lookupTable = {
         'total energy' : (self.pwCalc, 'total energy'),
+        'fermi energy' : (self.pwCalc, 'fermi energy'),
         'single phonon': (self.singlePhononCalc, 'single phonon'),
         'geometry'     : (self.pwCalc, 'lattice parameters')
         }
@@ -91,6 +92,10 @@ class Converger():
                 value = value*numpy.array(multiply)
             else:
                 value = value + step
+            # if the run includes geometry optimization - import optimized
+            # structure othervise it will reimport existing structure:
+            calc.pw.input.structure.parseOutput(calc.pw.setting.pwscfOutput)
+            calc.pw.input.structure.save()
 
         print 'optimized ' + what + ' value : ', value, '\n'
         print "Printing run history:\n", runHistory, '\n'

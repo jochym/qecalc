@@ -12,15 +12,21 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import os.path
+import StringIO
 class Setting:
-    def __init__(self, fname):        
+    def __init__(self, filename = None, configString = None):
         try:
-          if fname == None:
-             raise NameError("Config should be initialized with a filename")
+            if filename == None:
+                if configString == None:
+                    raise NameError("Config should be initialized either with a \
+                                                     filename or configString")
+                else:
+                    self.filename = StringIO.StringIO(configString)
+            else:
+                self.filename = filename
         except NameError:
-            raise
-
-        self.filename = fname
+            raise        
 
 
         
@@ -38,4 +44,11 @@ class Setting:
             config.add_section(sectionName)
 
         for varName in configDic:
-            setattr(self, varName, config.get(sectionName, varName))
+            varValue = config.get(sectionName, varName)
+            setattr(self, varName, varValue)
+            if 'input' in varName or 'Input' in varName:
+                if os.path.isfile(varValue):
+                    file = open(varValue, 'r')
+                    string = file.read()
+                    setattr(self, varName+'Str', string)
+

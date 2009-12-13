@@ -18,21 +18,30 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class Q2RTask(QETask):
-    def __init__(self, filename, cleanOutDir = None):
-        QETask.__init__(self, filename, cleanOutDir)
+    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+        QETask.__init__(self, filename, configString, cleanOutDir)
 
-        self.name = 'q2r.x'
+        #self.name = 'q2r.x'
 
         configDic = {
         'q2rInput': 'q2r.in',
         'q2rOutput': 'q2r.out'
         }
-        self.setting.section(self.name, configDic)
+        self.setting.section(self.name(), configDic)
 
         self.input = QEInput(filename = self.setting.q2rInput, type = 'q2r')
         self.output = QEOutput(self.setting, type = 'q2r')
-        self._cmdStr = "q2r.x < " + self.setting.q2rInput + " > " + \
-                        self.setting.q2rOutput
+        #self._cmdStr = "q2r.x < " + self.setting.q2rInput + " > " + \
+        #                self.setting.q2rOutput
+
+
+    def cmdLine(self):
+        return "q2r.x < " + self.setting.q2rInput + " > " + \
+                            self.setting.q2rOutput
+
+
+    def name(self):
+        return 'q2r.x'
 
 
 if __name__ == "__main__":
