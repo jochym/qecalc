@@ -68,7 +68,7 @@ class QETask(object):
     def _run(self):
         if os.path.exists('CRASH'):
             os.remove('CRASH')
-        os.system(self.setting.paraRemoteShell + ' mkdir ' + self.setting.outDir)
+        os.system(self.setting.paraRemoteShell + ' mkdir -p ' + self.setting.outDir)
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
             if self.setting.useTorque:
                 self._torque.serial(self.cmdLine())
