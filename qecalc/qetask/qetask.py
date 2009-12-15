@@ -35,6 +35,7 @@ class QETask(object):
         'torqueResourceList': '-l nodes=1:ppn=1',
         'paraPrefix': '',
         'paraPostfix': '',
+        'paraRemoteShell': '',
         'outDir': ''
         }
         self.setting = Setting(filename, configString)
@@ -97,12 +98,14 @@ class QETask(object):
             cleanOutDir = self.cleanOutDir
         if cleanOutDir == None:
             raise Exception('outDir can not be cleaned, since it was not defined')
-        if self.setting.useTorque:
-            os.system('bpsh -a rm -r -f ' + cleanOutDir)
-            os.system('bpsh -a mkdir ' + cleanOutDir)
-        else:
-            shutil.rmtree(cleanOutDir)
-            os.mkdir(cleanOutDir)
+
+        os.system(self.setting.paraRemoteShell + ' rm -r -f ' + cleanOutDir)
+        os.system(self.setting.paraRemoteShell + ' mkdir ' + cleanOutDir)
+#        if self.setting.useTorque:
+#
+#        else:
+#            shutil.rmtree(cleanOutDir)
+#            os.mkdir(cleanOutDir)
     
 #    def cmdLine(self):
 #        """
