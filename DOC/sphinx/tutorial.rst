@@ -20,8 +20,7 @@ numpy, scipy, and matplotlib. One such example can be the class Converger from
 qecalc/converger.py which can be  used to converge such
 properties as 'total energy', 'geometry', and 'single phonon' with respect to
 any iteratable variable of PW config file. More examples can be seen in examples
-directory. Sources can be checked out following the installation instructions
-or can be browsed `here <http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc>`_
+directory. Sources can be checked out following the installation instructions.
 
 Installation
 ------------
@@ -101,15 +100,25 @@ Example of config.ini is provided below::
     [Launcher]
     # parallelization parameters
     # if this section is empty - serial mode is used
-    paraPrefix:   mpiexec -n 8
-    paraPostfix: -npool 8
+    #paraPrefix:   mpiexec -n 8
+    #paraPostfix: -npool 8
 
     #useTorque: True
-    #paraPrefix: mpirun --mca btl openib,sm,self
-    #paraPostfix: -npool 900
+    paraPrefix: mpirun 
+    paraPostfix: -npool 900
 
     # this string will be passed to qsub, -d workingDir -V are already there:
-    #torqueResourceList: -l nodes=16:ppn=12 -N MyJobName -j oe
+    torqueResourceList: -l nodes=8:ppn=8 -N MyJobName -j oe
+
+
+    #Each task will synchronise its outDir through qecalc.qetask._syncSetting() on
+    #its launch
+    outDir: /scratch/temp
+
+    #Name of a script to execute a command on multiple nodes
+    #relevant if outdir is not located on Parallel/Network File system.
+    #Default value is empty
+    paraRemoteShell: bpsh -a
 
 
     [pw.x]

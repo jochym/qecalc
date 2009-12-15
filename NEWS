@@ -1,0 +1,9 @@
+News in version 0.2.1:
+
+- fixed few bugs in parsers
+- added outDir variable (mandatory) in [Launcher] section. Each task will
+  synchronise its outDir through qecalc.qetask._syncSetting()
+- added paraRemoteShell variable (default is nothing) in [Launcher] section for
+  parallel remote shell script command (which will prefix mkdir or rm -rf for example).
+  Relevant when there is no Network File System (e.g. scratch space)
+- added d3 output parser ('d3 tensor')

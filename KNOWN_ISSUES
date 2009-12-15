@@ -1,0 +1,4 @@
+Input parsers:
+Varabales in input files have to be separated either by white space or commas
+AND white space. Something like 'nk1=16,nk2=16,nk3=16' will not work. Use
+'nk1=16, nk2=16, nk3=16' or 'nk1=16 nk2=16 nk3=16' instead.
