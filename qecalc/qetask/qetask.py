@@ -128,6 +128,21 @@ class QETask(object):
         self._run()
         self.output.parse(parserList = 'all')
 
+    def _syncPathInNamelist(self, param, namelist, varName):
+        """
+        Syncs path attribute in namelist with setting variable varName
+        """
+        var = getattr(self.setting, varName)
+        if var != None:
+            self.input.namelist(namelist).add(param, var, quotes = True)
+        else:
+            if self.input.namelist(namelist).exists(param):
+                setattr(self.setting, varName, \
+                self.input.namelist(namelist).param(param,  quotes = False))
+            else:
+                setattr(self.setting, varName, self._defaults[varName])
+
+
 __author__="kolya"
 __date__ ="$Oct 18, 2009 5:03:21 PM$"
 
