@@ -26,20 +26,33 @@ class Namelist():
     def setName(self, name):
         self.__name = name.lower()
 
-    def param(self, param):
+    def param(self, param, quotes = True):
         """Returns value of parameter 'param'"""
         if self.__paramExists(param):
+            if quotes:
+                return self.params[param]
+            else:
+                return self._unquote(self.params[param])
             return self.params[param]
 
-    def add(self, param, val):
-        # Replaces addParam() Add verification? 
+        return None
+
+    def add(self, param, val, quotes = False):
+        # Replaces addParam() Add verification?
         param = param.lower()
+        if quotes:
+            val     = self._quote(val)
+
         self.params[param]  = val
 
-    def set(self, param, val):
+
+    def set(self, param, val, quotes = False):
         #  Replaces editParam() and addParam(). Merge with add()?
         """Edits parameter. If it doesn't exist, it just ignores it """
         if self.__paramExists(param):
+            if quotes:
+                val     = self._quote(val)
+
             self.params[param] = val
 
     def remove(self, param):
@@ -47,13 +60,18 @@ class Namelist():
         if self.__paramExists(param):
             del(self.params[param])
 
-    def __paramExists(self, param):
-        try:
-            param = param.lower()
-            self.params[param]
-            return True
-        except KeyError:    # parameter is not present
-            return False
+
+    def exists(self,param):
+        return self.__paramExists(param)
+
+
+    def _quote(self, val):
+        return "'" + val.strip('"').strip("'") + "'"
+
+
+    def _unquote(self, val):
+        return val.strip('"').strip("'")
+
 
     def toString(self, indent="    ", br="\n"):
         # Dump namelist
@@ -63,8 +81,18 @@ class Namelist():
         for p in self.params.keys():
             s += '%s%s = %s,%s' % (indent, p, self.params[p], br)
 
-        s += "/%s" % br 
+        s += "/%s" % br
         return s
+
+
+    def __paramExists(self, param):
+        try:
+            param = param.lower()
+            self.params[param]
+            return True
+        except KeyError:    # parameter is not present
+            return False
+
 
     # Depricated methods:
     # Depricated
@@ -75,7 +103,7 @@ class Namelist():
     def editParam(self, param, val):
         self.set(param, val)
 
-    # Depricated 
+    # Depricated
     def removeParam(self, param):
         self.remove()
 

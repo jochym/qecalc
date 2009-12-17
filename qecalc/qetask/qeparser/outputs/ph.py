@@ -29,7 +29,7 @@ class Output(BaseOutput):
         Extract ireducible qpoints from  ph output
         """
         #read Espresso output into memory:
-        file = open(setting.phOutput)
+        file = open(setting.get('phOutput'))
         phOut = file.readlines()
         posList =  \
         [i for i,line in enumerate(phOut) if 'Dynamical matrices for (' in line]
@@ -48,7 +48,7 @@ class Output(BaseOutput):
         and then proceed to read all the other files getting full list of qpoints
 
         """
-        file = open(setting.phFildyn+'0','r')
+        file = open(setting.get('fildyn')+'0','r')
         lines = file.readlines()
         file.close()
         [nq1,nq2,nq3]=[int(f) for f in lines[0].split()]
@@ -58,7 +58,7 @@ class Output(BaseOutput):
         for i in range(0,Nq_indep):
             qpoints_indep.append([float(f) for f in lines[i+2].split()])
         for i in range(0,Nq_indep):
-            file = open(setting.phFildyn+str(i+1),'r')
+            file = open(setting.get('fildyn')+str(i+1),'r')
             lines = file.readlines()
             file.close()
             for index, line in enumerate(lines):

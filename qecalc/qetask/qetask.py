@@ -26,7 +26,7 @@ class QETask(object):
 
     setting -- provides access to parallel environment and QE input/output files
     """
-    def __init__(self, filename = 'config.ini', configString = None, cleanOutDir = None):
+    def __init__(self, filename = 'config.ini', configString = None, cleanOutDir = False):
        # parallelization parameters
        # Default values, see explanations below:
         #self.name = 'Launcher'
@@ -36,20 +36,20 @@ class QETask(object):
         'paraPrefix': '',
         'paraPostfix': '',
         'paraRemoteShell': '',
-        'outDir': ''
+        'outdir': None
         }
         self.setting = Setting(filename, configString)
         self.setting.section(QETask.name(self), configDic)
 
         self.cleanOutDir = cleanOutDir
 
-        if self.setting.useTorque == 'True':
-            self.setting.useTorque = True
+        if self.setting.get('useTorque') == 'True':
+            self.setting.set('useTorque', True)
         else:
-            self.setting.useTorque = False
+            self.setting.set('useTorque', False)
 
-        if self.setting.useTorque:
-            self._torque = QETorque(self.setting.torqueResourceList)
+        if self.setting.get('useTorque'):
+            self._torque = QETorque(self.setting.get('torqueResourceList'))
 
 
     def name(self):
@@ -68,7 +68,10 @@ class QETask(object):
     def _run(self):
         if os.path.exists('CRASH'):
             os.remove('CRASH')
-        os.system(self.setting.paraRemoteShell + ' mkdir -p ' + self.setting.outDir)
+
+        outdir = self.setting.get('outdir')
+        if outdir != None:
+            os.system(self.setting.paraRemoteShell + ' mkdir -p ' + self.setting.get('outdir'))
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
             if self.setting.useTorque:
                 self._torque.serial(self.cmdLine())
@@ -80,7 +83,7 @@ class QETask(object):
             raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
 
 
-    def _syncSetting(self):
+    def syncSetting(self):
         """
         Will syncronise QE input file with class Setting for given task (QE input
         files may contain multiple input/ouput file names  definitions which
@@ -94,14 +97,18 @@ class QETask(object):
         Cleans the output directory (directory, where large files, used
         for calculation are stored, can be for example  'temp/' or 'scratch/')
         """
-        import shutil
+#        import shutil
         if cleanOutDir == None:
             cleanOutDir = self.cleanOutDir
-        if cleanOutDir == None:
-            raise Exception('outDir can not be cleaned, since it was not defined')
+#        if cleanOutDir == None:
+#            raise Exception('outDir can not be cleaned, since it was not defined')
 
-        os.system(self.setting.paraRemoteShell + ' rm -r -f ' + cleanOutDir)
-        os.system(self.setting.paraRemoteShell + ' mkdir ' + cleanOutDir)
+
+
+        if cleanOutDir:
+            outDir = self.setting.get('outdir')
+            os.system(self.setting.paraRemoteShell + ' rm -r -f ' + outDir)
+            os.system(self.setting.paraRemoteShell + ' mkdir ' + outDir)
 #        if self.setting.useTorque:
 #
 #        else:
@@ -114,33 +121,20 @@ class QETask(object):
 #        """
 #        return self._cmdStr
 
-    def launch(self, cleanOutDir = None):
+    def launch(self, cleanOutDir = False):
         """
         Parses input. Launches task. Parses output.
         """
-        if cleanOutDir == None:
-            cleanOutDir = self.cleanOutDir
-        if cleanOutDir != None:
-            self.cleanOutputDir(cleanOutDir)
+#        if cleanOutDir == None:
+#            cleanOutDir = self.cleanOutDir
+#        if cleanOutDir != None:
+#            self.cleanOutputDir(cleanOutDir)
         self.input.parse()
-        self._syncSetting() # sync setting with QE input file
+        self.syncSetting() # sync setting with QE input file
         self.input.save()
+        self.cleanOutputDir(cleanOutDir)
         self._run()
         self.output.parse(parserList = 'all')
-
-    def _syncPathInNamelist(self, param, namelist, varName):
-        """
-        Syncs path attribute in namelist with setting variable varName
-        """
-        var = getattr(self.setting, varName)
-        if var != None:
-            self.input.namelist(namelist).add(param, var, quotes = True)
-        else:
-            if self.input.namelist(namelist).exists(param):
-                setattr(self.setting, varName, \
-                self.input.namelist(namelist).param(param,  quotes = False))
-            else:
-                setattr(self.setting, varName, self._defaults[varName])
 
 
 __author__="kolya"

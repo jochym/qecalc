@@ -18,16 +18,27 @@ from qeparser.d3input import D3Input
 from qeparser.qeoutput import QEOutput
 
 class D3Task(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'ph.x'
 
         configDic = {
         'd3Input': 'd3.in',
-        'd3fildyn': 'd3dyn',
-        'd3Output': 'd3.out'
+        'd3Output': 'd3.out',
+        #'fildyn': None,
+        #'fildrho': None,
+        #'fild0rho': None,
+        #'outdir': None
         }
+
+        self._path_defaults = {
+        'fildyn': 'd3dyn',
+        'fildrho': ' ',
+        'fild0rho': ' ',
+        'outdir': ''
+        }
+        
         self.setting.section(self.name(), configDic)
 
         self.input = D3Input(filename = self.setting.d3Input)
@@ -44,10 +55,17 @@ class D3Task(QETask):
         return 'd3.x'
 
     
-    def _syncSetting(self):
+    def syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('inputph').add('outdir', \
-                                               "'" +  self.setting.outDir + "'")
+        self.input.parse()
+        for varName in self._path_defaults.keys():
+            self.setting.syncPathInNamelist(varName, 'inputph', varName, \
+                                                self.input, self._path_defaults)
+
+        #self._syncPathInNamelist('fildyn', 'inputph', 'd3fildyn')
+        #self._syncPathInNamelist('fildrho', 'inputph', 'd3fildrho')
+        #self._syncPathInNamelist('fild0rho', 'inputph', 'd3fild0rho')
+        #self._syncPathInNamelist('outdir', 'inputph', 'outDir')

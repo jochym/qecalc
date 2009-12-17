@@ -18,18 +18,29 @@ from qeparser.matdyninput import MatdynInput
 from qeparser.qeoutput import QEOutput
 
 class MatdynTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'matdyn.x'
         
         configDic = {
         'matdynInput': 'matdyn.in',
+#        'flfrc': None,
         'matdynOutput': 'matdyn.out',
-        'matdynModes': 'matdyn.modes',
-        'matdynFreqs': 'matdyn.freq',
-        'matdynfldos': 'matdyn.phdos'
+#        'flvec': None,
+#        'flfrq': None,
+#        'fldos': None
         }
+
+        # QE input file's path containing variables' defaults (will be moved to
+        # QE input parser)
+        self._path_defaults = {
+        'flfrc': None,
+        'flvec': 'matdyn.modes',
+        'flfrq': 'matdyn.freq',
+        'fldos': 'matdyn.dos'
+        }
+
         self.setting.section(self.name(), configDic)
 
         self.input = MatdynInput(filename = self.setting.matdynInput)
@@ -48,19 +59,22 @@ class MatdynTask(QETask):
         return 'matdyn.x'
 
 
-    def _syncSetting(self):
+    def syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('input').remove('flfrq')
-        self.input.namelist('input').add('flfrq', self.setting.matdynFreqs)
+        self.input.parse()
+        
+        for varName in self._path_defaults.keys():
+            self.setting.syncPathInNamelist(varName, 'input', varName, \
+                                                self.input, self._path_defaults)
 
-        self.input.namelist('input').remove('flvec')
-        self.input.namelist('input').add('flvec', self.setting.matdynModes)
+        #self._syncPathInNamelist('flfrc', 'input', 'matdynflfrc')
+        #self._syncPathInNamelist('flfrq', 'input', 'matdynflfrq')
+        #self._syncPathInNamelist('flvec', 'input', 'matdynflvec')
+        #self._syncPathInNamelist('fldos', 'input', 'matdynfldos')
 
-        self.input.namelist('input').remove('fldos')
-        self.input.namelist('input').add('fldos',self.setting.matdynfldos)
 
                     
 if __name__ == "__main__":

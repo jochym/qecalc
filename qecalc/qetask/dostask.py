@@ -20,7 +20,7 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class DOSTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'dos.x'
@@ -29,8 +29,16 @@ class DOSTask(QETask):
         configDic = {
         'dosInput' : 'dos.in',
         'dosOutput': 'dos.out',
-        'fldos'      : 'fldos.dos'
+        #'dosfldos' : None
         }
+
+        # QE input file's path containing variables' defaults (will be moved to
+        # QE input parser)
+        self._path_defaults = {
+        'fldos': 'fldos.dos',
+        'outdir': ''
+        }
+        
         self.setting.section(self.name(), configDic)
         self.input = QEInput(self.setting.dosInput, type = 'dos')
         self.output = QEOutput(self.setting, type='dos')
@@ -51,13 +59,16 @@ class DOSTask(QETask):
         return 'dos.x'
 
 
-    def _syncSetting(self):
+    def syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('inputpp').add('outdir', \
-                                               "'" +  self.setting.outDir + "'")
+        self.input.parse()
+        for varName in self._path_defaults.keys():
+            self.setting.syncPathInNamelist(varName, 'inputpp', varName, \
+                                                self.input, self._path_defaults)
+        
 if __name__ == "__main__":
     print "Hello World";
 

@@ -30,13 +30,13 @@ class Output(BaseOutput):
         Obtain third order anharmonicity Aqq from QE d3.x
         '''
 
-        file = open(setting.d3Output, 'r')
+        file = open(setting.get('d3Output'), 'r')
         for line in file.readlines():
             if 'Number of q in the star =' in line:
                 numberq = int(line.split()[7])
         file.close()
 
-        file = open(setting.d3fildyn,'r')
+        file = open(setting.get('fildyn'),'r')
         line = file.readline()
         line = file.readline()
         line = file.readline()
@@ -101,7 +101,7 @@ class Output(BaseOutput):
         Obtain third order anharmonic tensor from QE d3.x
         '''
 
-        file = open(setting.d3fildyn, 'r')
+        file = open(setting.get('fildyn'), 'r')
         lines = file.readlines()
         ntype = int(lines[2].split()[0])
         natom = int(lines[2].split()[1])

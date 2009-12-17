@@ -18,7 +18,7 @@ from qeparser.phinput import PHInput
 from qeparser.qeoutput import QEOutput
 
 class PHTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'ph.x'
@@ -26,8 +26,20 @@ class PHTask(QETask):
         configDic = {
         'phInput': 'ph.in',
         'phOutput': 'ph.out',
-        'phFildyn'  : 'matdyn'
+        'fildyn'  : None,
+#        'phfildrho' : None,
+#        'phfildvscf' : None
         }
+
+        # QE input file's path containing variables' defaults (will be moved to
+        # QE input parser)
+        self._path_defaults = {
+        'fildyn': 'matdyn',
+        'fildrho': '',
+        'fildvscf': '',
+        'outdir': ''
+        }
+        
         self.setting.section(self.name(), configDic)
 
         self.input = PHInput(filename = self.setting.phInput)
@@ -40,15 +52,21 @@ class PHTask(QETask):
                        self.setting.phInput + " > " + \
                        self.setting.phOutput + "< /dev/null"
 
-    def _syncSetting(self):
+    def name(self):
+        return 'ph.x'
+
+    def syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('inputph').add('fildyn', \
-                                              "'" + self.setting.phFildyn + "'")
-        self.input.namelist('inputph').add('outdir', \
-                                               "'" +  self.setting.outDir + "'")
+        self.input.parse()
 
-    def name(self):
-        return 'ph.x'
+        for varName in self._path_defaults.keys():
+            self.setting.syncPathInNamelist(varName, 'inputph', varName, \
+                                                self.input, self._path_defaults)
+
+        #self._syncPathInNamelist('fildyn', 'inputph', 'phfildyn')
+        #self._syncPathInNamelist('fildrho', 'inputph', 'phfildrho')
+        #self._syncPathInNamelist('fildvscf', 'inputph', 'phfildvscf')
+        #self._syncPathInNamelist('outdir', 'inputph', 'outDir')

@@ -1,6 +1,8 @@
 AUTHORS
 INSTALL
+KNOWN_ISSUES
 LICENSE
+NEWS
 README
 __init__.py
 setup.py
@@ -51,15 +53,6 @@ examples/output.pw/config.ini
 examples/output.pw/pw.output.py
 examples/output.pw/scf.full.out
 examples/output.pw/scf.out
-examples/phonon_surface/config.ini
-examples/phonon_surface/matdyn.freq
-examples/phonon_surface/matdyn.in
-examples/phonon_surface/matdyn.modes
-examples/phonon_surface/matdyn.out
-examples/phonon_surface/mgb2666.fc
-examples/phonon_surface/phonon_surface.py
-examples/phonon_surface/phonons.bxsf
-examples/phonon_surface/scf.in
 examples/volume.expander/B.pbe-n-van_ak.UPF
 examples/volume.expander/al_1.ncpp
 examples/volume.expander/config.ini
@@ -73,6 +66,8 @@ examples/volume.expander/volexpphon.py
 examples/volume.optimizer/volopt.py
 qecalc/__init__.py
 qecalc/converger.py
+qecalc/d3calc.py
+qecalc/d3multiphononcalc.py
 qecalc/multiphononcalc.py
 qecalc/phdispersion.py
 qecalc/phdos.py
@@ -101,10 +96,14 @@ qecalc/qetask/setting.py
 qecalc/qetask/taskmerger.py
 qecalc/qetask/qeparser/__init__.py
 qecalc/qetask/qeparser/card.py
+qecalc/qetask/qeparser/d3input.py
+qecalc/qetask/qeparser/d3qpoints.py
 qecalc/qetask/qeparser/matdyninput.py
 qecalc/qetask/qeparser/matdynqpoints.py
 qecalc/qetask/qeparser/namelist.py
 qecalc/qetask/qeparser/orderedDict.py
+qecalc/qetask/qeparser/phinput.py
+qecalc/qetask/qeparser/phqpoints.py
 qecalc/qetask/qeparser/pwinput.py
 qecalc/qetask/qeparser/pwkpoints.py
 qecalc/qetask/qeparser/qeinput.py
@@ -112,7 +111,6 @@ qecalc/qetask/qeparser/qelattice.py
 qecalc/qetask/qeparser/qeoutput.py
 qecalc/qetask/qeparser/qeparser.py
 qecalc/qetask/qeparser/qestructure.py
-qecalc/qetask/qeparser/inputs/Make.mm
 qecalc/qetask/qeparser/inputs/__init__.py
 qecalc/qetask/qeparser/inputs/inputbands.py
 qecalc/qetask/qeparser/inputs/inputcppp.py

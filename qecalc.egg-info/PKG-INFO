@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: qecalc
-Version: 0.2
+Version: 0.2.1
 Summary: wrapper for Quantum Espresso
 Home-page: http://docs.danse.us/AbInitio/espresso/qecalc/index.html
 Author: Nikolay Markovskiy

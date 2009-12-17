@@ -29,13 +29,13 @@ class Output(BaseOutput):
     def getMultiPhonon(self,setting):
         ''' Obtain a list of phonon modes and eigen vectors from output generated \
              by matdyn.x'''
-        return self.matdyn_modes( setting.matdynModes )
+        return self.matdyn_modes( setting.get('flvec') )
 
     def getPhononDOS(self,setting):
         """Obtain density of states from matdyn.x output. Returns DOS axis in
            wave numbers and DOS values, normalized to the number of degrees of
            freedom as numpy arrays"""
-        dosFile = open(setting.matdynfldos, 'r')
+        dosFile = open(setting.get('fldos'), 'r')
         line = dosFile.readline()
         dos = []
         while line:

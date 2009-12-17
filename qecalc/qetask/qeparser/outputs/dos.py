@@ -29,7 +29,7 @@ class Output(BaseOutput):
         """
         Extracts electronic DOS from QE output. Return axis and values
         """
-        dos = numpy.loadtxt(setting.fldos)
+        dos = numpy.loadtxt(setting.get('fldos'))
         return [(dos[0:,0], 'eV'), (dos[0:,1], None)]
 
 

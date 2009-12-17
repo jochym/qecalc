@@ -49,7 +49,7 @@ class SinglePhononCalc(QECalc):
         self.pw = PWTask(filename)
         self.ph = PHTask(filename)
         self.dynmat = DynmatTask(filename)
-        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
+        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
         self.taskList = [self.pwph, self.dynmat]
 
 if __name__ == "__main__":

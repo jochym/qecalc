@@ -18,16 +18,21 @@ from qeparser.pwinput import PWInput
 from qeparser.qeoutput import QEOutput
 
 class PWTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        #self.name = 'pw.x'
-
-        # pwscf input and output
+        # pwscf main input and output
         configDic = {
         'pwscfInput': 'scf.in',
         'pwscfOutput': 'scf.out',
         }
+
+        # QE input file's path containing variables' defaults (will be moved to
+        # QE input parser)
+        self._path_defaults = {
+        'outdir': ''
+        }
+
         self.setting.section(self.name(), configDic)
         self.input = PWInput(self.setting.pwscfInput)
         self.output = QEOutput(self.setting, type='pw')
@@ -47,10 +52,15 @@ class PWTask(QETask):
     def name(self):
         return 'pw.x'
 
-    def _syncSetting(self):
+    def syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('control').add('outdir', \
-                                               "'" +  self.setting.outDir + "'")
+
+        self.input.parse()
+        
+        self.setting.syncPathInNamelist('outdir', 'control', 'outdir', \
+                                                self.input, self._path_defaults)
+        #print 'Preved'
+        #print self.setting.outDir

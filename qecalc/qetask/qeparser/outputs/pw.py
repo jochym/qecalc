@@ -36,7 +36,7 @@ class Output(BaseOutput):
         Extract total energy value from pwscf output
         """
         #read Espresso output into memory:
-        file = open(setting.pwscfOutput)
+        file = open(setting.get('pwscfOutput'))
         pwscfOut = file.readlines()
         posList =  [i for i,line in enumerate(pwscfOut) if '!    total energy' in line]
         return [([float(pwscfOut[posList[-1]].split()[4])], 'Ry')]
@@ -51,7 +51,7 @@ class Output(BaseOutput):
         Extract Fermi energy value from pwscf output
         """
         #read Espresso output into memory:
-        file = open(setting.pwscfOutput)
+        file = open(setting.get('pwscfOutput'))
         pwscfOut = file.readlines()
         posList =  [i for i,line in enumerate(pwscfOut) if 'the Fermi energy is' in line]
         return [([float(pwscfOut[posList[-1]].split()[4])], 'eV')]   
@@ -67,7 +67,7 @@ class Output(BaseOutput):
         # does not work yet
         # obtain lattice from PWSCF input file:
         lat = QELattice(setting)
-        pwscfOut = read_file(setting.pwscfOutput)
+        pwscfOut = read_file(setting.get('pwscfOutput'))
         key_a_0 = find_key_from_string(pwscfOut, 'lattice parameter (a_0)')
         a_0 = float( string.split( pwscfOut[key_a_0] )[4] )
         if lat.type == 'traditional': a_0 = a_0*0.529177249 # convert back to angstrom
@@ -85,7 +85,7 @@ class Output(BaseOutput):
         """
         Extract total stress in kbar after pwscf launch or geometry optimization
         """
-        pwscfOut = read_file(setting.pwscfOutput)
+        pwscfOut = read_file(setting.get('pwscfOutput'))
         key = find_last_key_from_string(pwscfOut, 'total   stress  (Ry/bohr**3)') + 1
         stress = [[float(val) for val in string.split( pwscfOut[key] )[3:] ],
                   [float(val) for val in string.split( pwscfOut[key+1] )[3:] ],
@@ -93,7 +93,7 @@ class Output(BaseOutput):
         return [(stress, 'Ry/bohr**3')]
 
     def getForces(self, setting):
-        pwscfOut = read_file(setting.pwscfOutput)
+        pwscfOut = read_file(setting.get('pwscfOutput'))
         key = find_last_key_from_string(pwscfOut, 'Forces acting on atoms (Ry/au):') + 2
         forces = []
         while 'atom' in pwscfOut[key]:
@@ -108,7 +108,7 @@ class Output(BaseOutput):
         """
         kpoints = []
         bands = []
-        pwscfOut = open(setting.pwscfOutput).readlines()
+        pwscfOut = open(setting.get('pwscfOutput')).readlines()
         posList =  [i for i,line in enumerate(pwscfOut) \
                             if 'End of self-consistent calculation' in line or \
                             'End of band structure calculation' in line ]

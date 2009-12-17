@@ -64,7 +64,7 @@ class PWInput(QEInput):
 
     def outDir(self):
         self.parse()
-        return self.namelist('control').param('outdir')[1:-1]
+        return self.namelist('control').param('outdir', quotes = False)
 
 textA = """
 &control

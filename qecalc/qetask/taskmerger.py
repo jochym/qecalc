@@ -16,7 +16,7 @@
 from qetask import QETask
 
 class TaskMerger(QETask):
-    def __init__(self, filename, tasks, cleanOutDir = None):
+    def __init__(self, filename, tasks, cleanOutDir = False):
         QETask.__init__(self, filename, cleanOutDir)
         self.tasks = tasks
 #        self._cmdStr = tasks[0].cmdLine()
@@ -48,6 +48,18 @@ class TaskMerger(QETask):
             self.cleanOutputDir()
         for task in self.tasks:
             task.input.parse()
+            task.syncSetting()
+            task.input.save()
         self._run()
         for task in self.tasks:
             task.output.parse(parserList = 'all')
+
+    def syncSetting(self):
+        """
+        When this method is called on launch(), the input file is already
+        parsed and will be saved before the run...
+        """
+        for task in self.tasks:
+            task.input.parse()
+            task.syncSetting()
+            

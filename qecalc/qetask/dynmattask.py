@@ -18,15 +18,29 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class DynmatTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = None):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'dynmat.x'
 
         configDic = {
-        'dynmatInput': 'dynmat.in',
-        'dynmatOutput': 'dynmat.out'
+        'dynmatInput': 'dyn.in',
+        'dynmatOutput': 'dyn.out',
+ #       'dynmatfildyn': None,
+ #       'dynmatfilout': None,
+ #       'dynmatfilmol': None,
+ #       'dynmatfilxsf': None,
         }
+
+        # QE input file's path containing variables' defaults (will be moved to
+        # QE input parser)
+        self._path_defaults = {
+        'fildyn': 'matdyn',
+        'filout': 'dynmat.out',
+        'filmol': 'dynmat.mold',
+        'filxsf': 'dynmat.axsf',
+        }
+        
         self.setting.section(self.name(), configDic)
         
         self.input = QEInput(filename = self.setting.dynmatInput, type = 'dynmat')
@@ -37,20 +51,29 @@ class DynmatTask(QETask):
 
         
     def cmdLine(self):
-        return "dynmat.x < " + self.setting.dynmatInput
+        return "dynmat.x < " + self.setting.dynmatInput + '> /dev/null'
 
 
     def name(self):
         return 'dynmat.x'
 
 
-    def _syncSetting(self):
+    def syncSetting(self):
         """
         When this method is called on launch(), the input file is already
         parsed and will be saved before the run...
         """
-        self.input.namelist('input').remove('filout')
-        self.input.namelist('input').add('filout', self.setting.dynmatOutput)
+
+        self.input.parse()
+
+        for varName in self._path_defaults.keys():
+            self.setting.syncPathInNamelist(varName, 'input', varName, \
+                                                self.input, self._path_defaults)
+
+#        self._syncPathInNamelist('fildyn', 'input', 'dynmatfildyn')
+#        self._syncPathInNamelist('filout', 'input', 'dynmatfilout')
+#        self._syncPathInNamelist('filmol', 'input', 'dynmatfilmol')
+#        self._syncPathInNamelist('filxsf', 'input', 'dynmatfilxsf')
 
 
 if __name__ == "__main__":

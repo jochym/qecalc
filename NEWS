@@ -1,3 +1,11 @@
+News in version 0.2.2:
+- in class setting:
+  renamed:
+     phFildyn to phfildyn
+     matdynModes to matdynflvec
+     matdynFreqs to matdynflfrq
+     fldos (in [dos.x]) to dosfldos
+
 News in version 0.2.1:
 
 - fixed few bugs in parsers
