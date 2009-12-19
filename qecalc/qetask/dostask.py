@@ -20,7 +20,8 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class DOSTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'dos.x'
@@ -36,11 +37,16 @@ class DOSTask(QETask):
         # QE input parser)
         self._path_defaults = {
         'fldos': 'fldos.dos',
-        'outdir': ''
+        'outdir': './'
         }
         
-        self.setting.section(self.name(), configDic)
-        self.input = QEInput(self.setting.dosInput, type = 'dos')
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
+
+        self.setting.section(name, configDic)
+        self.input = QEInput(self.setting.get('dosInput'), type = 'dos')
         self.output = QEOutput(self.setting, type='dos')
 #        self._cmdStr = self.setting.paraPrefix + " dos.x " +  \
 #                       " -inp " + \
@@ -49,10 +55,10 @@ class DOSTask(QETask):
 
 
     def cmdLine(self):
-        return self.setting.paraPrefix + " dos.x " +  \
+        return self.setting.get('paraPrefix') + " dos.x " +  \
                        " -inp " + \
-                       self.setting.dosInput + " > " + \
-                       self.setting.dosOutput + "< /dev/null"
+                       self.setting.get('dosInput') + " > " + \
+                       self.setting.get('dosOutput') + "< /dev/null"
 
 
     def name(self):

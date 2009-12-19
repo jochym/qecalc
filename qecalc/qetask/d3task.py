@@ -18,7 +18,8 @@ from qeparser.d3input import D3Input
 from qeparser.qeoutput import QEOutput
 
 class D3Task(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'ph.x'
@@ -36,19 +37,24 @@ class D3Task(QETask):
         'fildyn': 'd3dyn',
         'fildrho': ' ',
         'fild0rho': ' ',
-        'outdir': ''
+        'outdir': './'
         }
         
-        self.setting.section(self.name(), configDic)
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
 
-        self.input = D3Input(filename = self.setting.d3Input)
+        self.setting.section(name, configDic)
+
+        self.input = D3Input(filename = self.setting.get('d3Input'))
         self.output = QEOutput(self.setting, type='d3')
 
 
     def cmdLine(self):
         return  "d3.x < " +  \
-                       self.setting.d3Input + " > " + \
-                       self.setting.d3Output
+                       self.setting.get('d3Input') + " > " + \
+                       self.setting.get('d3Output')
 
 
     def name(self):

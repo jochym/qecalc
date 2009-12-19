@@ -26,7 +26,7 @@ class QETask(object):
 
     setting -- provides access to parallel environment and QE input/output files
     """
-    def __init__(self, filename = 'config.ini', configString = None, cleanOutDir = False):
+    def __init__(self, filename = None, configString = None, cleanOutDir = False):
        # parallelization parameters
        # Default values, see explanations below:
         #self.name = 'Launcher'
@@ -37,7 +37,11 @@ class QETask(object):
         'paraPostfix': '',
         'paraRemoteShell': '',
         'outdir': None
-        }
+        }        
+
+        if filename == None:
+            filename = 'config.ini'
+
         self.setting = Setting(filename, configString)
         self.setting.section(QETask.name(self), configDic)
 

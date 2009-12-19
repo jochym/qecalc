@@ -1,10 +1,29 @@
 News in version 0.2.2:
-- in class setting:
+- section name of config.ini file can be passed to any task. Allowing to have
+- calcs can be initialized by task lists and as well as lists with section names
+  from config.ini
+- Varables' names corresponding to files from Class "Setting" match ones
+  in QE config files.
+  multiple sections for one task (pw scf, pw nscf etc)
   renamed:
-     phFildyn to phfildyn
-     matdynModes to matdynflvec
-     matdynFreqs to matdynflfrq
-     fldos (in [dos.x]) to dosfldos
+     pwscfInput to pwInput
+     pwscfOutput to pwOutput
+     outDir to outdir
+     phFildyn to fildyn
+     matdynModes to flvec
+     matdynFreqs to flfrq
+     fldos (in [dos.x]) to fldos
+     etc.
+- File name variables in Setting('config.ini') have the highest priority. If a
+  variable is not there, corresponding QE input file is searched, if it is not
+  in the QE input, QE default value is implied.
+- set('varName', varValue) and get('varName') are the only supported methods
+  to work with class Setting.
+- if outdir is not specified in config.ini file, it will be initialized for
+  each task from correponding QE input file(if relevant)
+- task.syncSetting() needs to be run before output parsing if some of the
+  output files are specified in QE input files only. task.syncSetting()
+  is always executed on task.launch()
 
 News in version 0.2.1:
 

@@ -18,7 +18,8 @@ from qeparser.phinput import PHInput
 from qeparser.qeoutput import QEOutput
 
 class PHTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'ph.x'
@@ -27,8 +28,8 @@ class PHTask(QETask):
         'phInput': 'ph.in',
         'phOutput': 'ph.out',
         'fildyn'  : None,
-#        'phfildrho' : None,
-#        'phfildvscf' : None
+#        'fildrho' : None,
+#        'fildvscf' : None
         }
 
         # QE input file's path containing variables' defaults (will be moved to
@@ -37,20 +38,25 @@ class PHTask(QETask):
         'fildyn': 'matdyn',
         'fildrho': '',
         'fildvscf': '',
-        'outdir': ''
+        'outdir': './'
         }
         
-        self.setting.section(self.name(), configDic)
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
 
-        self.input = PHInput(filename = self.setting.phInput)
+        self.setting.section(name, configDic)
+
+        self.input = PHInput(filename = self.setting.get('phInput'))
         self.output = QEOutput(self.setting, type='ph')
 
 
     def cmdLine(self):
         return  self.setting.paraPrefix + " ph.x " +  \
-                       self.setting.paraPostfix + " -inp " + \
-                       self.setting.phInput + " > " + \
-                       self.setting.phOutput + "< /dev/null"
+                       self.setting.get('paraPostfix') + " -inp " + \
+                       self.setting.get('phInput') + " > " + \
+                       self.setting.get('phOutput') + "< /dev/null"
 
     def name(self):
         return 'ph.x'

@@ -1,0 +1,16 @@
+Phonons of MgB2
+ &inputph
+  tr2_ph=1.0d-10,
+  reduce_io = .true.,
+  amass(1)=24.305,
+  amass(2)=11.000,
+  prefix='mgb2',
+  fildyn='mgb2.dyn',
+  !recover = .true.,
+  outdir='/scratch/markovsk/mgb2'
+  trans=.true.,
+  ldisp = .true.,
+  nq1=2,
+  nq2=2,
+  nq3=2
+ /

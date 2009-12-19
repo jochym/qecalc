@@ -52,19 +52,44 @@ class MultiPhononCalc(QECalc):
       >>> polVecs, freqs, qpoints =  mphon.lookupProperty('multi phonon')
             
     """
-    def __init__(self, filename):
+    def __init__(self, filename = None, sectionList = None, taskList = None):
         QECalc.__init__(self)
-        self._freqs = None
-        self._modes = None
-        self._qpts = None
-        self.pw = PWTask(filename)
-        self.ph = PHTask(filename)
-        self.q2r = Q2RTask(filename)
-        self.matdyn = MatdynTask(filename)
+
+        # tasks definition:
+        # specify taskName/taskConstructur pairs
+        self._taskSpec = [
+                          ['pw', PWTask],
+                          ['ph', PHTask],
+                          ['q2r', Q2RTask],
+                          ['matdyn', MatdynTask]
+                         ]
+        # Merging map sets tasks to be mergered. Last two columns identify name
+        # of default task (its input and output objects will be directly
+        #accesible) and last column is the name of merged task object (e.g.'pwph')
+
+        #is not implemented yet !!!!
+        self._mergingMap = [ ['pw', 'ph', 'pw','pwph'],
+                           ]
+
+        self._populateTasks(filename, sectionList, taskList)
+        #self._freqs = None
+        #self._modes = None
+        #self._qpts = None
+        #self.pw = PWTask(filename)
+        #self.ph = PHTask(filename)
+        #self.q2r = Q2RTask(filename)
+        #self.matdyn = MatdynTask(filename)
+
+
+
+
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
-        self.dispersion = PHDispersion(self.pw.input.structure.lattice, self.matdyn)
-        self.dos = PhononDOS(self.matdyn)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
+
+        self.dispersion = PHDispersion(self.pw.input.structure.lattice, self.matdyn)
+
+        self.dos = PhononDOS(self.matdyn)
+        
 
 
     def syncInputs(self):

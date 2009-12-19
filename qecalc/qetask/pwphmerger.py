@@ -17,6 +17,6 @@ from taskmerger import TaskMerger
 
 class PWPHMerger(TaskMerger):
     def __init__(self, pwTask, phTask, cleanOutDir = False):
-        TaskMerger.__init__(self, pwTask.setting.filename, [pwTask, phTask], cleanOutDir)
+        TaskMerger.__init__(self, [pwTask, phTask], cleanOutDir)
         self.input = pwTask.input
         self.output = pwTask.output

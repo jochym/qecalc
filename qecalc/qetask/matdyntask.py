@@ -18,7 +18,8 @@ from qeparser.matdyninput import MatdynInput
 from qeparser.qeoutput import QEOutput
 
 class MatdynTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'matdyn.x'
@@ -41,9 +42,14 @@ class MatdynTask(QETask):
         'fldos': 'matdyn.dos'
         }
 
-        self.setting.section(self.name(), configDic)
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
 
-        self.input = MatdynInput(filename = self.setting.matdynInput)
+        self.setting.section(name, configDic)
+
+        self.input = MatdynInput(filename = self.setting.get('matdynInput'))
         self.output = QEOutput(self.setting, type = 'matdyn')
         
 #        self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
@@ -51,8 +57,8 @@ class MatdynTask(QETask):
 
                         
     def cmdLine(self):
-        return "matdyn.x -inp " + self.setting.matdynInput + " > " + \
-                self.setting.matdynOutput
+        return "matdyn.x -inp " + self.setting.get('matdynInput') + " > " + \
+                self.setting.get('matdynOutput')
 
 
     def name(self):

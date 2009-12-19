@@ -16,8 +16,14 @@
 from qetask import QETask
 
 class TaskMerger(QETask):
-    def __init__(self, filename, tasks, cleanOutDir = False):
-        QETask.__init__(self, filename, cleanOutDir)
+    def __init__(self, tasks, cleanOutDir = False, ioTask = None):
+        QETask.__init__(self, filename = tasks[0].setting.get('filename'), cleanOutDir = cleanOutDir)
+
+        if ioTask == None:
+            ioTask = tasks[0]
+        self.input = ioTask.input
+        self.output = ioTask.output
+
         self.tasks = tasks
 #        self._cmdStr = tasks[0].cmdLine()
 #        self.name = tasks[0].name

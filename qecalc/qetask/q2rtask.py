@@ -18,7 +18,8 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class Q2RTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'q2r.x'
@@ -26,8 +27,8 @@ class Q2RTask(QETask):
         configDic = {
         'q2rInput': 'q2r.in',
         'q2rOutput': 'q2r.out',
-#        'q2rfildyn': None,
-#        'q2rflfrc': None
+#        'fildyn': None,
+#        'flfrc': None
         }
 
         # QE input file's path containing variables' defaults (will be moved to
@@ -37,17 +38,22 @@ class Q2RTask(QETask):
         'flfrc': None,
         }
 
-        self.setting.section(self.name(), configDic)
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
 
-        self.input = QEInput(filename = self.setting.q2rInput, type = 'q2r')
+        self.setting.section(name, configDic)
+
+        self.input = QEInput(filename = self.setting.get('q2rInput'), type = 'q2r')
         self.output = QEOutput(self.setting, type = 'q2r')
         #self._cmdStr = "q2r.x < " + self.setting.q2rInput + " > " + \
         #                self.setting.q2rOutput
 
 
     def cmdLine(self):
-        return "q2r.x < " + self.setting.q2rInput + " > " + \
-                            self.setting.q2rOutput
+        return "q2r.x < " + self.setting.get('q2rInput') + " > " + \
+                            self.setting.get('q2rOutput')
 
 
     def name(self):

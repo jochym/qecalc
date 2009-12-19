@@ -28,8 +28,10 @@ class Setting:
                                                      filename or configString")
                 else:
                     self.filename = StringIO.StringIO(configString)
+                    self.configString = configString
             else:
                 self.filename = filename
+                self.configString = open(filename,'r').read()
         except NameError:
             raise        
 

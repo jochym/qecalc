@@ -44,11 +44,21 @@ class D3Calc(QECalc):
       >>> print phonCalc.dynmat.output('single phonon')
 
     """
-    def __init__(self, filename):
+    def __init__(self, filename = None, sectionList = None, taskList = None):
         QECalc.__init__(self)
-        self.pw = PWTask(filename)
-        self.ph = PHTask(filename)
-        self.d3 = D3Task(filename)
+
+        # tasks definition:
+        # specify taskName/taskConstructur pairs
+        self._taskSpec = [
+                          ['pw', PWTask],
+                          ['ph', PHTask],
+                          ['d3', D3Task]
+                         ]
+
+        self._populateTasks(filename, sectionList, taskList)
+        #self.pw = PWTask(filename)
+        #self.ph = PHTask(filename)
+        #self.d3 = D3Task(filename)
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
         self.taskList = [self.pwph, self.d3]
 

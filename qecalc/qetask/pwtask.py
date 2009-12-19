@@ -18,23 +18,29 @@ from qeparser.pwinput import PWInput
 from qeparser.qeoutput import QEOutput
 
 class PWTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        # pwscf main input and output
+        # pw main input and output
         configDic = {
-        'pwscfInput': 'scf.in',
-        'pwscfOutput': 'scf.out',
+        'pwInput': 'scf.in',
+        'pwOutput': 'scf.out',
         }
 
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
-        'outdir': ''
+        'outdir': './'
         }
 
-        self.setting.section(self.name(), configDic)
-        self.input = PWInput(self.setting.pwscfInput)
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
+
+        self.setting.section(name, configDic)
+        self.input = PWInput( self.setting.get('pwInput') )
         self.output = QEOutput(self.setting, type='pw')
 #        self._cmdStr = self.setting.paraPrefix + " pw.x " +  \
 #                       self.setting.paraPostfix + " -inp " + \
@@ -43,10 +49,10 @@ class PWTask(QETask):
 
 
     def cmdLine(self):
-        return self.setting.paraPrefix + " pw.x " +  \
-                       self.setting.paraPostfix + " -inp " + \
-                       self.setting.pwscfInput + " > " + \
-                       self.setting.pwscfOutput + "< /dev/null"
+        return self.setting.get('paraPrefix') + " pw.x " +  \
+                       self.setting.get('paraPostfix') + " -inp " + \
+                       self.setting.get('pwInput') + " > " + \
+                       self.setting.get('pwOutput') + "< /dev/null"
 
 
     def name(self):

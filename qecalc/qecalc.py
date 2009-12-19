@@ -74,6 +74,34 @@ class QECalc(object):
             #    pass
         return value
 
+    def _populateTasks(self, filename = None, sectionList = None, taskList = None):
+        self.taskList = []
+        if sectionList != None:
+            if len(sectionList) == len(self._taskSpec):
+                for i, task in enumerate(self._taskSpec):
+                    setattr(self, task[0],task[1](filename, sectionName = sectionList[i]))
+                    self.taskList.append(getattr(self, task[0]))
+                return
+            else:
+                raise NameError('sectionList and _taskSpec dimensions do not match')
+
+        if taskList != None:
+            if len(taskList) == len(self._taskSpec):
+                for i, task in enumerate(self._taskSpec):
+                    if task[0] in taskList[i].name():
+                        setattr(self, task[0], taskList[i])
+                        self.taskList.append( getattr(self, task[0]))
+                    else:
+                        raise NameError('task names in taskList and _taskSpec  do not match')
+                return
+            else:
+                raise NameError('taskList and _taskSpec dimensions do not match')
+
+        for i, task in enumerate(self._taskSpec):            
+            setattr(self, task[0], task[1](filename))
+            self.taskList.append(getattr(self, task[0]))
+
+
 if __name__ == '__main__':
     qe = QECalc('config.ini')
     qe.qeConfig.setNamelistParameter('system', 'ecutwfc', 44)

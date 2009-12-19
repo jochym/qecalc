@@ -18,7 +18,8 @@ from qeparser.qeinput import QEInput
 from qeparser.qeoutput import QEOutput
 
 class DynmatTask(QETask):
-    def __init__(self, filename = None,configString = None, cleanOutDir = False):
+    def __init__(self, filename = None,configString = None, cleanOutDir = False,\
+                                                            sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         #self.name = 'dynmat.x'
@@ -41,9 +42,14 @@ class DynmatTask(QETask):
         'filxsf': 'dynmat.axsf',
         }
         
-        self.setting.section(self.name(), configDic)
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
+
+        self.setting.section(name, configDic)
         
-        self.input = QEInput(filename = self.setting.dynmatInput, type = 'dynmat')
+        self.input = QEInput(filename = self.setting.get('dynmatInput'), type = 'dynmat')
         self.output = QEOutput(self.setting, type = 'dynmat')
         #self._cmdStr = "dynmat.x < " + self.setting.dynmatInput
         #+ " > " + \
@@ -51,7 +57,7 @@ class DynmatTask(QETask):
 
         
     def cmdLine(self):
-        return "dynmat.x < " + self.setting.dynmatInput + '> /dev/null'
+        return "dynmat.x < " + self.setting.get('dynmatInput') + '> /dev/null'
 
 
     def name(self):

@@ -1,0 +1,10 @@
+Phonon of MgB2
+&INPUTPH
+    tr2_ph = 1.0d-10,
+    amass(1) = 24.305,
+    amass(2) = 11.000,
+    prefix = 'mgb2',
+    outdir = '/scratch/temp',
+    fildyn = 'mgb2.dynG',
+/
+0.0 0.0 0.0
