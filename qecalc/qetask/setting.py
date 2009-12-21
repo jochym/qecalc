@@ -27,14 +27,13 @@ class Setting:
                     raise NameError("Config should be initialized either with a \
                                                      filename or configString")
                 else:
-                    self.filename = StringIO.StringIO(configString)
+                    self.filename = None #StringIO.StringIO(configString)
                     self.configString = configString
             else:
                 self.filename = filename
                 self.configString = open(filename,'r').read()
         except NameError:
             raise        
-
 
         
     def section(self, sectionName, configDic = {}):
@@ -45,8 +44,10 @@ class Setting:
         import ConfigParser
         config = ConfigParser.SafeConfigParser()
         config.optionxform = str
-        config.read([self.filename])
         
+        file = StringIO.StringIO(self.configString)
+        config.readfp(file)
+                
         if not config.has_section(sectionName):
             config.add_section(sectionName)
 
@@ -61,8 +62,8 @@ class Setting:
         Vars = dir(self)
         for varName in Vars:
             if 'input' in varName or 'Input' in varName:
-                if os.path.isfile(varValue):
-                    file = open(varValue, 'r')
+                if os.path.isfile(varName):
+                    file = open(varName, 'r')
                     string = file.read()
                     setattr(self, '_'+varName+'Str', string)
 
@@ -86,19 +87,14 @@ class Setting:
         values
         """
         var = getattr(self, varName, None)
-        #print 'var, param = ', var, param
-        #print self.input.namelist(namelist).exists(param)
         if var != None:
-            #print 'preved preved'
             input.namelist(namelist).add(param, var, quotes = True)
             setattr(self._paths, varName, var)
         else:
             if input.namelist(namelist).exists(param):
-                #print 'nasel param'
                 inputVar = input.namelist(namelist).param(param,  quotes = False)
                 setattr(self, varName, inputVar)
                 setattr(self._paths, varName, inputVar)
-                #print 'namelist existsts: ', getattr(self.setting, varName)
             else:
                 setattr(self, varName, defaults[varName])
                 setattr(self.setting.paths, varName, defaults[varName])

@@ -39,7 +39,7 @@ class QETask(object):
         'outdir': None
         }        
 
-        if filename == None:
+        if filename == None and configString == None:
             filename = 'config.ini'
 
         self.setting = Setting(filename, configString)
