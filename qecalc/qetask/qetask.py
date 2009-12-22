@@ -59,7 +59,10 @@ class QETask(object):
             self.setting.set('useTorque', False)
 
         if self.setting.get('useTorque'):
-            self._torque = QETorque(self.setting.get('torqueResourceList'))
+            if self.isSerial():
+                self._torque = QETorque(self.setting.get('serialTorqueParams'))
+            else:
+                self._torque = QETorque(self.setting.get('paraTorqueParams'))
 
 
     def name(self):
@@ -82,13 +85,25 @@ class QETask(object):
         outdir = self.setting.get('outdir')
         if outdir != None:
             os.system(self.setting.paraRemoteShell + ' mkdir -p ' + outdir)
-        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
-            if self.setting.useTorque:
-                self._torque.serial(self.cmdLine())
+
+        if self.setting.get('useTorque'):
+            if self.isSerial():
+                if self.setting.get('serialPrefix') == '':
+                    self._check(os.system(self.cmdLine()))
+                else:
+                    self._torque.serial(self.cmdLine(), torqueParams = self.serialTorqueParams)
             else:
-                self._check(os.system(self.cmdLine()))
+                self._torque.serial(self.cmdLine(), torqueParams = self.paraTorqueParams)
         else:
             self._check(os.system(self.cmdLine()))
+
+#        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
+#            if self.setting.useTorque:
+#                self._torque.serial(self.cmdLine())
+#            else:
+#                self._check(os.system(self.cmdLine()))
+#        else:
+#            self._check(os.system(self.cmdLine()))
         if os.path.exists('CRASH'):
             raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
 
@@ -147,6 +162,7 @@ class QETask(object):
         self.output.parse(parserList = 'all')
 
     def setSerial(self):
+        #self._serialThroughMPI = serialThroughMPI
         self._isSerial = True
 
 
@@ -161,6 +177,9 @@ class QETask(object):
 
     def getPrefix(self) :
         if self.isSerial():
+ #           if self._isSerialThroughMPI():
+ #               return ''
+ #           else:
             return self.setting.get('serialPrefix')
         else:
             return self.setting.get('paraPrefix')
@@ -178,6 +197,14 @@ class QETask(object):
         if self.isSerial():
             self._inp = '<'
             self._devnul = ''
+
+
+#    def _isSerialThroughMPI(self):
+#        if self.isSerial():
+#            if self._serialThroughMPI:
+#                return True
+#            else:
+#                return False
 
 
     def _getCmdLine(self, executable, input, output):

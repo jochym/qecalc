@@ -17,7 +17,7 @@ import sys
 import os
 import time
 class QETorque:
-    def __init__(self, torqueResourceList):
+    def __init__(self, torqueParams):
         # need this in case $HOME includes symbolic links otherwise torque
         # gets confused:
         myHome = os.environ['HOME']
@@ -30,14 +30,21 @@ class QETorque:
             self._workDir = os.getcwd()
         self._jobID = None
 
-        self.torqueResourceList = torqueResourceList
+        self.torqueParams = torqueParams
 
         # use qmgr (not implemented)
-    def submit(self, cmdStr):
+    def submit(self, cmdStr, torqueParams = None):
         """Submits job. cmdStr is mpirun + params + program is if one did not
            use torque"""
+        if torqueParams == None:
+            torqueParams = self.torqueParams
+        else:
+            self.torqueParams = torqueParams
+        if torqueParams == None:
+            self.torqueParams = ''
+
         submitStr = "echo '" + cmdStr + "' | " + 'qsub -V -d ' + \
-                     self._workDir + ' ' + self.torqueResourceList + ' -'
+                     self._workDir + ' ' + self.torqueParams + ' -'
         print "submitStr = " + submitStr
         try:
             p = subprocess.Popen(submitStr, shell=True, stdout = subprocess.PIPE)

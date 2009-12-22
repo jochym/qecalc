@@ -23,7 +23,7 @@ class MatdynTask(QETask):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         self.setSerial()
-        
+
         configDic = {
         'matdynInput': 'matdyn.in',
 #        'flfrc': None,

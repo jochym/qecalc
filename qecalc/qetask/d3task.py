@@ -22,7 +22,6 @@ class D3Task(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-
         self.setSerial()
 
         configDic = {

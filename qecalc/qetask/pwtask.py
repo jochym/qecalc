@@ -24,6 +24,7 @@ class PWTask(QETask):
 
         self.setParallel()
 
+
         # pw main input and output
         configDic = {
         'pwInput': 'scf.in',
