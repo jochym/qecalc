@@ -19,6 +19,8 @@ class TaskMerger(QETask):
     def __init__(self, tasks, cleanOutDir = False, ioTask = None):
         QETask.__init__(self, filename = tasks[0].setting.get('filename'), cleanOutDir = cleanOutDir)
 
+        self.setParallel()
+
         if ioTask == None:
             ioTask = tasks[0]
         self.input = ioTask.input

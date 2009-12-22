@@ -81,8 +81,8 @@ class QETorque:
                 break
 
 
-    def serial(self, cmdStr):
-        self.submit(cmdStr)
+    def serial(self, cmdStr, torqueParams = None):
+        self.submit(cmdStr, torqueParams)
         self.wait()
 
 

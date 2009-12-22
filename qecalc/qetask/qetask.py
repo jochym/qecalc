@@ -91,9 +91,9 @@ class QETask(object):
                 if self.setting.get('serialPrefix') == '':
                     self._check(os.system(self.cmdLine()))
                 else:
-                    self._torque.serial(self.cmdLine(), torqueParams = self.serialTorqueParams)
+                    self._torque.serial(self.cmdLine(), torqueParams = self.setting.serialTorqueParams)
             else:
-                self._torque.serial(self.cmdLine(), torqueParams = self.paraTorqueParams)
+                self._torque.serial(self.cmdLine(), torqueParams = self.setting.paraTorqueParams)
         else:
             self._check(os.system(self.cmdLine()))
 
