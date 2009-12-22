@@ -22,7 +22,7 @@ class PHTask(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        #self.name = 'ph.x'
+        self.setParallel()
         
         configDic = {
         'phInput': 'ph.in',
@@ -53,10 +53,8 @@ class PHTask(QETask):
 
 
     def cmdLine(self):
-        return  self.setting.paraPrefix + " ph.x " +  \
-                       self.setting.get('paraPostfix') + " -inp " + \
-                       self.setting.get('phInput') + " > " + \
-                       self.setting.get('phOutput') + "< /dev/null"
+        return self._getCmdLine('ph.x', 'phInput', 'phOutput')
+    
 
     def name(self):
         return 'ph.x'

@@ -22,7 +22,7 @@ class DynmatTask(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        #self.name = 'dynmat.x'
+        self.setSerial()
 
         configDic = {
         'dynmatInput': 'dyn.in',
@@ -57,7 +57,9 @@ class DynmatTask(QETask):
 
         
     def cmdLine(self):
-        return "dynmat.x < " + self.setting.get('dynmatInput') + '> /dev/null'
+        if self.setting.get('dynmatOutput') == self.setting.get('filout'):
+            raise NameError('Naming conflict: Change dynmatOutput value')
+        return self._getCmdLine('dynmat.x', 'dynmatInput', 'dynmatOutput')
 
 
     def name(self):

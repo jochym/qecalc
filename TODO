@@ -2,3 +2,4 @@
 [done] add support of  alternative section naming for tasks in calcs
 [] finish merger mapping in calcs
 [] parser matdyn withUnits stoped working (works without)
+[] add init from configString for Calcs (like for Tasks)

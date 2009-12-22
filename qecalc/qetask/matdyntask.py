@@ -22,7 +22,7 @@ class MatdynTask(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        #self.name = 'matdyn.x'
+        self.setSerial()
         
         configDic = {
         'matdynInput': 'matdyn.in',
@@ -57,8 +57,7 @@ class MatdynTask(QETask):
 
                         
     def cmdLine(self):
-        return "matdyn.x -inp " + self.setting.get('matdynInput') + " > " + \
-                self.setting.get('matdynOutput')
+        return self._getCmdLine('matdyn.x', 'matdynInput', 'matdynOutput')
 
 
     def name(self):

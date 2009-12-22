@@ -22,6 +22,8 @@ class PWTask(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
+        self.setParallel()
+
         # pw main input and output
         configDic = {
         'pwInput': 'scf.in',
@@ -49,10 +51,7 @@ class PWTask(QETask):
 
 
     def cmdLine(self):
-        return self.setting.get('paraPrefix') + " pw.x " +  \
-                       self.setting.get('paraPostfix') + " -inp " + \
-                       self.setting.get('pwInput') + " > " + \
-                       self.setting.get('pwOutput') + "< /dev/null"
+        return self._getCmdLine('pw.x', 'pwInput', 'pwOutput')
 
 
     def name(self):

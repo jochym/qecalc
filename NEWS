@@ -5,7 +5,8 @@ News in version 0.2.2:
 - Varables' names corresponding to files from Class "Setting" match ones
   in QE config files.
   multiple sections for one task (pw scf, pw nscf etc)
-  renamed:
+  renamed variables:
+     torqueResourceList to paraTorqueParams
      pwscfInput to pwInput
      pwscfOutput to pwOutput
      outDir to outdir
@@ -14,6 +15,10 @@ News in version 0.2.2:
      matdynFreqs to flfrq
      fldos (in [dos.x]) to fldos
      etc.
+  added:
+     serialPrefix
+     serialPostfix
+     serialTorqueParams
 - File name variables in Setting('config.ini') have the highest priority. If a
   variable is not there, corresponding QE input file is searched, if it is not
   in the QE input, QE default value is implied.

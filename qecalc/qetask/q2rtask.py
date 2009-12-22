@@ -22,7 +22,7 @@ class Q2RTask(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        #self.name = 'q2r.x'
+        self.setSerial()
 
         configDic = {
         'q2rInput': 'q2r.in',
@@ -52,8 +52,7 @@ class Q2RTask(QETask):
 
 
     def cmdLine(self):
-        return "q2r.x < " + self.setting.get('q2rInput') + " > " + \
-                            self.setting.get('q2rOutput')
+        return self._getCmdLine('q2r.x', 'q2rInput', 'q2rOutput')
 
 
     def name(self):

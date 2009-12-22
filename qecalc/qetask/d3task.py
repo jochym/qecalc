@@ -22,7 +22,8 @@ class D3Task(QETask):
                                                             sectionName = None):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
-        #self.name = 'ph.x'
+
+        self.setSerial()
 
         configDic = {
         'd3Input': 'd3.in',
@@ -52,9 +53,7 @@ class D3Task(QETask):
 
 
     def cmdLine(self):
-        return  "d3.x < " +  \
-                       self.setting.get('d3Input') + " > " + \
-                       self.setting.get('d3Output')
+        return self._getCmdLine('d3.x', 'd3Input', 'd3Output')
 
 
     def name(self):

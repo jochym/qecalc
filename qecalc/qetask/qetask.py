@@ -30,14 +30,20 @@ class QETask(object):
        # parallelization parameters
        # Default values, see explanations below:
         #self.name = 'Launcher'
+
+        self._isSerial = True
+
         configDic = {
         'useTorque' : 'False',
-        'torqueResourceList': '-l nodes=1:ppn=1',
+        'paraTorqueParams':  '-l nodes=1:ppn=1',
+        'serialTorqueParams': '-l nodes=1:ppn=1',        
         'paraPrefix': '',
         'paraPostfix': '',
+        'serialPrefix': '',
+        'serialPostfix': '',
         'paraRemoteShell': '',
         'outdir': None
-        }        
+        }
 
         if filename == None and configString == None:
             filename = 'config.ini'
@@ -140,6 +146,45 @@ class QETask(object):
         self._run()
         self.output.parse(parserList = 'all')
 
+    def setSerial(self):
+        self._isSerial = True
+
+
+    def setParallel(self):
+        self._isSerial = False
+
+    def isSerial(self):
+        if self._isSerial:
+            return True
+        else:
+            return False
+
+    def getPrefix(self) :
+        if self.isSerial():
+            return self.setting.get('serialPrefix')
+        else:
+            return self.setting.get('paraPrefix')
+
+
+    def getPostfix(self):
+        if self.isSerial():
+            return self.setting.get('serialPostfix')
+        else:
+            return self.setting.get('paraPostfix')
+
+    def _initCmdLineParams(self):
+        self._inp = '-inp'
+        self._devnul = '< /dev/null'
+        if self.isSerial():
+            self._inp = '<'
+            self._devnul = ''
+
+
+    def _getCmdLine(self, executable, input, output):
+        self._initCmdLineParams()
+        return  self.getPrefix() + ' ' + executable + " " + self.getPostfix() + \
+                ' ' + self._inp + ' ' +  self.setting.get(input) + ' > ' + \
+                self.setting.get(output) + self._devnul
 
 __author__="kolya"
 __date__ ="$Oct 18, 2009 5:03:21 PM$"
