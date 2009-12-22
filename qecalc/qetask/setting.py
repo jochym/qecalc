@@ -97,7 +97,7 @@ class Setting:
                 setattr(self._paths, varName, inputVar)
             else:
                 setattr(self, varName, defaults[varName])
-                setattr(self.setting.paths, varName, defaults[varName])
+                setattr(self.setting._paths, varName, defaults[varName])
 
     def getAllPathsInNamelist(self, param, namelist, varName, input, defaults = None):
         """

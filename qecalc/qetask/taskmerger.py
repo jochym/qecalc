@@ -23,6 +23,7 @@ class TaskMerger(QETask):
             ioTask = tasks[0]
         self.input = ioTask.input
         self.output = ioTask.output
+        self.setting = ioTask.setting
 
         self.tasks = tasks
 #        self._cmdStr = tasks[0].cmdLine()
@@ -46,17 +47,21 @@ class TaskMerger(QETask):
         return name
 
     def launch(self, cleanOutDir = None):
-        if cleanOutDir != None:
-            clean = cleanOutDir
-        else:
-            clean = self.cleanOutDir
-        if clean:
-            self.cleanOutputDir()
+
         for task in self.tasks:
             task.input.parse()
             task.syncSetting()
             task.input.save()
+
+#        if cleanOutDir != None:
+#            clean = cleanOutDir
+#        else:
+#            clean = self.cleanOutDir
+#        if clean:
+#            self.cleanOutputDir()
+        self.cleanOutputDir(cleanOutDir)
         self._run()
+        
         for task in self.tasks:
             task.output.parse(parserList = 'all')
 

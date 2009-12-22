@@ -75,7 +75,7 @@ class QETask(object):
 
         outdir = self.setting.get('outdir')
         if outdir != None:
-            os.system(self.setting.paraRemoteShell + ' mkdir -p ' + self.setting.get('outdir'))
+            os.system(self.setting.paraRemoteShell + ' mkdir -p ' + outdir)
         if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
             if self.setting.useTorque:
                 self._torque.serial(self.cmdLine())
