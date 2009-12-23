@@ -17,23 +17,26 @@
 
 from qecalc.qetask.pwtask import PWTask
 from qeutils import kmesh
-from qeutils import bandstobxsf
+from qeutils.bandstobxsf import bandstobxsf
 
 if __name__ == "__main__":
 
-    
-    pw = PWTask('config.ini')
+
+    configString = """
+[pw.x]
+pwInput:  fermi.in
+pwOutput: fermi.out
+    """
+
+    pw = PWTask(configString = configString)
     pw.input.parse()
     pw.output.parse()
-    print pw.output.property('fermi energy')
-
+    
     kpoints = [17,17,17]
 
     bands = kmesh.packBands(kpoints,pw.output.property('bands')[1])
 
-    bandstobxsf(7.8071, \
-                pw.input.structure.lattice.reciprocalBase(), \
-                bands, 'test.bxsf')
+    bandstobxsf(7.8071, pw.input.structure.lattice.reciprocalBase(), bands, 'test.bxsf')
 
 
 __author__="Nikolay Markovskiy"

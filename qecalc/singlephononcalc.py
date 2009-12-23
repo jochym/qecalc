@@ -44,7 +44,7 @@ class SinglePhononCalc(QECalc):
       >>> print phonCalc.dynmat.output('single phonon')
       
     """
-    def __init__(self, filename = None, sectionList = None, taskList = None):
+    def __init__(self, filename = None , configString = None, sectionList = None, taskList = None):
         QECalc.__init__(self)
 
         # tasks definition:
@@ -55,7 +55,7 @@ class SinglePhononCalc(QECalc):
                           ['dynmat', DynmatTask]
                          ]
 
-        self._populateTasks(filename, sectionList, taskList)
+        self._populateTasks(filename, configString, sectionList, taskList)
 
         #self.pw = PWTask(filename)
         #self.ph = PHTask(filename)

@@ -4,8 +4,18 @@ from qeutils import kmesh
 from qeutils.bandstobxsf import bandstobxsf
 
 
-matdyn = MatdynTask('config.ini')
-pw = PWTask('config.ini')
+configString = """
+[pw.x]
+pwInput:  scf.in
+pwOutput: scf.out
+
+[matdyn.x]
+matdynInput:   matdyn.in
+matdynOutput:  matdyn.out
+"""
+
+matdyn = MatdynTask(configString = configString)
+pw = PWTask(configString = configString)
 
 pw.input.parse()
 matdyn.input.parse()
@@ -19,6 +29,7 @@ matdyn.input.save()
 
 matdyn.launch()
 
+#matdyn.syncSetting()
 #matdyn.output.parse()
 
 modes, freqs, qpts = matdyn.output.property('multi phonon')

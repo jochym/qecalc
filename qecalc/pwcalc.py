@@ -31,7 +31,7 @@ class PWCalc(QECalc):
         >>> pwCalc.launch()
             
     """
-    def __init__(self, filename = None, sectionList = None, taskList = None):
+    def __init__(self, filename = None, configString = None, sectionList = None, taskList = None):
         QECalc.__init__(self)
 
         # tasks definition:
@@ -40,12 +40,7 @@ class PWCalc(QECalc):
                           ['pw', PWTask]
                          ]
 
-        self._populateTasks(filename, sectionList, taskList)
-
-
-#        self.pw = PWTask(filename)
-#        self.taskList = [self.pw]
-
+        self._populateTasks(filename, configString, sectionList, taskList)
 
 
 if __name__ == "__main__":

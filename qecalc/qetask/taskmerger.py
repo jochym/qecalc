@@ -17,7 +17,9 @@ from qetask import QETask
 
 class TaskMerger(QETask):
     def __init__(self, tasks, cleanOutDir = False, ioTask = None):
-        QETask.__init__(self, filename = tasks[0].setting.get('filename'), cleanOutDir = cleanOutDir)
+        QETask.__init__(self, filename = tasks[0].setting.get('filename'),  \
+                        configString = tasks[0].setting.get('configString'),\
+                        cleanOutDir = cleanOutDir)
 
         self.setParallel()
 

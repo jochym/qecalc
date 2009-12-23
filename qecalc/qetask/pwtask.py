@@ -45,10 +45,6 @@ class PWTask(QETask):
         self.setting.section(name, configDic)
         self.input = PWInput( self.setting.get('pwInput') )
         self.output = QEOutput(self.setting, type='pw')
-#        self._cmdStr = self.setting.paraPrefix + " pw.x " +  \
-#                       self.setting.paraPostfix + " -inp " + \
-#                       self.setting.pwscfInput + " > " + \
-#                       self.setting.pwscfOutput + "< /dev/null"
 
 
     def cmdLine(self):
@@ -68,5 +64,3 @@ class PWTask(QETask):
         
         self.setting.syncPathInNamelist('outdir', 'control', 'outdir', \
                                                 self.input, self._path_defaults)
-        #print 'Preved'
-        #print self.setting.outDir

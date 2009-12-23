@@ -52,7 +52,7 @@ class MultiPhononCalc(QECalc):
       >>> polVecs, freqs, qpoints =  mphon.lookupProperty('multi phonon')
             
     """
-    def __init__(self, filename = None, sectionList = None, taskList = None):
+    def __init__(self, filename = None, configString = None, sectionList = None, taskList = None):
         QECalc.__init__(self)
 
         # tasks definition:
@@ -71,7 +71,7 @@ class MultiPhononCalc(QECalc):
         self._mergingMap = [ ['pw', 'ph', 'pw','pwph'],
                            ]
 
-        self._populateTasks(filename, sectionList, taskList)
+        self._populateTasks(filename, configString, sectionList, taskList)
         #self._freqs = None
         #self._modes = None
         #self._qpts = None

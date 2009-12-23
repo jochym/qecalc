@@ -20,7 +20,7 @@ class Converger():
 # value to converge with respect to k-points or different parameters in 'system'
 # namelist
 # currently can be 'total energy', 'single phonon', or 'geometry':
-    def __init__(self, fname=None, taskName = 'total energy', tolerance = 1, nMaxSteps = 10):
+    def __init__(self, filename = None, configString = None, taskName = 'total energy', tolerance = 1, nMaxSteps = 10):
         """taskName - currently can be 'total energy', 'single phonon',
            or 'geometry'
            tolerance -  task convergence criteria in percents
@@ -28,8 +28,8 @@ class Converger():
            the optimization routines"""
 
         # define calcs:
-        self.pwCalc = PWCalc(fname)
-        self.singlePhononCalc = SinglePhononCalc(fname)
+        self.pwCalc = PWCalc(filename, configString)
+        self.singlePhononCalc = SinglePhononCalc(filename, configString)
 
         self.taskName = taskName
         self.tolerance = tolerance
@@ -48,7 +48,7 @@ class Converger():
 
 
     def converge(self, what, startValue, step = None, multiply = None):
-        """what - variable name from pwscf input, in case of k-points,
+        """what - variable name from pw input, in case of k-points,
            what = 'kpoints'
            params -  extraparameters(if required for given property)"""
         whatPossible = {'nbnd'         : 'system',
@@ -94,7 +94,7 @@ class Converger():
                 value = value + step
             # if the run includes geometry optimization - import optimized
             # structure othervise it will reimport existing structure:
-            calc.pw.input.structure.parseOutput(calc.pw.setting.pwscfOutput)
+            calc.pw.input.structure.parseOutput(calc.pw.setting.get('pwOutput'))
             calc.pw.input.structure.save()
 
         print 'optimized ' + what + ' value : ', value, '\n'

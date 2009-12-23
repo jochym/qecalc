@@ -3,3 +3,4 @@
 [] finish merger mapping in calcs
 [] parser matdyn withUnits stoped working (works without)
 [] add init from configString for Calcs (like for Tasks)
+[] pwinput - k-points get shifted. 

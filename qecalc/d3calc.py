@@ -44,7 +44,7 @@ class D3Calc(QECalc):
       >>> print phonCalc.dynmat.output('single phonon')
 
     """
-    def __init__(self, filename = None, sectionList = None, taskList = None):
+    def __init__(self, filename = None, configString = None, sectionList = None, taskList = None):
         QECalc.__init__(self)
 
         # tasks definition:
@@ -55,7 +55,7 @@ class D3Calc(QECalc):
                           ['d3', D3Task]
                          ]
 
-        self._populateTasks(filename, sectionList, taskList)
+        self._populateTasks(filename, configString, sectionList, taskList)
         #self.pw = PWTask(filename)
         #self.ph = PHTask(filename)
         #self.d3 = D3Task(filename)
@@ -64,9 +64,11 @@ class D3Calc(QECalc):
 
         #Hack: make sure d3 task is serial (d3 does not seem to work in parallel)
         for task in [self.pw, self.ph, self.d3]:
-            task.setting.useTorque = 'False'
-            task.setting.paraPrefix = ''
-            task.setting.paraPostfix = ''
+            #task.setting.useTorque = 'False'
+            task.setSerial()
+            task.setting.serialPrefix = ''
+            #task.setting.paraPrefix = ''
+            #task.setting.paraPostfix = ''
 
 
 

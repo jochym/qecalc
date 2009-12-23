@@ -15,9 +15,14 @@
 
 from qecalc.pwcalc import PWCalc
 
+configString = """
+[pw.x]
+pwInput:  scf.in
+"""
+
 if __name__ == '__main__':
 
-    calc = PWCalc('config.ini')
+    calc = PWCalc(configString = configString)
 
     calc.pw.input.parse()
     print calc.pw.input.structure.toString()
@@ -42,7 +47,7 @@ if __name__ == '__main__':
     print calc.pw.input.structure.diffpy()
     print calc.pw.input.structure.toString()
 
-    calc.pw.input.structure.save('./scf_44.in')
+    calc.pw.input.structure.save('./scf_3.in')
 
 
 

@@ -74,12 +74,12 @@ class QECalc(object):
             #    pass
         return value
 
-    def _populateTasks(self, filename = None, sectionList = None, taskList = None):
+    def _populateTasks(self, filename = None, configString = None, sectionList = None, taskList = None):
         self.taskList = []
         if sectionList != None:
             if len(sectionList) == len(self._taskSpec):
                 for i, task in enumerate(self._taskSpec):
-                    setattr(self, task[0],task[1](filename, sectionName = sectionList[i]))
+                    setattr(self, task[0],task[1](filename = filename, configString = configString, sectionName = sectionList[i]))
                     self.taskList.append(getattr(self, task[0]))
                 return
             else:
@@ -98,7 +98,7 @@ class QECalc(object):
                 raise NameError('taskList and _taskSpec dimensions do not match')
 
         for i, task in enumerate(self._taskSpec):            
-            setattr(self, task[0], task[1](filename))
+            setattr(self, task[0], task[1](filename = filename, configString = configString))
             self.taskList.append(getattr(self, task[0]))
 
 
