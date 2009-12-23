@@ -52,6 +52,8 @@ and go through the following steps:
 
        export PYTHONPATH=$INSDIR/qecalc:$PYTHONPATH
 
+  ($INSDIR = ~/apps in this example)
+
 3. This module also depends on `diffpy.Structure <http://pypi.python.org/pypi/diffpy.Structure>`_  package. Make sure  setuptools is installed and type::
 
     easy_install diffpy.Structure
@@ -75,12 +77,12 @@ into working dir, which specifies parallel environment of your task as well as
 all the relevant input and output files. An example of config.ini is located in qecalc directory. All
 its sections do not need to be populated, only the parameters needed for a
 specific task. If some of the parameters are missing, default values will be used.
-The default values are located in qecalc/qecalc/settings.py
+The default values are located in qetask.py, pwtask.py, etc in qecalc/qetask
+folder.
 
 
 Before the run, check that all the pseudopotentials from the pw config file
-are available and your output dir exists (e.g. temp/ ). Also make sure
-Quantum Espresso is in your $PATH environment variable.
+are available.  Also make sure Quantum Espresso is in your $PATH environment variable.
 
 Execute your python script which uses qecalc API from your working dir.
 
@@ -97,46 +99,85 @@ PWCalc consists of one task, launching pw.x. Before running the example, one nee
 to create config.ini file in the current dir as well as scf.in input file for pw.x.
 Example of config.ini is provided below::
 
+    # all the relevant input files must be preconfigured for specific tasks
+    # before using this class
+
     [Launcher]
     # parallelization parameters
     # if this section is empty - serial mode is used
     #paraPrefix:   mpiexec -n 8
     #paraPostfix: -npool 8
 
-    #useTorque: True
-    paraPrefix: mpirun 
+    #serialPrefix: mpiexec -n 1
+    #serialPostfix:
+
+    # default: False
+    useTorque: True
+    paraPrefix: mpirun --mca btl openib,sm,self
     paraPostfix: -npool 900
 
-    # this string will be passed to qsub, -d workingDir -V are already there:
-    torqueResourceList: -l nodes=8:ppn=8 -N MyJobName -j oe
-
-
-    #Each task will synchronise its outDir through qecalc.qetask._syncSetting() on
-    #its launch
-    outDir: /scratch/temp
+    serialPrefix: mpirun
+    serialPostfix:
 
     #Name of a script to execute a command on multiple nodes
     #relevant if outdir is not located on Parallel/Network File system.
     #Default value is empty
-    paraRemoteShell: bpsh -a
+    #paraRemoteShell: bpsh -a
 
+    # this string will be passed to qsub, -d workingDir -V are already there:
+    paraTorqueParams: -l nodes=4:ppn=12 -N myjob -j oe
+    serialTorqueParams: -l nodes=1:ppn=1 -N myjob -j oe
+
+    outdir: temp/
 
     [pw.x]
-    # pwscf input/output files
-    pwscfInput:  scf.in
-    pwscfOutput: scf.out
+    pwfInput: scf.in
+    pwOutput: scf.out
+
+[Launcher] section is common for all tasks (but each task has corresponding
+variables independantly from other tasks). Some tasks are serial, some are
+parallel. para/serial variables specify launching parameters for these two classes
+of tasks. If serialPrefix is empty, a serial task will be launched on head node.
+
+Task sections can also contain Quantum Espresso varialbes, corresponding to input/output
+files which are usually  specified in QE config files. For example 'flvec' from matdyn.x config
+file  or 'fildyn' from ph.x input file. Any file variable, specified in a section
+of config.ini will override one in corresponding QE config file. If none is specified,
+QECalc will try to resolve their default values internally, so it will not affect parsing.
+For example, default value of 'flvec' is 'matdyn.modes' and it does not have
+to be specified in matdyn config file nor in config.ini.
+
+if 'outdir' is specified in config.ini, it will override any outdir specified
+in QE config input files of tasks containing outdir field.
+
+One does not have to specify all the sections. if a section is ommited, default
+values are assumed.
 
 
-lookupProperty() goes through the all the  output files of given calc::
+lookupProperty() goes through the all the  output files of a given calc::
 
     # PWCalc
     from qecalc.pwcalc import PWCalc
     pwcalc = PWCalc('config.ini')
     pwcalc.launch()
+    print 'looking for properties in output file ', pwcalc.pw.setting.get('pwOutput')
     pwcalc.lookupProperty('total energy')
     pwcalc.lookupProperty('total energy', withUnits = True)
     pwcalc.lookupProperty('stress', withUnits = True)
     pwcalc.lookupProperty('forces', withUnits = True)
+
+Methods task.setting.get(varName) and task.setting.set(varName, varValue) allow
+to read and modify QECalc configuration dynamically for  each task.
+
+Config file can also be passed as a string::
+
+    configString = """
+    [pw.x]
+    pwfInput: scf.in
+    pwOutput: scf.out
+    """
+    pwcalc = PWCalc(configString = configString)
+    pwcalc.launch()
 
 
 MultiPhononCalc
@@ -155,7 +196,7 @@ additional tasks::
     [dynmat.x]
     #dynmat.x input/output files relevant to single phonon calculation
     dynmatInput:  dynmat.in
-    dynmatOutput: dynmat.out
+    dynmatOutput: dyn.out
 
 
     [q2r.x]
@@ -168,9 +209,6 @@ additional tasks::
     # input/output files relevant to multiple phonon calculation
     matdynInput:   matdyn.in
     matdynOutput:  matdyn.out
-    matdynModes:   matdyn.modes
-    matdynFreqs:   matdyn.freq
-    matdynfldos:   matdyn.phdos
 
 In the following example it is also assumed outputs are already there
 after a successful run::
@@ -184,7 +222,7 @@ after a successful run::
     mphon.lookupProperty('multi phonon', withUnits = True)
     mphon.dispersion.launch('M', 'Gamma', 'A','L', 50, 50, 50)
     mphon.dispersion.plot()
-    
+
 Converger
 ^^^^^^^^^^^
 
@@ -192,10 +230,8 @@ Class converger will converge a value  with respect to k-points or different par
 namelist of pw.x input file. Currently, the value can be 'total energy',
 'fermi energy' or 'single phonon'::
 
-    from qecalc.converger import Converger
+    from qeutils.converger import Converger
     opt = Converger('config.ini','total energy', tolerance = 0.1)
     ecut = opt.converge(what = 'ecutwfc', startValue = 18, step = 4)
     conv_thr = opt.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.1)
-
-    
 
