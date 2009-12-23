@@ -12,8 +12,8 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-from pwcalc import PWCalc
-from singlephononcalc import SinglePhononCalc
+from qecalc.pwcalc import PWCalc
+from qecalc.singlephononcalc import SinglePhononCalc
 import numpy
 
 class Converger():

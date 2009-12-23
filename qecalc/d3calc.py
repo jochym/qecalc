@@ -67,9 +67,6 @@ class D3Calc(QECalc):
             #task.setting.useTorque = 'False'
             task.setSerial()
             task.setting.serialPrefix = ''
-            #task.setting.paraPrefix = ''
-            #task.setting.paraPostfix = ''
-
 
 
 if __name__ == "__main__":

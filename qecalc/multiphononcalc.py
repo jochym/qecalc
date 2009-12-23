@@ -14,8 +14,8 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import numpy
 
-from phdispersion import PHDispersion
-from phdos import PhononDOS
+from qeutils.phdispersion import PHDispersion
+from qeutils.phdos import PhononDOS
 
 from qecalc import QECalc
 
