@@ -59,7 +59,7 @@ class D3Calc(QECalc):
         #self.pw = PWTask(filename)
         #self.ph = PHTask(filename)
         #self.d3 = D3Task(filename)
-        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = self.pw.input.outDir())
+        self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
         self.taskList = [self.pwph, self.d3]
 
         #Hack: make sure d3 task is serial (d3 does not seem to work in parallel)

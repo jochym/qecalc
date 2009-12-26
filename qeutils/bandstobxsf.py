@@ -53,4 +53,4 @@ def bandstobxsf(energy, recipLatticeVectors, bands, fname):
 
 if __name__ == "__main__":
 
-__date__ ="$Nov 15, 2009 5:12:00 PM$"
+    __date__ ="$Nov 15, 2009 5:12:00 PM$"
