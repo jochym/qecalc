@@ -33,6 +33,8 @@ class QETask(object):
 
         self._isSerial = True
 
+        self._mergedTask = False
+
         configDic = {
         'useTorque' : 'False',
         'paraTorqueParams':  '-l nodes=1:ppn=1',
@@ -191,6 +193,11 @@ class QETask(object):
             return self.setting.get('serialPostfix')
         else:
             return self.setting.get('paraPostfix')
+
+
+    def isMerged(self):
+        return self._mergedTask
+
 
     def _initCmdLineParams(self):
         self._inp = '-inp'

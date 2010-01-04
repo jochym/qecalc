@@ -79,6 +79,22 @@ class Setting:
             else:
                 return None
 
+    def getExistingFiles(self):
+        """
+        Returns list of existing files from class setting
+        """
+        fileList = []
+        Vars = vars(self._paths)
+        moreVars = vars(self)
+        for var in moreVars.keys():
+            Vars[var] = moreVars[var]
+        for varName in Vars.keys():
+            value =  Vars[varName]
+            if value != None:                
+                if os.path.isfile(str(value)):
+                    fileList.append(str(value))
+        return fileList
+
     def syncAllPathsInNamelist(self, param, namelist, varName, input, defaults = None):
         """
         Syncs path attribute in namelist with setting variable varName

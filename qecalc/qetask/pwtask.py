@@ -34,7 +34,8 @@ class PWTask(QETask):
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
-        'outdir': './'
+        'outdir': './',
+        'pseudo_dir': './'
         }
 
         if sectionName == None:
@@ -64,3 +65,11 @@ class PWTask(QETask):
         
         self.setting.syncPathInNamelist('outdir', 'control', 'outdir', \
                                                 self.input, self._path_defaults)
+        self.setting.syncPathInNamelist('pseudo_dir', 'control', 'pseudo_dir', \
+                                                self.input, self._path_defaults)
+
+
+        # Solve for pseudopotential locations
+        species = self.input.structure.atomicSpecies
+        for specie in species.keys():
+            setattr(self.setting._paths, 'ps' + specie, self.setting.get('pseudo_dir') + species[specie].pseudopotential )

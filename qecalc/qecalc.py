@@ -44,6 +44,18 @@ class QECalc(object):
         for task in taskList:
             task.launch()
 
+    def getAllTasks(self):
+
+        taskList = []
+        for task in self.taskList:
+            if task.isMerged():
+                for subTask in task.tasks:
+                    taskList.append(subTask)
+            else:
+                taskList.append(task)
+
+        return taskList
+
     def syncInputs(self): pass
 
     def lookupProperty(self, propertyName, taskList = None, \

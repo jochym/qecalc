@@ -23,6 +23,8 @@ class TaskMerger(QETask):
 
         self.setParallel()
 
+        self._mergedTask = True
+
         if ioTask == None:
             ioTask = tasks[0]
         self.input = ioTask.input
