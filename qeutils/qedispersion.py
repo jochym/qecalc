@@ -99,7 +99,7 @@ class QEDispersion():
         self.points = []
 
         kPoints = []
-        if self._lattice.ibrav == 4:
+        if self._lattice.ibrav <= 4:
             numPoints = [0]
             for i, ipnt in enumerate(nPoints):
                 numPoints.append(ipnt + numPoints[i])
