@@ -99,12 +99,21 @@ class QEDispersion():
         self.points = []
 
         kPoints = []
-        if self._lattice.ibrav <= 4:
+        if self._lattice.ibrav <= 4 and self._lattice.ibrav > 0:
+            if self._lattice.ibrav == 4:
+                symPoints = hexSymPoints
+            if self._lattice.ibrav == 1:
+                symPoints = SCubSymPoints
+            if self._lattice.ibrav == 2:
+                symPoints = FCCubSymPoints
+            if self._lattice.ibrav == 3:
+                symPoints = BCCubSymPoints
+
             numPoints = [0]
             for i, ipnt in enumerate(nPoints):
                 numPoints.append(ipnt + numPoints[i])
             for symbol, ipnt in zip(path, numPoints ):
-                kPoints.append(hexSymPoints[symbol])
+                kPoints.append(symPoints[symbol])
                 self.points.append((symbol, ipnt))
         else:
             raise Exception("Dispersion path generator does not support this lattice symmetry")

@@ -49,7 +49,7 @@ serialPostfix:
 paraTorqueParams: -l nodes=2:ppn=12 -N myjob -j oe
 serialTorqueParams: -l nodes=1:ppn=1 -N myjob -j oe
 
-#outdir: /scratch/temp
+outdir: temp
 
 
 [pw.x]

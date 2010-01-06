@@ -5,7 +5,7 @@
     prefix = 'mgb2',
     pseudo_dir = '/home/markovsk/projects/pslib/espresso/mgb2/',
     lkpoint_dir = .false.,
-    outdir = '/scratch/temp',
+    outdir = 'temp',
 /
 
 &SYSTEM
