@@ -1,4 +1,4 @@
-from qecalc.converger import Converger
+from qeutils.converger import Converger
 
 #convergence in 'total energy',  'geometry' or 'single phonon' calculations
 #can be studied  with respect to the following variables:
