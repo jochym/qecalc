@@ -156,6 +156,12 @@ class QELattice(object):
         self.qeConf.parse()
         setLatticeFromPWInput(self, qeConf)
 
+    def setLatticeFromDiffpyLattice(self, lattice, ibrav):
+        """
+        lattice - diffpyLattice object        
+        """
+        
+
 
     def setLattice(self, ibrav, a = None, b = None, c = None,
                    cBC = None, cAC = None, cAB = None, base = None):
@@ -244,7 +250,6 @@ class QELattice(object):
                     self._cAC = cAC
                 if cAB is not None:
                     self._cAB = cAB
-                                    
             qeBaseTuple = self._getQEBaseFromParCos(self._ibrav, self._a, self._b,
                                                self._c, self._cBC, self._cAC, self._cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]            
@@ -252,7 +257,7 @@ class QELattice(object):
             alpha = degrees(acos(self._cBC))
             beta = degrees(acos(self._cAC))
             gamma = degrees(acos(self._cAB))
-            self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)
+            self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)            
         self._base = qeBase
 
     def toString(self):

@@ -14,6 +14,8 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 from diffpy.Structure.structure import Structure
 from diffpy.Structure.atom import Atom
+from diffpy.Structure.lattice import cosd, Lattice
+from diffpy.Structure.SymmetryUtilities import equalPositions
 
 from qelattice import QELattice
 import numpy
@@ -168,6 +170,74 @@ class QEStructure():
                         ps = atomicSpeciesWords[2]
                         self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
+                        
+    def setStructureFromDiffpyStructure(self, diffpyStructure, ibrav, massList, psList):
+        """
+        structure - diffpy.Structure object
+        ibrav - Lattice index
+        psList - list of strings with pseudopotential names
+        diffpyStructure object will be modified with reduced atomic positions
+        """
+
+        self.atomicSpecies = OrderedDict()
+        self.optConstraints = []
+        self.atomicPositionsType = 'crystal'
+
+        diffpyLattice = diffpyStructure.lattice
+
+        a = diffpyLattice.a
+        b = diffpyLattice.b
+        c = diffpyLattice.c
+        cAB = cosd(diffpyLattice.gamma)
+        cBC = cosd(diffpyLattice.alpha)
+        cAC = cosd(diffpyLattice.beta)
+
+        qeLattice = QELattice(ibrav = ibrav, a = a, b = b, c = c,  cBC =  cBC, \
+                              cAC = cAC, cAB = cAB)
+
+        self.lattice = qeLattice
+        qeLattice.type = 'celldm'
+        #print qeLattice.a
+        #print qeLattice.type
+        # make a deep copy (does not wok now)
+        #reducedStructure = Structure(diffpyStructure)
+        reducedStructure = diffpyStructure
+
+
+        reducedStructure.placeInLattice(Lattice(base=qeLattice.diffpy().base))
+
+        print reducedStructure
+
+        # collect atoms that are at equivalent position to some previous atom
+        duplicates = set([a1
+            for i0, a0 in enumerate(reducedStructure) for a1 in reducedStructure[i0+1:]
+                if   self._element(a0) == self._element(a1) and equalPositions(a0.xyz, a1.xyz, eps=1e-4)])
+
+        
+        # Filter out duplicate atoms.  Use slice assignment so that
+        # reducedStructure is not replaced with a list.
+        reducedStructure[:] = [a for a in reducedStructure if not a in duplicates]
+
+        self.structure = reducedStructure
+        print self.structure
+        #print self.structure.lattice.a
+
+        for atom, mass, ps in zip(reducedStructure, massList, psList):
+            elem = self._element(atom)
+            self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+            self.optConstraints.append([])
+
+
+        self.nat = len(reducedStructure)
+        self.ntyp = len(self.atomicSpecies)
+
+        # use rstrip to avoid duplicate line feed
+        #print reducedStructure.writeStr(format='discus').rstrip()
+        #print reducedStructure.writeStr(format='discus')
+        #print reducedStructure.writeStr().rstrip()
+        #print reducedStructure
+        #self.lattice = setLatticeFromDiffpyLattice(structure.lattice, ibrav)
+
 
     def toString(self):
         s = self.lattice.toString() + '\n'
@@ -184,7 +254,7 @@ class QEStructure():
                     coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
-            s = s + '%-3s'%atom.element + '    ' + coords + '  ' \
+            s = s + '%-3s'%self._element(atom) + '    ' + coords + '  ' \
                     + str(constraint)[1:-1] + '\n'
 
         s = s + '\n'
@@ -219,7 +289,7 @@ class QEStructure():
                     coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     raise NonImplementedError
-            line = '%-3s'%atom.element + '    ' + coords + '  ' + str(constraint)[1:-1]
+            line = '%-3s'%self._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
             qeConf.card('atomic_positions').addLine(line)
 
         # update ATOMIC_SPECIES card
@@ -248,6 +318,19 @@ class QEStructure():
 
     def diffpy(self):
         return self.structure
+
+
+    def _element(self, atom):
+        """
+        Is needed for suport both diffpy and matter classess
+        """
+        if 'element' in dir(atom):
+            return atom.element
+        else:
+            if 'symbol' in dir(atom):
+                return atom.symbol
+            else:
+                raise
 
 if __name__ == '__main__':
     print "Hello";
