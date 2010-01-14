@@ -172,18 +172,29 @@ class QEStructure():
                         ps = atomicSpeciesWords[2]
                         self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
-                        
-                        
-    def setStructureFromDiffpyStructure(self, diffpyStructure, massList, psList):                        
+
+
+    def load(self, source, **args):
+        task = {
+            'diffpy': self.setStructureFromDiffpyStructure
+        }
+        if source == 'diffpy':
+            if 'ibrav' in args:
+                task['diffpy'] = self.setReducedStructureFromDiffpyStructure
+
+        task[source](**args)
+
+
+    def setStructureFromDiffpyStructure(self, structure, massList, psList):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
         psList - list of strings with pseudopotential names
         diffpyStructure object will be modified with reduced atomic positions
         """      
-        diffpyLattice = diffpyStructure.lattice        
+        diffpyLattice = structure.lattice
         
-        self.structure = diffpyStructure
+        self.structure = structure
                
         
         #set lattice and  convert to bohr units
@@ -194,16 +205,16 @@ class QEStructure():
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
         
-        for atom, mass, ps in zip(diffpyStructure, massList, psList):
+        for atom, mass, ps in zip(structure, massList, psList):
             elem = self._element(atom)
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
             self.optConstraints.append([])
 
-        self.nat = len(diffpyStructure)
+        self.nat = len(structure)
         self.ntyp = len(self.atomicSpecies)        
      
                         
-    def setReducedStructureFromDiffpyStructure(self, diffpyStructure, ibrav, massList, psList):
+    def setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList, psList):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
@@ -215,7 +226,7 @@ class QEStructure():
         #self.optConstraints = []
         #self.atomicPositionsType = 'crystal'
 
-        diffpyLattice = diffpyStructure.lattice
+        diffpyLattice = structure.lattice
 
         a = diffpyLattice.a
         b = diffpyLattice.b
@@ -232,7 +243,7 @@ class QEStructure():
         #print qeLattice.type
         # make a deep copy (does not wok now)
         #reducedStructure = Structure(diffpyStructure)
-        reducedStructure = diffpyStructure
+        reducedStructure = structure
 
 
         reducedStructure.placeInLattice(Lattice(base=qeLattice.diffpy().base))
