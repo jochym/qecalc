@@ -458,17 +458,17 @@ class QELattice(object):
         else:
             if string != None:
                 qeConf = QEInput(config = string)
-                qeConf.parse()
+                qeConf.parse()                
             else:
                 qeConf = self.qeConf
                 filename = qeConf.filename
         self.updatePWInput(qeConf)
         
         if string != None:
-            string = qeConf.toString()
+            return qeConf.toString()
         if filename != None:
             qeConf.save(filename)
-
+        
 
     def recipCartesian(self, kPoint):
         """Conversts vector on fractional coordinates in reciprocal space into

@@ -310,7 +310,7 @@ class QEStructure():
             qeConf.parse()
         else:
             if string != None:
-                self.lattice.save(string = string)
+                string = self.lattice.save(string = string)
                 qeConf = QEInput(config = string)
                 qeConf.parse()
             else:
@@ -320,7 +320,7 @@ class QEStructure():
         self.updatePWInput(qeConf)
 
         if string != None:
-            string = qeConf.toString()
+            return qeConf.toString()
         if filename != None:
             qeConf.save(filename)
 
