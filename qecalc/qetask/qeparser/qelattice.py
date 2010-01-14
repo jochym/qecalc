@@ -176,6 +176,8 @@ class QELattice(object):
             qeBase = numpy.array(base, dtype = float)*a
 #            print qeBase
             self._a = 1.0
+            if 'generic' not in self._type:
+                self._type = 'generic cubic'
             self._primitiveLattice.setLatBase(qeBase)
             self._standardLattice.setLatBase(qeBase)
         else:
@@ -254,22 +256,34 @@ class QELattice(object):
             self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)            
         self._base = qeBase
 
-    def toString(self):
-        st = ''
-        if self._ibrav == 0:
-            st = st + '"generic" cell:\n'
-        else:
-            qeBaseTuple = self._getQEBaseFromParCos(self._ibrav, self._a, self._b,
-                                               self._c, self._cBC, self._cAC, self._cAB)
-            qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]
-            st = st + '"' + qeBaseTuple[2] + '" cell:\n'
+    # def toString(self):
+        # st = ''
+        # if self._ibrav == 0:
+            # st = st + '"generic" cell:\n'
+        # else:
+            # qeBaseTuple = self._getQEBaseFromParCos(self._ibrav, self._a, self._b,
+                                               # self._c, self._cBC, self._cAC, self._cAB)
+            # qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]
+            # st = st + '"' + qeBaseTuple[2] + '" cell:\n'
         
-        for i in range(3):
-            v = self._primitiveLattice.base[i,:]
-            st = st + self.formatString%(v[0], v[1], v[2])
-            st = st + '\n'
+        # for i in range(3):
+            # v = self._primitiveLattice.base[i,:]
+            # st = st + self.formatString%(v[0], v[1], v[2])
+            # st = st + '\n'
       
-        return st
+        # return st
+
+    def toString(self, string = None):        
+        if string != None:        
+            qeConf = QEInput(config = string)
+            qeConf.parse()                
+        else:
+            if self.qeConf != None:
+                qeConf = self.qeConf
+            else:
+                qeConf = QEInput(config = '')
+        self.updatePWInput(qeConf)    
+        return qeConf.toString()
 
     def latticeParams(self):
         return [self._a, self._b,self._c, self._cBC, self._cAC, self._cAB]
@@ -439,7 +453,7 @@ class QELattice(object):
 
 
 
-    def save(self, fname = None, string = None):
+    def save(self, fname = None):
         """Will save the lattice either into its own file or into supplied with fname.
            It will also create all relevant sections/cards"""
         from os.path import exists
@@ -448,22 +462,16 @@ class QELattice(object):
             if not exists(filename):
                 f = open(filename, 'w')
             qeConf = QEInput(fname)
-            qeConf.parse()
+            qeConf.parse()               
         else:
-            if string != None:
-                qeConf = QEInput(config = string)
-                qeConf.parse()                
-            else:
-                qeConf = self.qeConf
-                filename = qeConf.filename
+            qeConf = self.qeConf
+            filename = qeConf.filename
+            
         self.updatePWInput(qeConf)
         
-        if string != None:
-            return qeConf.toString()
-        if filename != None:
-            qeConf.save(filename)
+        qeConf.save(filename)
         
-
+        
     def recipCartesian(self, kPoint):
         """Conversts vector on fractional coordinates in reciprocal space into
            a vector in cartesian coordinates"""

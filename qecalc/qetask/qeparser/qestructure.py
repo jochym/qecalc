@@ -273,31 +273,45 @@ class QEStructure():
         #self.lattice = setLatticeFromDiffpyLattice(structure.lattice, ibrav)
 
 
-    def toString(self):
-        s = self.lattice.toString() + '\n'
-        if self.atomicPositionsType == 'alat':
-            s = s + 'Atomic positions in units of lattice parametr "a":\n'        
-        if self.atomicPositionsType == 'crystal':
-            s = s + 'Atomic positions in crystal coordinates:\n'
-        for atom, constraint in zip(self.structure, self.optConstraints):
-            if self.atomicPositionsType == 'alat':      
-                coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
-                coords = self.formatString%(coords[0], coords[1], coords[2])
+    # def toString(self):
+        # s = self.lattice.toString() + '\n'
+        # if self.atomicPositionsType == 'alat':
+            # s = s + 'Atomic positions in units of lattice parametr "a":\n'        
+        # if self.atomicPositionsType == 'crystal':
+            # s = s + 'Atomic positions in crystal coordinates:\n'
+        # for atom, constraint in zip(self.structure, self.optConstraints):
+            # if self.atomicPositionsType == 'alat':      
+                # coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
+                # coords = self.formatString%(coords[0], coords[1], coords[2])
+            # else:
+                # if self.atomicPositionsType == 'crystal':
+                    # coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                # else:
+                    # raise NonImplementedError
+            # s = s + '%-3s'%self._element(atom) + '    ' + coords + '  ' \
+                    # + str(constraint)[1:-1] + '\n'
+
+        # s = s + '\n'
+        # for element, specie in self.atomicSpecies.items():
+            # s = s + specie.toString() + '\n'
+
+        # return s
+
+    def toString(self, string = None):
+        if string != None:
+            string = self.lattice.toString(string = string)
+            qeConf = QEInput(config = string)
+            qeConf.parse()
+        else:
+            if self.qeConf != None:
+                qeConf = self.qeConf
             else:
-                if self.atomicPositionsType == 'crystal':
-                    coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
-                else:
-                    raise NonImplementedError
-            s = s + '%-3s'%self._element(atom) + '    ' + coords + '  ' \
-                    + str(constraint)[1:-1] + '\n'
+                qeConf = QEInput(config = '')
 
-        s = s + '\n'
-        for element, specie in self.atomicSpecies.items():
-            s = s + specie.toString() + '\n'
+        self.updatePWInput(qeConf)
+        return qeConf.toString()
 
-        return s
-
-
+        
     def updatePWInput(self, qeConf = None):
 
         if qeConf == None:
@@ -334,7 +348,7 @@ class QEStructure():
             qeConf.card('atomic_species').addLine(specie.toString())
 
 
-    def save(self, fname = None, string = None):
+    def save(self, fname = None):
         """Writes/updates structure into PW config file,
            if the file does not exist, new one will be created"""
         filename = fname
@@ -343,20 +357,12 @@ class QEStructure():
             qeConf = QEInput(fname)
             qeConf.parse()
         else:
-            if string != None:
-                string = self.lattice.save(string = string)
-                qeConf = QEInput(config = string)
-                qeConf.parse()
-            else:
-                filename = self.filename
-                self.lattice.save(filename)
-                qeConf = self.qeConf
+            filename = self.filename
+            self.lattice.save(filename)
+            qeConf = self.qeConf
+            
         self.updatePWInput(qeConf)
-
-        if string != None:
-            return qeConf.toString()
-        if filename != None:
-            qeConf.save(filename)
+        qeConf.save(filename)
 
         
 
