@@ -227,6 +227,9 @@ class QEStructure():
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
             self.optConstraints.append([])
 
+        self.lattice.setLattice(ibrav, self.lattice.a*1.889725989, \
+                                 self.lattice.b*1.889725989,
+                                 self.lattice.c*1.889725989)
 
         self.nat = len(reducedStructure)
         self.ntyp = len(self.atomicSpecies)
