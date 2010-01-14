@@ -300,21 +300,31 @@ class QEStructure():
             qeConf.card('atomic_species').addLine(specie.toString())
 
 
-    def save(self, fname = None):
+    def save(self, fname = None, string = None):
         """Writes/updates structure into PW config file,
            if the file does not exist, new one will be created"""
+        filename = fname
         if fname != None:
-            filename = fname
             self.lattice.save(filename)
             qeConf = QEInput(fname)
             qeConf.parse()
         else:
-            filename = self.filename
-            self.lattice.save(filename)
-            qeConf = self.qeConf
-        self.updatePWInput(qeConf )
-            
-        qeConf.save(filename)
+            if string != None:
+                self.lattice.save(string = string)
+                qeConf = QEInput(config = string)
+                qeConf.parse()
+            else:
+                filename = self.filename
+                self.lattice.save(filename)
+                qeConf = self.qeConf
+        self.updatePWInput(qeConf)
+
+        if string != None:
+            string = qeConf.toString()
+        if filename != None:
+            qeConf.save(filename)
+
+        
 
     def diffpy(self):
         return self.structure

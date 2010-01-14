@@ -445,21 +445,29 @@ class QELattice(object):
 
 
 
-    def save(self, fname = None):
+    def save(self, fname = None, string = None):
         """Will save the lattice either into its own file or into supplied with fname.
            It will also create all relevant sections/cards"""
         from os.path import exists
+        filename = fname
         if fname != None:
-            filename = fname
             if not exists(filename):
                 f = open(filename, 'w')
             qeConf = QEInput(fname)
             qeConf.parse()
         else:
-            qeConf = self.qeConf
-            filename = qeConf.filename
-        self.updatePWInput(qeConf)                      
-        qeConf.save(filename)
+            if string != None:
+                qeConf = QEInput(config = string)
+                qeConf.parse()
+            else:
+                qeConf = self.qeConf
+                filename = qeConf.filename
+        self.updatePWInput(qeConf)
+        
+        if string != None:
+            string = qeConf.toString()
+        if filename != None:
+            qeConf.save(filename)
 
 
     def recipCartesian(self, kPoint):
