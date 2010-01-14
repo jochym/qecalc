@@ -48,6 +48,8 @@ class QEStructure():
         self.structure = Structure(lattice = self.lattice.diffpy())
         self.nat = None
         self.ntyp = None
+        self.atomicPositionsType = 'crystal'       
+        
         
         
     def parseInput(self):
@@ -171,7 +173,37 @@ class QEStructure():
                         self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
                         
-    def setStructureFromDiffpyStructure(self, diffpyStructure, ibrav, massList, psList):
+                        
+    def setStructureFromDiffpyStructure(self, diffpyStructure, massList, psList):                        
+        """
+        structure - diffpy.Structure object
+        ibrav - Lattice index
+        psList - list of strings with pseudopotential names
+        diffpyStructure object will be modified with reduced atomic positions
+        """      
+        diffpyLattice = diffpyStructure.lattice        
+        
+        self.structure = diffpyStructure
+               
+        
+        #set lattice and  convert to bohr units
+        qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
+
+        print qeLattice.toString()
+        
+        self.lattice = qeLattice
+        self.lattice.type = 'generic cubic'
+        
+        for atom, mass, ps in zip(diffpyStructure, massList, psList):
+            elem = self._element(atom)
+            self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+            self.optConstraints.append([])
+
+        self.nat = len(diffpyStructure)
+        self.ntyp = len(self.atomicSpecies)        
+     
+                        
+    def setReducedStructureFromDiffpyStructure(self, diffpyStructure, ibrav, massList, psList):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
@@ -179,9 +211,9 @@ class QEStructure():
         diffpyStructure object will be modified with reduced atomic positions
         """
 
-        self.atomicSpecies = OrderedDict()
-        self.optConstraints = []
-        self.atomicPositionsType = 'crystal'
+        #self.atomicSpecies = OrderedDict()
+        #self.optConstraints = []
+        #self.atomicPositionsType = 'crystal'
 
         diffpyLattice = diffpyStructure.lattice
 
@@ -196,7 +228,6 @@ class QEStructure():
                               cAC = cAC, cAB = cAB)
 
         self.lattice = qeLattice
-        qeLattice.type = 'celldm'
         #print qeLattice.a
         #print qeLattice.type
         # make a deep copy (does not wok now)
@@ -206,7 +237,7 @@ class QEStructure():
 
         reducedStructure.placeInLattice(Lattice(base=qeLattice.diffpy().base))
 
-        print reducedStructure
+        #print reducedStructure
 
         # collect atoms that are at equivalent position to some previous atom
         duplicates = set([a1
@@ -226,7 +257,7 @@ class QEStructure():
             elem = self._element(atom)
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
             self.optConstraints.append([])
-
+        # convert to bohr units
         self.lattice.setLattice(ibrav, self.lattice.a*1.889725989, \
                                  self.lattice.b*1.889725989,
                                  self.lattice.c*1.889725989)

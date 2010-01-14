@@ -156,13 +156,7 @@ class QELattice(object):
         self.qeConf.parse()
         setLatticeFromPWInput(self, qeConf)
 
-    def setLatticeFromDiffpyLattice(self, lattice, ibrav):
-        """
-        lattice - diffpyLattice object        
-        """
         
-
-
     def setLattice(self, ibrav, a = None, b = None, c = None,
                    cBC = None, cAC = None, cAB = None, base = None):
         """ 'base', numpy array of lattice vectors, and 'a'  will only be used
@@ -436,7 +430,7 @@ class QELattice(object):
                     if self._type == 'generic cubic' or self._type == None:
                         cardArg = 'cubic'
                     qeConf.createCard('cell_parameters')
-                    qeConf.card('cell_parameters').setArgument(cardArg)
+                    qeConf.card('cell_parameters').setArg(cardArg)
                     qeConf.card('cell_parameters').removeLines()
                     for i in range(3):
                         v = self._primitiveLattice.base[i,:]
