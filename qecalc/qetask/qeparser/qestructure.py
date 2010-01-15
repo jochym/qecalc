@@ -179,13 +179,13 @@ class QEStructure():
             'diffpy': self.setStructureFromDiffpyStructure
         }
         if source == 'diffpy':
-            if 'ibrav' in args:
+            if 'ibrav' in args and args['ibrav'] != 0:
                 task['diffpy'] = self.setReducedStructureFromDiffpyStructure
 
         task[source](**args)
 
 
-    def setStructureFromDiffpyStructure(self, structure, massList, psList):
+    def setStructureFromDiffpyStructure(self, structure, massList, psList, ibrav = 0):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
