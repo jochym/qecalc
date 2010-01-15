@@ -199,8 +199,7 @@ class QEStructure():
         
         #set lattice and  convert to bohr units
         qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
-
-        print qeLattice.toString()
+        
         
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
@@ -239,8 +238,6 @@ class QEStructure():
                               cAC = cAC, cAB = cAB)
 
         self.lattice = qeLattice
-        #print qeLattice.a
-        #print qeLattice.type
         # make a deep copy (does not wok now)
         #reducedStructure = Structure(diffpyStructure)
         reducedStructure = structure
@@ -261,8 +258,6 @@ class QEStructure():
         reducedStructure[:] = [a for a in reducedStructure if not a in duplicates]
 
         self.structure = reducedStructure
-        print self.structure
-        #print self.structure.lattice.a
 
         for atom, mass, ps in zip(reducedStructure, massList, psList):
             elem = self._element(atom)
