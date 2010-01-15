@@ -50,7 +50,12 @@ class QEStructure():
         self.ntyp = None
         self.atomicPositionsType = 'crystal'       
         
-        
+
+    def atomLabels(self):
+        labels = []
+        for l in self.atomicSpecies:
+            labels.append(l)
+        return labels
         
     def parseInput(self):
         self.setStructureFromQEInput()
