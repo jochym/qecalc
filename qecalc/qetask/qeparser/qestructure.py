@@ -190,7 +190,7 @@ class QEStructure():
         task[source](**args)
 
 
-    def setStructureFromDiffpyStructure(self, structure, massList, psList, ibrav = 0):
+    def setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
@@ -208,17 +208,30 @@ class QEStructure():
         
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
-        
-        for atom, mass, ps in zip(structure, massList, psList):
+
+        for i, atom in enumerate(structure):
             elem = self._element(atom)
+            if len(massList) - 1 < i:
+                mass = 0
+            else:
+                mass = massList[i]
+            if len(psList) - 1 < i:
+                ps = ''
+            else:
+                ps = psList[i]
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
             self.optConstraints.append([])
+
+#        for atom, mass, ps in zip(structure, massList, psList):
+#            elem = self._element(atom)
+#            self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+#            self.optConstraints.append([])
 
         self.nat = len(structure)
         self.ntyp = len(self.atomicSpecies)        
      
                         
-    def setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList, psList):
+    def setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList = [], psList = []):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
@@ -264,10 +277,20 @@ class QEStructure():
 
         self.structure = reducedStructure
 
-        for atom, mass, ps in zip(reducedStructure, massList, psList):
+
+        for i, atom in enumerate(reducedStructure):
             elem = self._element(atom)
+            if len(massList) - 1 < i:
+                mass = 0
+            else:
+                mass = massList[i]
+            if len(psList) - 1 < i:
+                ps = ''
+            else:
+                ps = psList[i]            
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
             self.optConstraints.append([])
+
         # convert to bohr units
         self.lattice.setLattice(ibrav, self.lattice.a*1.889725989, \
                                  self.lattice.b*1.889725989,
