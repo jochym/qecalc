@@ -479,6 +479,9 @@ class QELattice(object):
         return numpy.dot( kPoint, recip_base)
 
     def reciprocalBase(self):
+        """
+        Get reciprocal lattice vectors in units of 2*pi/a
+        """
         return self.diffpy().reciprocal().base*self._a
 
 
