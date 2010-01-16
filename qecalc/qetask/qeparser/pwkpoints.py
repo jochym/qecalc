@@ -21,6 +21,10 @@ class PWKpoints(object):
     def parse(self):
         """ Returns array of points. Does not have to be AUTOMATIC """
         kpoints = []
+        if 'k_points' not in self.qeInput.cards:
+            kpoints = numpy.array(kpoints)
+            self.shifts = None
+            return
         if self.qeInput.cards['k_points'].arg() == 'automatic':
             self.isAutomatic = True
         for line in self.qeInput.cards['k_points'].lines():

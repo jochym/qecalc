@@ -54,6 +54,7 @@ class MatdynQpoints(object):
         self.qeInput.namelist('input').add('nk1', str(grid[0]))
         self.qeInput.namelist('input').add('nk2', str(grid[1]))
         self.qeInput.namelist('input').add('nk3', str(grid[2]))
+        self.qeInput.namelist('input').add('dos', '.true.')
 
 
     def parse(self):
