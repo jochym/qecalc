@@ -188,6 +188,8 @@ class QEStructure():
                 task['diffpy'] = self.setReducedStructureFromDiffpyStructure
 
         task[source](**args)
+        
+        self.updatePWInput(qeConf = self.qeConf)
 
 
     def setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
