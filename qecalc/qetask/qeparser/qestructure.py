@@ -124,7 +124,7 @@ class QEStructure():
                                   [float(f)*a_0 for f in lastSection[i + 3].split() ]]
                 self.lattice.setLatticeFromQEVectors(ibrav, latticeVectors)
                 #self.lattice = QELattice(ibrav = ibrav, base = latticeVectors)
-                print self.lattice.diffpy().base
+                #print self.lattice.diffpy().base
             if 'ATOMIC_POSITIONS (alat)' in line:
                 self.structure = Structure(lattice = self.lattice.diffpy())
                 for n in range(self.nat):
@@ -145,42 +145,50 @@ class QEStructure():
         self.lattice.setLatticeFromPWInput(self.qeConf)
         #self.lattice = QELattice(qeConf = self.qeConf)
         self.structure = Structure(lattice = self.lattice.diffpy())
-        self.nat  = int(self.qeConf.namelist('system').param('nat'))
-        self.ntyp  = int(self.qeConf.namelist('system').param('ntyp'))
-        atomicLines = self.qeConf.card('atomic_positions').lines()
-        self.atomicPositionsType = self.qeConf.card('atomic_positions').arg()
-        if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
-            raise NotImplementedError
-        if self.atomicPositionsType == None:
-            self.atomicPositionsType = 'alat'
-        for line in atomicLines:
-            if '!' not in line:
-                words = line.split()
-                coords = [float(w) for w in words[1:4]]
-                constraint = []
-                if len(words) > 4:
-                    constraint = [int(c) for c in words[4:7]]
-                self.optConstraints.append(numpy.array(constraint, dtype = int))
-                atomSymbol = words[0]
-                if self.atomicPositionsType == 'alat':
-                    coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a0)
-                if self.atomicPositionsType == 'crystal':
-                    coords = numpy.array(coords[0:3])
-                self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
-                # parse mass ATOMIC_SPECIES section:
-                atomicSpeciesLines = self.qeConf.card('atomic_species').lines()
-                for line in atomicSpeciesLines:
-                    if '!' not in line:
-                        if line.strip() != '':                            
-                            atomicSpeciesWords = line.split()
-                            element = atomicSpeciesWords[0]
-                            mass = 0
-                            ps = ''
-                            if len(atomicSpeciesWords) > 1 :
-                                mass = float(atomicSpeciesWords[1])
-                            if len(atomicSpeciesWords) > 2:
-                                ps = atomicSpeciesWords[2]
-                            self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
+        self.nat = self.ntyp = None
+        self.filename = self.qeConf.filename
+        self.optConstraints = []
+        
+        if 'system' in self.qeConf.namelists:        
+            self.nat  = int(self.qeConf.namelist('system').param('nat'))
+            self.ntyp  = int(self.qeConf.namelist('system').param('ntyp'))
+        if 'atomic_positions' in self.qeConf.cards:        
+            atomicLines = self.qeConf.card('atomic_positions').lines()
+            self.atomicPositionsType = self.qeConf.card('atomic_positions').arg()
+            if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
+                raise NotImplementedError
+            if self.atomicPositionsType == None:
+                self.atomicPositionsType = 'alat'
+            for line in atomicLines:
+                if '!' not in line:
+                    words = line.split()
+                    coords = [float(w) for w in words[1:4]]
+                    constraint = []
+                    if len(words) > 4:
+                        constraint = [int(c) for c in words[4:7]]
+                    self.optConstraints.append(numpy.array(constraint, dtype = int))
+                    atomSymbol = words[0]
+                    if self.atomicPositionsType == 'alat':
+                        coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a0)
+                    if self.atomicPositionsType == 'crystal':
+                        coords = numpy.array(coords[0:3])
+                    self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+        # parse mass ATOMIC_SPECIES section:
+         
+        if 'atomic_species' in self.qeConf.cards:
+            atomicSpeciesLines = self.qeConf.card('atomic_species').lines()
+            for line in atomicSpeciesLines:
+                if '!' not in line:
+                    if line.strip() != '':                            
+                        atomicSpeciesWords = line.split()
+                        element = atomicSpeciesWords[0]
+                        mass = 0
+                        ps = ''
+                        if len(atomicSpeciesWords) > 1 :
+                            mass = float(atomicSpeciesWords[1])
+                        if len(atomicSpeciesWords) > 2:
+                            ps = atomicSpeciesWords[2]
+                        self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
 
     def load(self, source, **args):
