@@ -176,9 +176,9 @@ class QEStructure():
                             element = atomicSpeciesWords[0]
                             mass = 0
                             ps = ''
-                            if len(atomicSpeciesWords > 1):
+                            if len(atomicSpeciesWords) > 1 :
                                 mass = float(atomicSpeciesWords[1])
-                            if len(atomicSpeciesWords > 2):
+                            if len(atomicSpeciesWords) > 2:
                                 ps = atomicSpeciesWords[2]
                             self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
