@@ -15,7 +15,7 @@ PROJECT = qecalc
 PACKAGE = qecalc/qetask
 
 BUILD_DIRS = \
-	qeparser \
+    qeparser \
 
 
 OTHER_DIRS = \
