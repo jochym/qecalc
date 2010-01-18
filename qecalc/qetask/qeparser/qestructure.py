@@ -171,12 +171,16 @@ class QEStructure():
                 atomicSpeciesLines = self.qeConf.card('atomic_species').lines()
                 for line in atomicSpeciesLines:
                     if '!' not in line:
-                        atomicSpeciesWords = line.split()
-                        element = atomicSpeciesWords[0]
-                        mass = float(atomicSpeciesWords[1])
-                        ps = atomicSpeciesWords[2]
-                        self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
-
+                        if line.strip() != '':                            
+                            atomicSpeciesWords = line.split()
+                            element = atomicSpeciesWords[0]
+                            mass = 0
+                            ps = ''
+                            if len(atomicSpeciesWords > 1):
+                                mass = float(atomicSpeciesWords[1])
+                            if len(atomicSpeciesWords > 2):
+                                ps = atomicSpeciesWords[2]
+                            self.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
 
 
     def load(self, source, **args):
@@ -279,7 +283,7 @@ class QEStructure():
 
         self.structure = reducedStructure
 
-
+        atomNames  = [self.element(a) for a in reducedStructure ] 
         for i, atom in enumerate(reducedStructure):
             elem = self._element(atom)
             if len(massList) - 1 < i:
