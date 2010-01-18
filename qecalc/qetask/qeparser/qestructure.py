@@ -215,8 +215,14 @@ class QEStructure():
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
 
-        for i, atom in enumerate(structure):
-            elem = self._element(atom)
+        atomNames = []
+        for a in structure:
+            if self._element(a) not in atomNames:
+                atomNames.append(self._element(a))
+        
+        print atomNames
+        print len(massList)
+        for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
             else:
@@ -224,9 +230,24 @@ class QEStructure():
             if len(psList) - 1 < i:
                 ps = ''
             else:
-                ps = psList[i]
+                ps = psList[i]               
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
-            self.optConstraints.append([])
+        
+        for atom in structure:
+            self.optConstraints.append([])        
+        
+        # for i, atom in enumerate(structure):
+            # elem = self._element(atom)
+            # if len(massList) - 1 < i:
+                # mass = 0
+            # else:
+                # mass = massList[i]
+            # if len(psList) - 1 < i:
+                # ps = ''
+            # else:
+                # ps = psList[i]
+            # self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+            # self.optConstraints.append([])
 
 #        for atom, mass, ps in zip(structure, massList, psList):
 #            elem = self._element(atom)
@@ -283,9 +304,14 @@ class QEStructure():
 
         self.structure = reducedStructure
 
-        atomNames  = [self.element(a) for a in reducedStructure ] 
-        for i, atom in enumerate(reducedStructure):
-            elem = self._element(atom)
+        atomNames = []
+        for a in reducedStructure:
+            if self._element(a) not in atomNames:
+                atomNames.append(self._element(a))
+        
+        print atomNames
+        print len(massList)
+        for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
             else:
@@ -293,8 +319,22 @@ class QEStructure():
             if len(psList) - 1 < i:
                 ps = ''
             else:
-                ps = psList[i]            
+                ps = psList[i]      
+            #print mass, ps
+            # atomDict[a] = 
+        # for i, atom in enumerate(reducedStructure):
+            # elem = self._element(atom)
+            # if len(massList) - 1 < i:
+                # mass = 0
+            # else:
+                # mass = massList[i]
+            # if len(psList) - 1 < i:
+                # ps = ''
+            # else:
+                # ps = psList[i]            
             self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+        
+        for atom in reducedStructure:
             self.optConstraints.append([])
 
         # convert to bohr units
