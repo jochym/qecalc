@@ -407,10 +407,17 @@ class QEStructure():
 
         self.lattice.updatePWInput(qeConf)
 
+        if 'system' not in qeConf.namelists:
+            qeConf.addNamelist('system')            
         qeConf.namelist('system').remove('ntyp')
         qeConf.namelist('system').remove('nat')
-        qeConf.namelist('system').add('ntyp', self.ntyp)
-        qeConf.namelist('system').add('nat', self.nat)
+        if self.ntyp != None:
+            qeConf.namelist('system').add('ntyp', self.ntyp)
+        if self.nat != None:
+            qeConf.namelist('system').add('nat', self.nat)
+        
+        if len(qeConf.namelist('system').params) == 0:
+            qeConf.removeNamelist('system')  
 
         if 'atomic_positions' in qeConf.cards:
             qeConf.removeCard('atomic_positions')
@@ -427,6 +434,9 @@ class QEStructure():
                     raise NonImplementedError
             line = '%-3s'%self._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
             qeConf.card('atomic_positions').addLine(line)
+        
+        if len(qeConf.card('atomic_positions').lines()) == 0:
+            qeConf.removeCard('atomic_positions')
 
         # update ATOMIC_SPECIES card
         if 'atomic_species' in qeConf.cards:
@@ -434,6 +444,9 @@ class QEStructure():
         qeConf.createCard('atomic_species')
         for element, specie in self.atomicSpecies.items():
             qeConf.card('atomic_species').addLine(specie.toString())
+        
+        if len(qeConf.card('atomic_species').lines()) == 0:
+            qeConf.removeCard('atomic_species')        
 
 
     def save(self, fname = None):

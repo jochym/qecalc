@@ -52,7 +52,15 @@ class QELattice(object):
             else:
                 self.setLattice(ibrav ,a ,b , c, cBC ,cAC ,cAB, base)
 
-
+    # def _setDefaults(self):
+        # self.formatString = '%# .8f %# .8f %# .8f'
+        # self._type = 'celldm'
+        # self._primitiveLattice = Lattice()
+        # self._standardLattice = Lattice()        
+        # self._base = None
+        # self._a0 = None
+        # self.setLattice(1. ,a ,b , c, cBC ,cAC ,cAB, base)
+                
     def setLatticeFromQEVectors(self, ibrav, vectors):
         """ Will extract conventional lattice parameters from primitive vectors.
             'vectors' - is a list with primitive vectors (in QE notation),
@@ -303,6 +311,8 @@ class QELattice(object):
         cBC = 0.0
         cAC = 0.0
         cAB = 0.0
+        # reset Lattice:
+        self.setLattice(1. ,1 , 1, cBC ,cAC ,cAB)
         if 'celldm(1)' in qeConf.namelists['system'].params:
             self._type = 'celldm' # celldm(i), i=1,6
             a = float(qeConf.namelist('system').param('celldm(1)'))
@@ -310,8 +320,10 @@ class QELattice(object):
             if ibrav == 0:
                 # lattice is set in the units of celldm(1)
                 # need to parse CELL_PARAMETERS
+                #if 'cell_parameters' not in qeConf.cards:
+                #    return  #qeConf.createCard('cell_parameters')
                 cellParLines = qeConf.card('cell_parameters').lines()
-                print cellParLines
+                #print cellParLines
                 cellParType = qeConf.card('cell_parameters').arg()
                 if cellParType == 'cubic' or cellParType == None:
                     self._type = 'generic cubic'
