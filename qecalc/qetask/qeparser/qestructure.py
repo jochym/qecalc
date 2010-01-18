@@ -220,8 +220,8 @@ class QEStructure():
             if self._element(a) not in atomNames:
                 atomNames.append(self._element(a))
         
-        print atomNames
-        print len(massList)
+        #print atomNames
+        #print len(massList)
         for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
@@ -309,8 +309,8 @@ class QEStructure():
             if self._element(a) not in atomNames:
                 atomNames.append(self._element(a))
         
-        print atomNames
-        print len(massList)
+        #print atomNames
+        #print len(massList)
         for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
