@@ -38,7 +38,8 @@ class PHTask(QETask):
         'fildyn': 'matdyn',
         'fildrho': '',
         'fildvscf': '',
-        'outdir': './'
+        'outdir': './',
+        'prefix': 'pwscf'
         }
         
         if sectionName == None:

@@ -13,6 +13,10 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 from diffpy.Structure.lattice import Lattice, cosd
+
+#from matter import Lattice
+#from matter.Lattice import cosd
+
 from math import sqrt, degrees
 import numpy
 from qeinput import QEInput
@@ -142,12 +146,22 @@ class QELattice(object):
 
 
     def setLatticeFromPWInput(self, qeConf = None):
+            
         if qeConf == None:
             qeConf = self.qeConf
         else:
             self.qeConf = qeConf
         if qeConf == None:
             raise NotImplementedError("writeLatticeToPWSCF: qeConf was not properly initialized")
+    
+    
+        #self.setLattice(ibrav = 1,a = 1,b = 1,c = 1, cBC = 0,cAC = 0 ,cAB = 0)
+        #if 'system' not in self.qeConf.namelists:
+        #    if 'cell_parameters' not in self.qeConf.cards:
+        #        return
+        #    else:
+        #jr        self.ibrav = 0
+    
         if 'ibrav' in self.qeConf.namelists['system'].params:
             ibrav  = int(self.qeConf.namelist('system').param('ibrav'))
             if ibrav >= 0:
@@ -312,7 +326,7 @@ class QELattice(object):
         cAC = 0.0
         cAB = 0.0
         # reset Lattice:
-        self.setLattice(1. ,1 , 1, cBC ,cAC ,cAB)
+        #self.setLattice(1. ,1 , 1, cBC ,cAC ,cAB)
         if 'celldm(1)' in qeConf.namelists['system'].params:
             self._type = 'celldm' # celldm(i), i=1,6
             a = float(qeConf.namelist('system').param('celldm(1)'))

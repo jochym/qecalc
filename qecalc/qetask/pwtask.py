@@ -35,7 +35,8 @@ class PWTask(QETask):
         # QE input parser)
         self._path_defaults = {
         'outdir': './',
-        'pseudo_dir': './'
+        'pseudo_dir': './',
+        'prefix': 'pwscf'
         }
 
         if sectionName == None:
@@ -66,6 +67,8 @@ class PWTask(QETask):
         self.setting.syncPathInNamelist('outdir', 'control', 'outdir', \
                                                 self.input, self._path_defaults)
         self.setting.syncPathInNamelist('pseudo_dir', 'control', 'pseudo_dir', \
+                                                self.input, self._path_defaults)
+        self.setting.syncPathInNamelist('prefix', 'control', 'prefix', \
                                                 self.input, self._path_defaults)
 
 

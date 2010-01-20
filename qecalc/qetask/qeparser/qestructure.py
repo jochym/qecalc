@@ -12,10 +12,16 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 from diffpy.Structure.structure import Structure
 from diffpy.Structure.atom import Atom
 from diffpy.Structure.lattice import cosd, Lattice
 from diffpy.Structure.SymmetryUtilities import equalPositions
+
+
+#from matter import Structure, Atom, Lattice
+#from matter.Lattice import cosd
+#from matter.SymmetryUtilities import equalPositions
 
 from qelattice import QELattice
 import numpy
@@ -295,10 +301,7 @@ class QEStructure():
         #reducedStructure = Structure(diffpyStructure)
         reducedStructure = structure
 
-
         reducedStructure.placeInLattice(Lattice(base=qeLattice.diffpy().base))
-
-        #print reducedStructure
 
         # collect atoms that are at equivalent position to some previous atom
         duplicates = set([a1

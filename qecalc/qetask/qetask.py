@@ -72,45 +72,6 @@ class QETask(object):
         return 'Launcher'
 
 
-    def _check(self, x):
-        """
-        Will check the exit status of the program to be executed
-        """
-        signal = x & 0xFF
-        exitcode = (x >> 8) & 0xFF
-        if exitcode != 0:
-            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine())
-
-    def _run(self):
-        if os.path.exists('CRASH'):
-            os.remove('CRASH')
-
-        outdir = self.setting.get('outdir')
-        if outdir != None:
-            os.system(self.setting.paraRemoteShell + ' mkdir -p ' + outdir)
-
-        if self.setting.get('useTorque'):
-            if self.isSerial():
-                if self.setting.get('serialPrefix') == '':
-                    self._check(os.system(self.cmdLine()))
-                else:
-                    self._torque.serial(self.cmdLine(), torqueParams = self.setting.serialTorqueParams)
-            else:
-                self._torque.serial(self.cmdLine(), torqueParams = self.setting.paraTorqueParams)
-        else:
-            self._check(os.system(self.cmdLine()))
-
-#        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
-#            if self.setting.useTorque:
-#                self._torque.serial(self.cmdLine())
-#            else:
-#                self._check(os.system(self.cmdLine()))
-#        else:
-#            self._check(os.system(self.cmdLine()))
-        if os.path.exists('CRASH'):
-            raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
-
-
     def syncSetting(self):
         """
         Will syncronise QE input file with class Setting for given task (QE input
@@ -214,6 +175,44 @@ class QETask(object):
 #            else:
 #                return False
 
+
+    def _check(self, x):
+        """
+        Will check the exit status of the program to be executed
+        """
+        signal = x & 0xFF
+        exitcode = (x >> 8) & 0xFF
+        if exitcode != 0:
+            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine())
+
+    def _run(self):
+        if os.path.exists('CRASH'):
+            os.remove('CRASH')
+
+        outdir = self.setting.get('outdir')
+        if outdir != None:
+            os.system(self.setting.paraRemoteShell + ' mkdir -p ' + outdir)
+
+        if self.setting.get('useTorque'):
+            if self.isSerial():
+                if self.setting.get('serialPrefix') == '':
+                    self._check(os.system(self.cmdLine()))
+                else:
+                    self._torque.serial(self.cmdLine(), torqueParams = self.setting.serialTorqueParams)
+            else:
+                self._torque.serial(self.cmdLine(), torqueParams = self.setting.paraTorqueParams)
+        else:
+            self._check(os.system(self.cmdLine()))
+
+#        if self.setting.paraPrefix != '' and self.setting.paraPrefix in self.cmdLine():
+#            if self.setting.useTorque:
+#                self._torque.serial(self.cmdLine())
+#            else:
+#                self._check(os.system(self.cmdLine()))
+#        else:
+#            self._check(os.system(self.cmdLine()))
+        if os.path.exists('CRASH'):
+            raise Exception("Task " + self.name() + " crashed: 'CRASH' file was discovered")
 
     def _getCmdLine(self, executable, input, output):
         self._initCmdLineParams()

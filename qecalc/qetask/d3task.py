@@ -37,7 +37,8 @@ class D3Task(QETask):
         'fildyn': 'd3dyn',
         'fildrho': ' ',
         'fild0rho': ' ',
-        'outdir': './'
+        'outdir': './',
+        'prefix': 'pwscf'
         }
         
         if sectionName == None:

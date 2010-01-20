@@ -36,7 +36,8 @@ class DOSTask(QETask):
         # QE input parser)
         self._path_defaults = {
         'fldos': 'fldos.dos',
-        'outdir': './'
+        'outdir': './',
+        'prefix': 'pwscf',
         }
         
         if sectionName == None:
