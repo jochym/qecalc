@@ -88,8 +88,7 @@ class QETorque:
 
 
 if __name__ == "__main__":
-    torque = QETorque('config.ini')
-    torque.serial('ps')
+    print 'Hello World';
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 6, 2009 10:13:47 PM$"
