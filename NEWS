@@ -1,3 +1,7 @@
+News in version 0.2.3
+- prefix variable in Setting wil override all prefixes in tasks
+- added projwfc task
+
 News in version 0.2.2:
 - section name of config.ini file can be passed to any task. Allowing to have
 - calcs can be initialized by task lists and as well as lists with section names

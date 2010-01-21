@@ -4,7 +4,7 @@
 # QEcalc              by DANSE Inelastic group
 #                     Nikolay Markovskiy
 #                     California Institute of Technology
-#                     (C) 2009  All Rights Reserved
+#                     (C) 2010  All Rights Reserved
 #
 # File coded by:      Nikolay Markovskiy
 #
@@ -12,6 +12,8 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
 
 from baseoutput import BaseOutput
 
@@ -25,6 +27,5 @@ class Output(BaseOutput):
 if __name__ == "__main__":
     print "Hello World";
 
-
 __author__="Nikolay Markovskiy"
-__date__ ="$Nov 3, 2009 6:56:53 PM$"
+__date__ ="$Jan 20, 2010 5:31:02 PM$"
