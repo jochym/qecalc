@@ -94,7 +94,7 @@ def test():
     print qeOut.properties()
 
 if __name__ == "__main__":
-    test()
+    #test()
     print "Hello World";
 
 __author__="Nikolay Markovskiy"

@@ -482,13 +482,14 @@ def testMgB2():
 
 
 if __name__ == "__main__":
+    pass
     #testMatdyn()
     #testDynmat()
     #testFile()
     #testCards()
     #testComma()
     #testHeader()
-    testMgB2()
+    #testMgB2()
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"
 

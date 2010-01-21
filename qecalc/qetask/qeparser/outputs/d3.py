@@ -130,12 +130,6 @@ class Output(BaseOutput):
 
 if __name__ == "__main__":
     print "Hello World";
-    qpoints, d3tensor = parse_d3('si.anh_X','si.d3X.out')
-    print 'qpoints are', qpoints
-    for q in range(0,len(qpoints)):
-          print 'd3tensors of qpoint', qpoints[q], 'is:'
-          print d3tensor[q]
-          print ' '
 
 __author__="Xiaoli Tang"
 __date__ ="$Nov 28, 2009 4:57:29 PM$"

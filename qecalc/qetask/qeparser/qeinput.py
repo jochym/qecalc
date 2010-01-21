@@ -199,9 +199,10 @@ def testAttach():
 
 
 if __name__ == "__main__":
+    pass
     #testCreateConfig()
     #testParseConfig()
-    testAttach()
+    #testAttach()
 
 
 

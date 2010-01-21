@@ -115,9 +115,4 @@ class QECalc(object):
 
 
 if __name__ == '__main__':
-    qe = QECalc('config.ini')
-    qe.qeConfig.setNamelistParameter('system', 'ecutwfc', 44)
-    qe.qeConfig.save(qe.qeConfig.filename)
-    print qe.getkPoints().shape
-    qe.setkPointsAutomatic(numpy.array([17, 33, 12, 0, 0, 0]))
-    print 'ibrav' in qe.qeConfig.namelists['system'].params
+    pass
