@@ -12,7 +12,7 @@
 #
 
 PROJECT = qecalc
-PACKAGE = qecalc/qetask/qeparser/outputs
+PACKAGE = qetask/qeparser/outputs
 
 BUILD_DIRS = \
 
@@ -24,7 +24,7 @@ RECURSE_DIRS = $(BUILD_DIRS) $(OTHER_DIRS)
 #--------------------------------------------------------------------------
 #
 
-all: export
+all: export-package-python-modules  #export
 	BLD_ACTION="all" $(MM) recurse
 
 tidy::
@@ -50,10 +50,6 @@ EXPORT_PYTHON_MODULES = \
     pw.py \
     q2r.py \
     qe_io_dict.py \
-
-
-export:: export-python-modules
-	BLD_ACTION="export" $(MM) recurse
 
 
 __date__ = "$Jan 17, 2010 4:13:02 PM$"

@@ -12,7 +12,7 @@
 #
 
 PROJECT = qecalc
-PACKAGE = qecalc
+PACKAGE = 
 
 BUILD_DIRS = \
     qetask \
@@ -25,7 +25,7 @@ RECURSE_DIRS = $(BUILD_DIRS) $(OTHER_DIRS)
 #--------------------------------------------------------------------------
 #
 
-all: export
+all: export-package-python-modules  #export-python-modules
 	BLD_ACTION="all" $(MM) recurse
 
 tidy::
@@ -48,9 +48,6 @@ EXPORT_PYTHON_MODULES = \
     qecalc.py \
     singlephononcalc.py \
 
-
-export:: export-python-modules
-	BLD_ACTION="export" $(MM) recurse
 
 
 __date__ = "$Jan 17, 2010 4:13:02 PM$"

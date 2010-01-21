@@ -12,7 +12,7 @@
 #
 
 PROJECT = qecalc
-PACKAGE = qecalc/qetask
+PACKAGE = qetask
 
 BUILD_DIRS = \
     qeparser \
@@ -25,7 +25,7 @@ RECURSE_DIRS = $(BUILD_DIRS) $(OTHER_DIRS)
 #--------------------------------------------------------------------------
 #
 
-all: export
+all: export-package-python-modules #export-python-modules
 	BLD_ACTION="all" $(MM) recurse
 
 tidy::
@@ -55,9 +55,6 @@ EXPORT_PYTHON_MODULES = \
     setting.py \
     taskmerger.py \
 
-
-export:: export-python-modules
-	BLD_ACTION="export" $(MM) recurse
 
 
 __date__ = "$Jan 17, 2010 4:13:02 PM$"
