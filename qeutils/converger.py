@@ -79,12 +79,12 @@ class Converger():
                 calc.pw.input.kpoints.setAutomatic(value)
             else:
                 calc.pw.input.namelist(whatPossible[what]).addParam(what, value)
+            print '\n\nStep: ', iStep
+            print what, ': ', value
             calc.pw.input.save()
             calc.launch()
             propertyName = self.lookupTable[self.taskName][1]
-            print '\nStep: ', iStep
-            print what, ': ', value
-            print propertyName + ': ', calc.lookupProperty(propertyName)
+            print '\n', propertyName + ': ', calc.lookupProperty(propertyName)
             runHistory.append( calc.lookupProperty(propertyName) )
             if iStep >= 2:
                 if self.isConverged(runHistory): break
