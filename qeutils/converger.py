@@ -15,25 +15,43 @@
 from qecalc.pwcalc import PWCalc
 from qecalc.singlephononcalc import SinglePhononCalc
 import numpy
+from qecalc.qetask.setting import Setting
 
-class Converger():
+class Converger(Setting):
 # value to converge with respect to k-points or different parameters in 'system'
 # namelist
 # currently can be 'total energy', 'single phonon', or 'geometry':
-    def __init__(self, filename = None, configString = None, taskName = 'total energy', tolerance = 1, nMaxSteps = 10):
+    def __init__(self, filename = None, configString = None, sectionName = 'Converger',\
+                      taskName = None, tolerance = 1, nMaxSteps = 10):
         """taskName - currently can be 'total energy', 'single phonon',
            or 'geometry'
            tolerance -  task convergence criteria in percents
            nMaxSteps =  maximum number of optimization steps for
            the optimization routines"""
+        
+        Setting.__init__(filename, configString)
 
         # define calcs:
         self.pwCalc = PWCalc(filename, configString)
         self.singlePhononCalc = SinglePhononCalc(filename, configString)
 
-        self.taskName = taskName
-        self.tolerance = tolerance
-        self.nMaxSteps = nMaxSteps
+        if taskName == None:
+            import ConfigParser
+            configDic = {
+                            'taskName'  : 'total energy',
+                            'tolerance ': '0.1',
+                            'what'      : 'ecutwfc',
+                            'startValue': None,
+                            'step'      : None,
+                            'multiply'  : None,
+                        }
+
+            self.section(sectionName, configDic)
+
+        else:
+            self.taskName = taskName
+            self.tolerance = tolerance
+            self.nMaxSteps = nMaxSteps
 
         # defines lookupTable: specifies capable Calc and property of interest
         # which can be looked up in output parsers
@@ -47,7 +65,7 @@ class Converger():
         estimator's name is not known"
 
 
-    def converge(self, what, startValue, step = None, multiply = None):
+    def converge(self, what = None, startValue = None, step = None, multiply = None):
         """what - variable name from pw input, in case of k-points,
            what = 'kpoints'
            params -  extraparameters(if required for given property)"""
@@ -61,6 +79,15 @@ class Converger():
                         'path_thr'     : 'ions',
                         'kpoints'      : 'k_points'
                         }
+        if what == None:
+            what = self.what
+            startValue = self.startValue
+            step = self.step
+            multiply = self.multiply
+        else:
+            if what == startValue == step == None or\
+               what == startValue == multiply == None:
+                raise('Converger.converge: Converger was not properly initialized')
         calc = self.lookupTable[self.taskName][0]
         # this implies all available calcs have pw task in them:
         calc.pw.input.parse()
