@@ -29,7 +29,7 @@ class Converger(Setting):
            nMaxSteps =  maximum number of optimization steps for
            the optimization routines"""
         
-        Setting.__init__(filename, configString)
+        Setting.__init__( self, filename, configString )
 
         # define calcs:
         self.pwCalc = PWCalc(filename, configString)
@@ -98,7 +98,8 @@ class Converger(Setting):
         else:
             if startValue == None and step == None or\
                startValue == None and multiply == None:
-                raise('Converger.converge: Converger was not properly initialized')
+                raise('Converger.converge: starting value and increment\
+                                                         were not properly set')
         calc = self.lookupTable[self.taskName][0]
         # this implies all available calcs have pw task in them:
         calc.pw.input.parse()
