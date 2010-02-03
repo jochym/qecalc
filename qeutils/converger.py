@@ -28,7 +28,7 @@ class Converger(Setting):
            tolerance -  task convergence criteria in percents
            nMaxSteps =  maximum number of optimization steps for
            the optimization routines"""
-        
+
         Setting.__init__( self, filename, configString )
 
         # define calcs:
@@ -40,6 +40,7 @@ class Converger(Setting):
             configDic = {
                             'taskName'  : 'total energy',
                             'tolerance ': '0.1',
+                            'nMaxSteps' : '10',
                             'what'      : 'ecutwfc',
                             'startValue': None,
                             'step'      : None,
@@ -48,12 +49,15 @@ class Converger(Setting):
 
             self.section(sectionName, configDic)
             self.tolerance = float(self.tolerance)
+            self.nMaxSteps = int(self.nMaxSteps)
             if self.what == 'kpoints':
                 self.startValue = map(int, self.startValue.split())
-                self.step = map(int, step.split())
+                if self.step != None:
+                    self.step = map(int, self.step.split())
             else:
                 self.startValue = float(self.startValue)
-                self.step = float(self.step)
+                if self.step != None:
+                    self.step = float(self.step)
             if self.multiply != None:
                 self.multiply = float(self.multiply)
 
@@ -111,7 +115,7 @@ class Converger(Setting):
 
         value = numpy.array(startValue)
         step = numpy.array(step)
-        
+
         runHistory = []
         for iStep in range(self.nMaxSteps):
             if what == 'kpoints':
@@ -142,7 +146,7 @@ class Converger(Setting):
         self.convergedValue = value
         return value
 
-        
+
 
     def isConverged(self,runHistory):
         import math
@@ -167,4 +171,3 @@ class Converger(Setting):
         else:
             #print runHistory[-1]
             return False
-    
