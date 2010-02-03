@@ -49,11 +49,11 @@ class Converger(Setting):
             self.section(sectionName, configDic)
             self.tolerance = float(self.tolerance)
             if self.what == 'kpoints':
-                self.startValue = map(int, startValue.split())
+                self.startValue = map(int, self.startValue.split())
                 self.step = map(int, step.split())
             else:
-                self.startValue = float(startValue)
-                self.step = float(step)
+                self.startValue = float(self.startValue)
+                self.step = float(self.step)
             if self.multiply != None:
                 self.multiply = float(self.multiply)
 
