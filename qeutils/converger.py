@@ -47,6 +47,15 @@ class Converger(Setting):
                         }
 
             self.section(sectionName, configDic)
+            self.tolerance = float(self.tolerance)
+            if self.what == 'kpoints':
+                self.startValue = map(int, startValue.split())
+                self.step = map(int, step.split())
+            else:
+                self.startValue = float(startValue)
+                self.step = float(step)
+            if self.multiply != None:
+                self.multiply = float(self.multiply)
 
         else:
             self.taskName = taskName
@@ -79,14 +88,16 @@ class Converger(Setting):
                         'path_thr'     : 'ions',
                         'kpoints'      : 'k_points'
                         }
+
         if what == None:
+            # look up in config file
             what = self.what
             startValue = self.startValue
             step = self.step
             multiply = self.multiply
         else:
-            if what == startValue == step == None or\
-               what == startValue == multiply == None:
+            if startValue == None and step == None or\
+               startValue == None and multiply == None:
                 raise('Converger.converge: Converger was not properly initialized')
         calc = self.lookupTable[self.taskName][0]
         # this implies all available calcs have pw task in them:
