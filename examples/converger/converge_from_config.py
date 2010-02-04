@@ -24,9 +24,7 @@ configString = """
 paraPrefix:   mpiexec -n 8
 paraPostfix: -npool 8
 
-
 outdir: temp/
-
 
 [pw.x]
 # pw input/output files
@@ -46,3 +44,7 @@ multiply: 0.1
 if __name__ == "__main__":
     task = Converger(configString = configString)
     opt_value = task.converge()
+
+#    configFileName = 'config.ini'
+#    task = Converger(filename = configFileName)
+#    opt_value = task.converge()

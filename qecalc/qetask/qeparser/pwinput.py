@@ -29,7 +29,7 @@ class PWInput(QEInput):
         self.structure.parseInput()
         self.kpoints.parse()
 
-    def toString(self):
+    def toString(self):       
         s = ''
         namelistOrder = {
         0 : 'control',
