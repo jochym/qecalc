@@ -8,8 +8,10 @@ QECalc offers a set of Quantum Espresso calculators, designed for various
 purposes. Each Calc is a list of tasks. Each task is executed sequantially
 after another on launch of a given Calc:
 
-.. image:: ../overview_2.png
+.. figure:: ../overview_2.png
    :width:  512
+
+   *Fig. Class backbone of QECalc*
 
 For example, PWCalc consists of a single task, pw.x and SignlePhononCalc
 contains  [pw.x, ph.x, dynmat.x] tasks.
@@ -19,8 +21,10 @@ information it needs to launch itself as well as
 how to parse its inputs and outputs. New tasks can be easily defined based on
 existing patterns. The following diagram addresses the relation between tasks:
 
-.. image:: ../tasks_2.png
+.. figure:: ../tasks_2.png
    :width:  512
+
+   *Fig. QETask family of classes*
 
 Configuration
 ---------------------

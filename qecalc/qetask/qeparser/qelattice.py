@@ -75,7 +75,9 @@ class QELattice(object):
         cBC = cAC = cAB = 0.0
         v = numpy.array(vectors, dtype = float)
         if ibrav == 0:
-            raise NotImplementedError
+            self.setLattice(ibrav = 0, a =  1.0, base = vectors )
+            return
+            #raise NotImplementedError
         # sc simple cubic:
         if ibrav == 1:
             a = v[0,0]
