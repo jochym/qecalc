@@ -22,7 +22,7 @@ a library of such QETasks for several QE modules (e.g. pw.x, ph.x etc) and defin
 several Calcs based on lists of these Tasks. One convenient example
 is the class Converger in qeutils directory  which can be  used to converge such
 properties as 'total energy' and 'single phonon' with respect to
-any iterable variable of pw.x config file.
+many iterable variables of pw.x config file.
 
 Please, read INSTALL file for installation instructions and/or go to the project's
 documentation at http://docs.danse.us/AbInitio/espresso/qecalc
