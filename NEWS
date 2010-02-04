@@ -4,6 +4,7 @@ News in version 0.2.3
 - added projwfc task
 - class Converger can be initialized from a config file or config string,
   analogous to QETask
+- Added new examples and updated old ones
 
 News in version 0.2.2:
 - section name of config.ini file can be passed to any task. Allowing to have

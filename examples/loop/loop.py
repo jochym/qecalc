@@ -12,8 +12,6 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
 
 from qecalc.qetask.pwtask import PWTask
 
@@ -31,11 +29,13 @@ if __name__ == "__main__":
     pw.syncSetting()
     lat_params = [5.5, 5.6, 5.7]
     for a in lat_params:
-        # whole lattice and structure will be auto updated on change in a:
+        # whole lattice and structure will be auto updated on change in a according
+        # to lattice symmetry:
         pw.input.structure.lattice.a = a
         # changes in structure should be propagated into the parsing object:
         pw.input.structure.updatePWInput()
         pw.input.save()
+        # or just use pw.input.structure.save()
         pw.launch()
         print 'Stress = ', pw.output.property('stress')
 
@@ -47,5 +47,3 @@ if __name__ == "__main__":
         pw.launch()
         print 'Total Energy = ', pw.output.property('total energy')
 
-__author__="Nikolay Markovskiy"
-__date__ ="$Feb 3, 2010 5:00:33 PM$"
