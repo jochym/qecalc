@@ -23,27 +23,9 @@ configString = """
 paraPrefix:   mpiexec -n 8
 paraPostfix: -npool 8
 
-serialPrefix: mpiexec -n 1
-serialPostfix:
-
-# default: False
-#useTorque: True
-#paraPrefix: mpirun --mca btl openib,sm,self
-#paraPostfix: -npool 900
-
-#serialPrefix: mpirun
-#serialPostfix:
-
-#Name of a script to execute a command on multiple nodes
-#relevant if outdir is not located on Parallel/Network File system.
-#Default value is empty
-#paraRemoteShell: bpsh -a
-
-# this string will be passed to qsub, -d workingDir -V are already there:
-#paraTorqueParams: -l nodes=4:ppn=12 -N myjob -j oe
-#serialTorqueParams: -l nodes=1:ppn=1 -N myjob -j oe
 
 outdir: temp/
+
 
 
 [pw.x]
