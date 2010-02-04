@@ -12,7 +12,7 @@ after another on launch of a given Calc:
    :width:  512
 
 For example, PWCalc consists of a single task, pw.x and SignlePhononCalc
-contains  [pw.x, ph.x, dynmat.x]
+contains  [pw.x, ph.x, dynmat.x] tasks.
 
 Each task corresponds to an executable from QE package and contains all the
 information it needs to launch itself as well as
@@ -24,7 +24,7 @@ existing patterns. The following diagram addresses the relation between tasks:
 
 Configuration
 ---------------------
-QECalc settings can be provided either through a config file or config string,
+QECalc settings can be provided either through a config file or a config string,
 placed into the python script. This configuration contains launching parameters
 as well as input/output variables
 descriptions relevant to each QE executable. If some parameters are not specified,
@@ -44,12 +44,12 @@ Example of a file config.ini (or configString) is provided below::
     outdir: temp/
 
     [pw.x]
-    pwfInput: scf.in
+    pwInput: scf.in
     pwOutput: scf.out
 
 [Launcher] section is common for all tasks (but its variables can be independently modified
 for each specific task during the execution). Some tasks are serial, some are
-parallel. para/serial variables specify launching parameters for these two classes
+parallel, para/serial variables specify launching parameters for these two classes
 of tasks. If serialPrefix is empty, a serial task will be launched on a head node.
 
 Task sections can also contain Quantum Espresso varialbes, corresponding to input/output
@@ -58,13 +58,13 @@ file  or 'fildyn' from ph.x input file. Any file variable, specified in a sectio
 of config.ini will override one in corresponding QE config file. If none is specified,
 QECalc will try to resolve their default values internally, so it will not affect parsing.
 For example, default value of 'flvec' is 'matdyn.modes' and it does not have
-to be specified in matdyn config file nor in config.ini.
+to be specified neither in matdyn config file nor in config.ini.
 
 if 'outdir' or 'prefix' is specified in config.ini, it will override any prefix or outdir specified
 in QE config input files of tasks containing these fields.
 
-One does not have to specify all the sections. if a section is ommited, default
-values are assumed.
+One does not have to include all the sections. if a section is ommited, default
+values are used.
 
 How to pass the configuration::
 
@@ -79,8 +79,8 @@ How to pass the configuration::
 
 Torque
 --------
-QECalc can use torque for launching jobs. By default, on each its launch, torque
-launcher will wait till job's completion and check it's exit status.
+QECalc can use torque. By default, on each task launch, torque
+launcher will wait till the job's completion and check it's exit status.
 
 Example of configuration file using Torque::
 
@@ -105,7 +105,7 @@ Example of configuration file using Torque::
     outdir: /scratch/user/temp/
 
     [pw.x]
-    pwfInput: scf.in
+    pwInput: scf.in
     pwOutput: scf.out
     """
     from qecalc.qetask.pwtask import PWTask
@@ -129,7 +129,7 @@ is used)::
     print mphon.lookupProperty('total energy', withUnits = True)
     print mphon.lookupProperty('stress')
     print mphon.lookupProperty('forces', withUnits = True)
-    # this will output out qpoints, frequencies and eigen modes
+    # this will output qpoints, frequencies and eigen modes
     vecs, freqs, qpts = mphon.lookupProperty('multi phonon')
 
 It should be noted, in order to run this example, config.ini, pw.x, ph.x, q2r.x,
@@ -162,12 +162,14 @@ The following example processes outputs only (assuming outputs are available)::
     mphon = MultiPhononCalc('config.ini')
 
     for task in mphon.getAllTasks():
+        #add this line if need to resolve some of the output file names from QE input files (e.g. 'flvec'):
+        #task.syncSetting()
         task.output.parse()
 
 Example 2: Converger
 ----------------------
 
-Class converger will converge a value  with respect to k-points or
+Class Converger will converge a value  with respect to k-points or
 different parameters  of pw.x input file. Currently, the value can be 'total energy',
 'fermi energy' or 'single phonon'::
 
@@ -181,7 +183,7 @@ Example 3: Loops
 ------------------
 
 For greater flexibility, tasks should be used separately. Here we will define
-a couple of loops::
+a couple of loops using PWTask::
 
     from qecalc.qetask.pwtask import PWTask
 

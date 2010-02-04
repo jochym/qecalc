@@ -4,8 +4,10 @@ Quick Start
 Installation
 -------------
 
-There are two ways of installing qecalc. One is easy_install and another is
-checking out current development version from our svn repository.
+QECalc itself is pure Python, but it depends on `NumPy <http://numpy.scipy.org>`_,
+`diffpy.Structure <http://pypi.python.org/pypi/diffpy.Structure>`_, 
+and `matplotlib <http://matplotlib.sourceforge.net>`_  packages. Matplot lib is used in few examples and is not needed for QECalc to work.  
+There are two ways of installing QECalc. One is easy_install and another is checking out current development version from our svn repository.
 
 
 For easy_install option make sure  setuptools is installed and type::
@@ -21,7 +23,7 @@ or for custom location (which has to be in $PYTHONPATH) type::
 svn option allows to get current development snapshot of QECalc. You should have svn client installed
 and go through the following steps:
 
-1. Go to your installation dir ($INSDIR), for example, ~/apps and type::
+1. Go to your installation dir ($INSDIR), for example, ~/lib-py and type::
 
        svn co svn://svn@danse.us/AbInitio/espresso/qecalc
 
@@ -31,9 +33,9 @@ and go through the following steps:
 
        export PYTHONPATH=$INSDIR/qecalc:$PYTHONPATH
 
-  ($INSDIR = ~/apps in this example)
+  ($INSDIR = ~/lib-py in this example)
 
-3. This module also depends on `diffpy.Structure <http://pypi.python.org/pypi/diffpy.Structure>`_  package. Make sure  setuptools is installed and type::
+3. This module also depends on `diffpy.Structure <http://pypi.python.org/pypi/diffpy.Structure>`_  packages. Make sure  setuptools is installed and type::
 
     easy_install diffpy.Structure
 
