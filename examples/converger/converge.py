@@ -47,7 +47,8 @@ opt_conv_thr = task.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.
 opt_ecutwfc = task.converge(what = 'ecutwfc', startValue = 18, step = 4)
 opt_ecutrho = task.converge('ecutrho', opt_ecutwfc*4, 16)
 
-print 'Complete History:', task.history
+print 'Last run history:', task.runHistory
+print 'Complete history:', task.history
 #task.converge('kpoints',[12,12,12],[2,2,2])
 
 

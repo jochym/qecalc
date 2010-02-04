@@ -30,7 +30,7 @@ class Converger(Setting):
            the optimization routines"""
 
         Setting.__init__( self, filename, configString )
-        self.history = {}
+        self.history = []
         # define calcs:
         self.pwCalc = PWCalc(filename, configString)
         self.pwCalc.pw.cleanOutDir = True
