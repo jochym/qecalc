@@ -3,18 +3,18 @@ for plane wave Density Functional Theory (DFT) and molecular dynamics calculatio
 Often users need to go beyond basic capabilities of an ab initio program and
 use its outputs for more advanced tasks. Some examples:
 
-  * convergence studies of a property of interest with respect to ranging
+  * Convergence studies of a property of interest with respect to ranging
     values of different input parameters
   * Various optimization and minimization problems
   * Plotting and data processing
 
-QECalc is a set of Quantum Espresso launchers and input/ouput parsers available
-organized  under single API.
+QECalc is a set of Quantum Espresso launchers and input/ouput parsers 
+organized  under a single API.
 Its primary goal is to use its classes to streamline user's work flow,
 offer new functionality and provide the machinery  to build new  features using
 numpy, scipy, and matplotlib.
 
-Please read INSTALL file for installation instruction and/ or go to the project's
+Please, read INSTALL file for installation instruction and/ or go to the project's
 documentation at http://docs.danse.us/AbInitio/espresso/qecalc
 
 You may also check for new QECalc version at

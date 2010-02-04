@@ -92,11 +92,11 @@ Inheritance diagrams of QETask family of classes
 
 
 
-Class overview of QECalc
-------------------------------
+.. todo: Class overview of QECalc
+.. todo: ------------------------------
 
-.. image:: ../QECalc_diagram.png
-   :width:  600
+.. todo: .. image:: ../QECalc_diagram.png
+.. todo:    :width:  600
 
 
 .. todo: don't forget to replace the dataobjects with the current ones

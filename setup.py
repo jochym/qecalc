@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 # define distribution
 setup(
         name = "qecalc",
-        version = "0.2.2",
+        version = "0.2.3",
         #namespace_packages = ['matter'],
         packages = find_packages(exclude=['DOC','examples']),
         test_suite = 'examples',

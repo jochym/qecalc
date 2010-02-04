@@ -1,4 +1,4 @@
-Tutorial
+Quick Tutorial
 ========
 
 Introduction
@@ -18,7 +18,7 @@ Its primary goal is to use its classes to streamline user's work flow,
 offer new functionality and provide the machinery  to build new  features using
 numpy, scipy, and matplotlib. One such example can be the class Converger from
 qecalc/converger.py which can be  used to converge such
-properties as 'total energy', 'geometry', and 'single phonon' with respect to
+properties as 'total energy' and 'single phonon' with respect to
 any iteratable variable of PW config file. More examples can be seen in examples
 directory. Sources can be checked out following the installation instructions.
 

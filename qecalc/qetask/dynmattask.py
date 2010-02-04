@@ -27,10 +27,6 @@ class DynmatTask(QETask):
         configDic = {
         'dynmatInput': 'dyn.in',
         'dynmatOutput': 'dyn.out',
- #       'dynmatfildyn': None,
- #       'dynmatfilout': None,
- #       'dynmatfilmol': None,
- #       'dynmatfilxsf': None,
         }
 
         # QE input file's path containing variables' defaults (will be moved to

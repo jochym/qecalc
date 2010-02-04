@@ -29,8 +29,8 @@ if __name__ == "__main__":
     pw.syncSetting()
     lat_params = [5.5, 5.6, 5.7]
     for a in lat_params:
-        # whole lattice and structure will be auto updated on change in a according
-        # to lattice symmetry:
+        # whole lattice and structure will be auto updated on change in 'a' according
+        # to the lattice symmetry (ibrav):
         pw.input.structure.lattice.a = a
         # changes in structure should be propagated into the parsing object:
         pw.input.structure.updatePWInput()

@@ -24,7 +24,6 @@ class Converger(Setting):
     def __init__(self, filename = None, configString = None, sectionName = 'Converger',\
                       taskName = None, tolerance = 1, nMaxSteps = 10, cleanOutDir = True):
         """taskName - currently can be 'total energy', 'single phonon',
-           or 'geometry'
            tolerance -  task convergence criteria in percents
            nMaxSteps =  maximum number of optimization steps for
            the optimization routines"""
