@@ -23,10 +23,7 @@ configString = """
 paraPrefix:   mpiexec -n 8
 paraPostfix: -npool 8
 
-
 outdir: temp/
-
-
 
 [pw.x]
 # pw input/output files
@@ -45,12 +42,12 @@ dynmatInput:  dynmat.in
 dynmatOutput: dyn.out
 """
 
-opt = Converger(configString = configString, taskName = 'total energy', tolerance = 0.1)
-conv_thr = opt.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.1)
-ecut = opt.converge(what = 'ecutwfc', startValue = 18, step = 4)
-ecutrho = opt.converge('ecutrho', ecut*4, 16)
-#opt.converge('kpoints',[12,12,12],[2,2,2])
+task = Converger(configString = configString, taskName = 'total energy', tolerance = 0.1)
+opt_conv_thr = task.converge(what = 'conv_thr', startValue = 1e-4, multiply = 0.1)
+opt_ecutwfc = task.converge(what = 'ecutwfc', startValue = 18, step = 4)
+opt_ecutrho = task.converge('ecutrho', opt_ecutwfc*4, 16)
 
-#print opt.getForces()
-#print opt.getStress()
+print 'Complete History:', task.history
+#task.converge('kpoints',[12,12,12],[2,2,2])
+
 

@@ -22,7 +22,7 @@ class Converger(Setting):
 # namelist
 # currently can be 'total energy', 'single phonon', or 'geometry':
     def __init__(self, filename = None, configString = None, sectionName = 'Converger',\
-                      taskName = None, tolerance = 1, nMaxSteps = 10):
+                      taskName = None, tolerance = 1, nMaxSteps = 10, cleanOutDir = True):
         """taskName - currently can be 'total energy', 'single phonon',
            or 'geometry'
            tolerance -  task convergence criteria in percents
@@ -30,9 +30,10 @@ class Converger(Setting):
            the optimization routines"""
 
         Setting.__init__( self, filename, configString )
-
+        self.history = {}
         # define calcs:
         self.pwCalc = PWCalc(filename, configString)
+        self.pwCalc.pw.cleanOutDir = True
         self.singlePhononCalc = SinglePhononCalc(filename, configString)
 
         if taskName == None:
@@ -92,7 +93,7 @@ class Converger(Setting):
                         'path_thr'     : 'ions',
                         'kpoints'      : 'k_points'
                         }
-
+        self.runHistory = []
         if what == None:
             # look up in config file
             what = self.what
@@ -116,7 +117,6 @@ class Converger(Setting):
         value = numpy.array(startValue)
         step = numpy.array(step)
 
-        runHistory = []
         for iStep in range(self.nMaxSteps):
             if what == 'kpoints':
                 calc.pw.input.kpoints.setAutomatic(value)
@@ -128,9 +128,9 @@ class Converger(Setting):
             calc.launch()
             propertyName = self.lookupTable[self.taskName][1]
             print '\n', propertyName + ': ', calc.lookupProperty(propertyName)
-            runHistory.append( calc.lookupProperty(propertyName) )
+            self.runHistory.append( calc.lookupProperty(propertyName) )
             if iStep >= 2:
-                if self.isConverged(runHistory): break
+                if self.isConverged(self.runHistory): break
             if multiply !=None:
                 value = value*numpy.array(multiply)
             else:
@@ -141,9 +141,10 @@ class Converger(Setting):
             calc.pw.input.structure.save()
 
         print 'optimized ' + what + ' value : ', value, '\n'
-        print "Printing run history:\n", runHistory, '\n'
+        print "Printing run history:\n", self.runHistory, '\n'
         print "End of convergence test\n"
         self.convergedValue = value
+        self.history.append(self.runHistory)
         return value
 
 

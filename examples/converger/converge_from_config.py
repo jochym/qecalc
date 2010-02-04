@@ -45,7 +45,4 @@ multiply: 0.1
 
 if __name__ == "__main__":
     task = Converger(configString = configString)
-    opt = task.converge()
-
-__author__="Nikolay Markovskiy"
-__date__ ="$Feb 3, 2010 3:52:24 PM$"
+    opt_value = task.converge()
