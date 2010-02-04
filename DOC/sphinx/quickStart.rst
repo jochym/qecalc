@@ -18,7 +18,7 @@ or for custom location (which has to be in $PYTHONPATH) type::
 
 
 
-For svn option, you should have svn client installed
+svn option allows to get current development snapshot of QECalc. You should have svn client installed
 and go through the following steps:
 
 1. Go to your installation dir ($INSDIR), for example, ~/apps and type::
