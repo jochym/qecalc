@@ -12,7 +12,6 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 import numpy
 from qedos import QEDOS
 from qeutils import kmesh
@@ -28,7 +27,8 @@ class PhononDOS(QEDOS):
         self._qpts = None
         self.axis = []
         self.dos = []
-        self.partdos = []
+        self.partdos = {} # OrderedDict on init in PartDOS {label: pdos}
+        self.partdosElem = {} # OrderedDict on init in PartDOS {symbol: pdos}
 
         self.matdynTask = matdynTask
 
@@ -47,7 +47,8 @@ class PhononDOS(QEDOS):
         else:
             if self.structure == None:
                 raise('PartialDOS: structure was not set')
-            qpoints = kmesh.kMeshCart(nqpoints,self.structure.lattice.reciprocalBase())
+            qpoints = kmesh.kMeshCart(nqpoints, \
+                                         self.structure.lattice.reciprocalBase())
 
             #update qpoints and launch matdyn
             self.matdynTask.syncSetting()
@@ -55,28 +56,18 @@ class PhononDOS(QEDOS):
             self.matdynTask.input.save()
             self.matdynTask.launch()
             self.loadPhonons()
-            self.axis, self.dos = self.DOS()
-            self.axis, self.partdos = self.partDOS()
+            #self.axis, self.dos = self.DOS()
+            #self.axis, self.partdos = self.partDOS()
 
-    def loadPhonons(self, fname = None):
+    def loadPhonons(self):
+        self.matdynTask.syncSetting()
+        self.matdynTask.output.parse()
         self._modes, self._freqs, self._qpts =  \
-                                    self.matdyn.output.property('multi phonon')
-
+                                self.matdynTask.output.property('multi phonon')
 
     def setPhonons(self, modes, freqs, qpts):
         self._modes, self._freqs, self._qpts =   modes, freqs, qpts
 
-    def get(self):
-        return self._modes, self._freqs, self._qpts
-
-    def qpoints(self):
-        return self._qpts
-
-    def freqs(self):
-        return self._freqs
-
-    def modes(self):
-        return self._modes
 
     def setRange(self, minOmega, maxOmega, deltaOmega):
         if minOmega == None:
@@ -103,10 +94,13 @@ class PhononDOS(QEDOS):
                     norm = norm + 1.0
 
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
-        return  axis, histOmega/norm
+        self.axis, self.dos = axis, histOmega/norm
+        return  self.axis, self.dos
 
-    def partDOSType(self, atomSymbol, minOmega = None, maxOmega = None, deltaOmega = None):
+    def partDOSType(self, atomSymbol, minOmega = None, maxOmega = None, \
+                                                            deltaOmega = None):
         from numpy import real
+        raise NonImplementedError
         minOmega, maxOmega, deltaOmega   =      \
                                 self.setRange(minOmega, maxOmega, deltaOmega)
         nPoints = int((maxOmega - minOmega)/deltaOmega)
@@ -122,16 +116,25 @@ class PhononDOS(QEDOS):
                             histPartOmega[idx] = histPartOmega[idx] + weight
                             norm = norm + weight
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
+        self.axis, self.partdos = axis, histOmega/norm
         return axis, histPartOmega/norm
 
-    def partDOSAtom(self, iAtom, minOmega = None, maxOmega = None, deltaOmega = None):
+    def partDOSAtom(self, iAtom, minOmega = None, maxOmega = None, \
+                                                            deltaOmega = None):
         from numpy import real
+        from qecalc.qetask.qeparser.orderedDict import OrderedDict
         minOmega, maxOmega, deltaOmega   =      \
                                 self.setRange(minOmega, maxOmega, deltaOmega)
         nPoints = int((maxOmega - minOmega)/deltaOmega)
         histPartOmega = numpy.zeros(nPoints)
+        labels = self.structure.diffpy().getLabels()
         norm = 0.0
-        atom = structure.diffpy()[iAtom]
+
+        if self.partdos == {}:
+            self.partdos = OrderedDict()
+            for i in range( len(self.structure.diffpy()) ):
+                self.partdos[labels[i]] = []
+        atom = self.structure.diffpy()[iAtom]
         for cell_freqs, vectors in zip(self._freqs, self._modes):
             for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
                 idx = int( (abs(omega) - minOmega)/deltaOmega )
@@ -140,9 +143,26 @@ class PhononDOS(QEDOS):
                     histPartOmega[idx] = histPartOmega[idx] + weight
                     norm = norm + weight
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
-        return axis, histPartOmega/norm
+        self.axis, self.partdos[labels[iAtom]] = axis, histPartOmega/norm
+        return self.axis, self.partdos[labels[iAtom]]
 
-    def partDOS(self, iAtom = None, atomSymbol = None, minOmega = None, maxOmega = None, deltaOmega = None):
+    def partDOS(self, iAtom = None, atomSymbol = None, minOmega = None, \
+                                            maxOmega = None, deltaOmega = None):
+        """
+        calculates partial phonon DOS.
+        iAtom - number of atom in structure (partDOS will calculate
+                                             its contribution only)
+        atomSymbol - atomic symbol (partDOS will calculate
+                     contribution of all atoms with this symbol)
+        iAtom and atomSymbol are not provided, ordered dictionary
+        of histograms with unic labels is created: { 'label1': hist
+                                                         ...
+                                                    }
+        """
+        from qecalc.qetask.qeparser.orderedDict import OrderedDict
+        minOmega, maxOmega, deltaOmega   =      \
+                                self.setRange(minOmega, maxOmega, deltaOmega)
+        nPoints = int((maxOmega - minOmega)/deltaOmega)
         histPartOmega = numpy.zeros(nPoints)
         if iAtom != None:
             return self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
@@ -150,15 +170,50 @@ class PhononDOS(QEDOS):
         if atomSymbol != None:
             for iAtom, atom in enumerate(self.structure.diffpy()):
                 if atomSymbol == atom.element:
-                    axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
+                    axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, \
+                                                                   deltaOmega)
                     histPartOmega = histPartOmega + hist
             return axis, histPartOmega
-        # will return list of histograms:
-        histList = []
+        # will return OrderedDict of histograms:
+        self.dos = numpy.zeros(nPoints)
+        self.partdosElem = OrderedDict()
+        for atom in self.structure.diffpy():
+            self.partdosElem[atom.element] = numpy.zeros(nPoints)
         for iAtom, atom in enumerate(self.structure.diffpy()):
             axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
-            histList.append(hist)
-        return axis, histList
+            self.dos = self.dos + hist
+            self.partdosElem[atom.element] = self.partdosElem[atom.element] + \
+                                                                            hist
+        return axis, self.partdos
+
+    def save(self):
+        """
+        saves all DOSes
+        """
+        if self.dos != []:
+            numpy.savetxt('dos_total.dat', numpy.column_stack( (self.axis, \
+                                                                    self.dos)) )
+        if self.partdos != {}:
+            for label in self.partdos:
+                numpy.savetxt('dos_' + label + '.dat', \
+                        numpy.column_stack( (self.axis, self.partdos[label]) ) )
+
+        if self.partdosElem != {}:
+            for elem in self.partdosElem:
+                numpy.savetxt('dos_' + elem + '.dat', \
+                     numpy.column_stack( (self.axis, self.partdosElem[elem]) ) )
+
+    def get(self):
+        return self._modes, self._freqs, self._qpts
+
+    def qpoints(self):
+        return self._qpts
+
+    def freqs(self):
+        return self._freqs
+
+    def modes(self):
+        return self._modes
 
     def plot(self): pass
 

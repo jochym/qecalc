@@ -1,0 +1,7 @@
+&INPUT
+    asr = 'crystal',
+    amass(1) = 55.8470,
+    amass(2) = 50.9415,
+    flfrc = 'fe3v.fc',
+/
+
