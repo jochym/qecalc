@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quick Tutorial &mdash; qecalc v0.2.3 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.3',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="qecalc v0.2.3 documentation" href="index.html" />
+    <link rel="next" title="API" href="api.html" />
+    <link rel="prev" title="Quick Start" href="quickStart.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/pyre-logo-new.png" border="0" alt="QECalc" height="80"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quickStart.html" title="Quick Start"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+        <li><a href="http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc">QECalc trac page </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Quick Tutorial</a><ul>
+<li><a class="reference external" href="#organization">Organization</a></li>
+<li><a class="reference external" href="#configuration">Configuration</a></li>
+<li><a class="reference external" href="#torque">Torque</a></li>
+<li><a class="reference external" href="#example-1-multiphononcalc">Example 1: MultiPhononCalc</a></li>
+<li><a class="reference external" href="#example-2-converger">Example 2: Converger</a></li>
+<li><a class="reference external" href="#example-3-loops">Example 3: Loops</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="quickStart.html"
+                                  title="previous chapter">Quick Start</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="api.html"
+                                  title="next chapter">API</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/quickTutorial.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="quick-tutorial">
+<h1>Quick Tutorial<a class="headerlink" href="#quick-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="organization">
+<h2>Organization<a class="headerlink" href="#organization" title="Permalink to this headline">¶</a></h2>
+<p>QECalc offers a set of Quantum Espresso calculators, designed for various
+purposes. Each Calc is a list of tasks. Each task is executed sequantially
+after another on launch of a given Calc:</p>
+<div class="figure">
+<img alt="_images/overview_2.png" src="_images/overview_2.png" style="width: 512px;" />
+<p class="caption"><em>Fig. Class backbone of QECalc</em></p>
+</div>
+<p>For example, PWCalc consists of a single task, pw.x and SignlePhononCalc
+contains  [pw.x, ph.x, dynmat.x] tasks.</p>
+<p>Each task corresponds to an executable from QE package and contains all the
+information it needs to launch itself as well as
+how to parse its inputs and outputs. New tasks can be easily defined based on
+existing patterns. The following diagram addresses the relation between tasks:</p>
+<div class="figure">
+<img alt="_images/tasks_2.png" src="_images/tasks_2.png" style="width: 512px;" />
+<p class="caption"><em>Fig. QETask family of classes</em></p>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>QECalc settings can be provided either through a config file or a config string,
+placed into the python script. This configuration contains launching parameters
+as well as input/output variables
+descriptions relevant to each QE executable. If some parameters are not specified,
+default values are used.</p>
+<p>Example of a file config.ini (or configString) is provided below:</p>
+<div class="highlight-python"><pre>[Launcher]
+# parallelization parameters
+# if this section is empty - serial mode is used
+paraPrefix:   mpiexec -n 8
+paraPostfix: -npool 8
+
+serialPrefix: mpiexec -n 1
+serialPostfix:
+
+outdir: temp/
+
+[pw.x]
+pwInput: scf.in
+pwOutput: scf.out</pre>
+</div>
+<p>[Launcher] section is common for all tasks (but its variables can be independently modified
+for each specific task during the execution). Some tasks are serial, some are
+parallel, para/serial variables specify launching parameters for these two classes
+of tasks. If serialPrefix is empty, a serial task will be launched on a head node.</p>
+<p>Task sections can also contain Quantum Espresso varialbes, corresponding to input/output
+files which are usually  specified in QE config files. For example &#8216;flvec&#8217; from matdyn.x config
+file  or &#8216;fildyn&#8217; from ph.x input file. Any file variable, specified in a section
+of config.ini will override one in corresponding QE config file. If none is specified,
+QECalc will try to resolve their default values internally, so it will not affect parsing.
+For example, default value of &#8216;flvec&#8217; is &#8216;matdyn.modes&#8217; and it does not have
+to be specified neither in matdyn config file nor in config.ini.</p>
+<p>if &#8216;outdir&#8217; or &#8216;prefix&#8217; is specified in config.ini, it will override any prefix or outdir specified
+in QE config input files of tasks containing these fields.</p>
+<p>One does not have to include all the sections. if a section is ommited, default
+values are used.</p>
+<p>How to pass the configuration:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">qecalc.qetask.pwtask</span> <span class="kn">import</span> <span class="n">PWTask</span>
+
+<span class="n">pw</span> <span class="o">=</span> <span class="n">PWTask</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;config.ini&#39;</span><span class="p">)</span>
+<span class="c"># or</span>
+<span class="n">pw</span> <span class="o">=</span> <span class="n">PWTask</span><span class="p">(</span><span class="n">configString</span> <span class="o">=</span> <span class="n">configString</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="torque">
+<h2>Torque<a class="headerlink" href="#torque" title="Permalink to this headline">¶</a></h2>
+<p>QECalc can use torque. By default, on each task launch, torque
+launcher will wait till the job&#8217;s completion and check it&#8217;s exit status.</p>
+<p>Example of configuration file using Torque:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">configString</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+
+<span class="s">useTorque: True</span>
+<span class="s">paraPrefix: mpirun --mca btl openib,sm,self</span>
+<span class="s">paraPostfix: -npool 900</span>
+
+<span class="s">serialPrefix: mpirun</span>
+<span class="s">serialPostfix:</span>
+
+<span class="s">#Name of a script to execute a command on multiple nodes</span>
+<span class="s">#relevant if outdir is not located on Parallel/Network File system.</span>
+<span class="s">#Default value is empty</span>
+<span class="s">paraRemoteShell: bpsh -a</span>
+
+<span class="s"># this string will be passed to qsub, -d workingDir -V are already there:</span>
+<span class="s">paraTorqueParams: -l nodes=8:ppn=12 -l walltime=999:99:99 -N myjob -o stdout -e stderr</span>
+<span class="s">serialTorqueParams: -l nodes=1:ppn=1 -l walltime=999:99:99 -N myjob -o stdout -e stderr</span>
+
+<span class="s">outdir: /scratch/user/temp/</span>
+
+<span class="s">[pw.x]</span>
+<span class="s">pwInput: scf.in</span>
+<span class="s">pwOutput: scf.out</span>
+<span class="s">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">qecalc.qetask.pwtask</span> <span class="kn">import</span> <span class="n">PWTask</span>
+
+<span class="n">pw</span> <span class="o">=</span> <span class="n">PWTask</span><span class="p">(</span><span class="n">configString</span> <span class="o">=</span> <span class="n">configString</span><span class="p">)</span>
+<span class="n">pw</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-1-multiphononcalc">
+<h2>Example 1: MultiPhononCalc<a class="headerlink" href="#example-1-multiphononcalc" title="Permalink to this headline">¶</a></h2>
+<p>MultiPhononCalc consists of [pw.x, ph.x, q2r.x, matdyn.x]
+list of tasks. And pw.x and ph.x tasks are &#8216;merged&#8217; - they
+are submited as a single job (in order to share one set of outdirs when torque
+is used):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">qecalc.multiphononcalc</span> <span class="kn">import</span> <span class="n">MultiPhononCalc</span>
+<span class="n">mphon</span> <span class="o">=</span> <span class="n">MultiPhononCalc</span><span class="p">(</span><span class="s">&#39;config.ini&#39;</span><span class="p">)</span>
+<span class="n">mphon</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+<span class="c">#lookupProperty() goes through  all the  output files of a given calc:</span>
+<span class="k">print</span> <span class="n">mphon</span><span class="o">.</span><span class="n">lookupProperty</span><span class="p">(</span><span class="s">&#39;total energy&#39;</span><span class="p">,</span> <span class="n">withUnits</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">mphon</span><span class="o">.</span><span class="n">lookupProperty</span><span class="p">(</span><span class="s">&#39;stress&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">mphon</span><span class="o">.</span><span class="n">lookupProperty</span><span class="p">(</span><span class="s">&#39;forces&#39;</span><span class="p">,</span> <span class="n">withUnits</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="c"># this will output qpoints, frequencies and eigen modes</span>
+<span class="n">vecs</span><span class="p">,</span> <span class="n">freqs</span><span class="p">,</span> <span class="n">qpts</span> <span class="o">=</span> <span class="n">mphon</span><span class="o">.</span><span class="n">lookupProperty</span><span class="p">(</span><span class="s">&#39;multi phonon&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It should be noted, in order to run this example, config.ini, pw.x, ph.x, q2r.x,
+and matdyn.x input files should be in the
+current dir. config.ini should have additional sections corresponding to
+these additional tasks:</p>
+<div class="highlight-python"><pre>[ph.x]
+#ph.x input/ouput, relevant to all phonon calculations:
+phInput:  ph.in
+phOutput: ph.out
+
+[dynmat.x]
+#dynmat.x input/output files relevant to single phonon calculation
+dynmatInput:  dynmat.in
+dynmatOutput: dyn.out
+
+[q2r.x]
+# input/output files relevant to multiple phonon calculation
+q2rInput:      q2r.in
+q2rOutput:     q2r.out
+
+[matdyn.x]
+# input/output files relevant to multiple phonon calculation
+matdynInput:   matdyn.in
+matdynOutput:  matdyn.out</pre>
+</div>
+<p>The following example processes outputs only (assuming outputs are available):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">mphon</span> <span class="o">=</span> <span class="n">MultiPhononCalc</span><span class="p">(</span><span class="s">&#39;config.ini&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">mphon</span><span class="o">.</span><span class="n">getAllTasks</span><span class="p">():</span>
+    <span class="c">#add this line if need to resolve some of the output file names from QE input files (e.g. &#39;flvec&#39;):</span>
+    <span class="c">#task.syncSetting()</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-2-converger">
+<h2>Example 2: Converger<a class="headerlink" href="#example-2-converger" title="Permalink to this headline">¶</a></h2>
+<p>Class Converger will converge a value  with respect to k-points or
+different parameters  of pw.x input file. Currently, the value can be &#8216;total energy&#8217;,
+&#8216;fermi energy&#8217; or &#8216;single phonon&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">qeutils.converger</span> <span class="kn">import</span> <span class="n">Converger</span>
+<span class="n">task</span> <span class="o">=</span> <span class="n">Converger</span><span class="p">(</span><span class="n">configString</span> <span class="o">=</span> <span class="n">configString</span><span class="p">,</span> <span class="n">taskName</span> <span class="o">=</span> <span class="s">&#39;total energy&#39;</span><span class="p">,</span> <span class="n">tolerance</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">opt_ecutwfc</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">converge</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s">&#39;ecutwfc&#39;</span><span class="p">,</span> <span class="n">startValue</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span> <span class="n">step</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">opt_kpoints</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">converge</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s">&#39;kpoints&#39;</span><span class="p">,</span> <span class="n">startValue</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">],</span> <span class="n">step</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">opt_conv_thr</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">converge</span><span class="p">(</span><span class="n">what</span> <span class="o">=</span> <span class="s">&#39;conv_thr&#39;</span><span class="p">,</span> <span class="n">startValue</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">multiply</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-3-loops">
+<h2>Example 3: Loops<a class="headerlink" href="#example-3-loops" title="Permalink to this headline">¶</a></h2>
+<p>For greater flexibility, tasks can be used separately from calcs. Here we will define
+a couple of loops using PWTask:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">qecalc.qetask.pwtask</span> <span class="kn">import</span> <span class="n">PWTask</span>
+
+<span class="n">configString</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">[Launcher]</span>
+<span class="s">paraPrefix:   mpiexec -n 8</span>
+<span class="s">paraPostfix: -npool 8</span>
+<span class="s">outdir: temp/</span>
+
+<span class="s">#default value of pwInput is &#39;scf.in&#39;</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="n">pw</span> <span class="o">=</span> <span class="n">PWTask</span><span class="p">(</span><span class="n">configString</span> <span class="o">=</span> <span class="n">configString</span><span class="p">)</span>
+<span class="c">#parse inputs and sync with Settings:</span>
+<span class="n">pw</span><span class="o">.</span><span class="n">syncSetting</span><span class="p">()</span>
+<span class="n">lat_params</span> <span class="o">=</span> <span class="p">[</span><span class="mf">5.5</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span> <span class="mf">5.7</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">lat_params</span><span class="p">:</span>
+    <span class="c"># whole lattice and structure will be auto updated on change in &#39;a&#39; according</span>
+    <span class="c"># to the lattice symmetry (ibrav):</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="c"># changes in structure should be propagated into the parsing object:</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">updatePWInput</span><span class="p">()</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="c"># or just use pw.input.structure.save()</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Stress = &#39;</span><span class="p">,</span> <span class="n">pw</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="s">&#39;stress&#39;</span><span class="p">)</span>
+
+<span class="n">ecut_wfc_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mf">17.5</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">ecut_wfc</span> <span class="ow">in</span> <span class="n">ecut_wfc_list</span><span class="p">:</span>
+    <span class="c"># if the variable did not exist, it will be created, othervise overwritten</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">namelist</span><span class="p">(</span><span class="s">&#39;system&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;ecutwfc&#39;</span><span class="p">,</span> <span class="n">ecut_wfc</span><span class="p">)</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+    <span class="n">pw</span><span class="o">.</span><span class="n">launch</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Total Energy = &#39;</span><span class="p">,</span> <span class="n">pw</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">property</span><span class="p">(</span><span class="s">&#39;total energy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="quickStart.html" title="Quick Start"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+        <li><a href="http://dev.danse.us/trac/AbInitio/browser/espresso/qecalc">QECalc trac page </a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Nikolay Markovskiy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>

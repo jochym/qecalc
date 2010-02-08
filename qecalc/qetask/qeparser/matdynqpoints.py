@@ -30,6 +30,8 @@ class MatdynQpoints(object):
         self.qeInput.namelist('input').remove('nk3')
         self.qeInput.namelist('input').remove('fldos')
         self.qeInput.namelist('input').remove('dos')
+        self.qeInput.namelist('input').remove('ndos')
+        self.qeInput.namelist('input').remove('deltaE')
         self.coords = qpoints
         self.grid = None
         # axis == None for custom generated q-point grid

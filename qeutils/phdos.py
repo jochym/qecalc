@@ -15,32 +15,48 @@
 
 import numpy
 from qedos import QEDOS
+from qeutils import kmesh
 
 class PhononDOS(QEDOS):
 
-    def __init__(self, matdynTask):
+    def __init__(self, matdynTask, structure = None):
         QEDOS.__init__(self)
 
+        self.structure = structure
         self._freqs = None
         self._modes = None
         self._qpts = None
         self.axis = []
         self.dos = []
+        self.partdos = []
 
         self.matdynTask = matdynTask
 
 
-    def launch(self, *nqpoints):
+    def launch(self, nqpoints, partialDOS = False):
         """
         launches matdyn task with a grid provided through list 'nqpoints'
         """
-        self.matdynTask.qpoints.setAutomatic(nqpoints)
-        self.matdynTask.input.save()
+        if partialDOS == False:
+            self.matdynTask.qpoints.setAutomatic(nqpoints)
+            self.matdynTask.input.save()
 
-        self.matdynTask.launch()
-        self.loadPhonons()
-        self.axis, self.dos = self.matdynTask.output.property('phonon dos')
+            self.matdynTask.launch()
+            self.loadPhonons()
+            self.axis, self.dos = self.matdynTask.output.property('phonon dos')
+        else:
+            if self.structure == None:
+                raise('PartialDOS: structure was not set')
+            qpoints = kmesh.kMeshCart(nqpoints,self.structure.lattice.reciprocalBase())
 
+            #update qpoints and launch matdyn
+            self.matdynTask.syncSetting()
+            self.matdynTask.input.qpoints.set(qpoints)
+            self.matdynTask.input.save()
+            self.matdynTask.launch()
+            self.loadPhonons()
+            self.axis, self.dos = self.DOS()
+            self.axis, self.partdos = self.partDOS()
 
     def loadPhonons(self, fname = None):
         self._modes, self._freqs, self._qpts =  \
@@ -89,7 +105,7 @@ class PhononDOS(QEDOS):
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
         return  axis, histOmega/norm
 
-    def partDOS(self, atomSymbol, minOmega = None, maxOmega = None, deltaOmega = None):
+    def partDOSType(self, atomSymbol, minOmega = None, maxOmega = None, deltaOmega = None):
         from numpy import real
         minOmega, maxOmega, deltaOmega   =      \
                                 self.setRange(minOmega, maxOmega, deltaOmega)
@@ -108,6 +124,41 @@ class PhononDOS(QEDOS):
         axis = numpy.linspace(minOmega, maxOmega, nPoints)
         return axis, histPartOmega/norm
 
+    def partDOSAtom(self, iAtom, minOmega = None, maxOmega = None, deltaOmega = None):
+        from numpy import real
+        minOmega, maxOmega, deltaOmega   =      \
+                                self.setRange(minOmega, maxOmega, deltaOmega)
+        nPoints = int((maxOmega - minOmega)/deltaOmega)
+        histPartOmega = numpy.zeros(nPoints)
+        norm = 0.0
+        atom = structure.diffpy()[iAtom]
+        for cell_freqs, vectors in zip(self._freqs, self._modes):
+            for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
+                idx = int( (abs(omega) - minOmega)/deltaOmega )
+                if idx < len(histPartOmega):
+                    weight = (real(vector*vector.conjugate())).sum()
+                    histPartOmega[idx] = histPartOmega[idx] + weight
+                    norm = norm + weight
+        axis = numpy.linspace(minOmega, maxOmega, nPoints)
+        return axis, histPartOmega/norm
+
+    def partDOS(self, iAtom = None, atomSymbol = None, minOmega = None, maxOmega = None, deltaOmega = None):
+        histPartOmega = numpy.zeros(nPoints)
+        if iAtom != None:
+            return self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
+
+        if atomSymbol != None:
+            for iAtom, atom in enumerate(self.structure.diffpy()):
+                if atomSymbol == atom.element:
+                    axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
+                    histPartOmega = histPartOmega + hist
+            return axis, histPartOmega
+        # will return list of histograms:
+        histList = []
+        for iAtom, atom in enumerate(self.structure.diffpy()):
+            axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
+            histList.append(hist)
+        return axis, histList
 
     def plot(self): pass
 
