@@ -32,10 +32,11 @@ if __name__ == "__main__":
     # generate qpoints and launch matdyn task
     dos.launch(nqpoints = qgrid, partialDOS = True )
 
-    dos.loadPhonons()
+    # this line is required if matdyn.modes exisits from previoius run and
+    # dos.launch() is commented out
+    #dos.loadPhonons()
 
     #dos.DOS()
-
     # partDOS will calculate DOS for each atomic site. It will also generate
     # total DOS and DOS by ellement type
     dos.partDOS()
