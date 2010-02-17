@@ -17,9 +17,6 @@ from qecalc.qetask.matdyntask import MatdynTask
 from qecalc.qetask.pwtask import PWTask
 from qeutils.phdos import PhononDOS
 
-import pylab
-import matplotlib
-
 if __name__ == "__main__":
     matdyn = MatdynTask(configString = "")
     pw = PWTask(configString = "")

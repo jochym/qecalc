@@ -613,7 +613,7 @@ class QELattice(object):
 
     def _set_a(self, value):
         self._a = value
-        self.setLattice(ibrav = self._ibrav, a = self._a)
+        self.setLattice(ibrav = self._ibrav, a = self._a, base = self._base)
 
     a = property(_get_a, _set_a, doc ="lattice parameter a")
 
