@@ -47,7 +47,8 @@ class QELattice(object):
         self._primitiveLattice = Lattice()
         self._standardLattice = Lattice()
         self._base = None
-        self._a0 = None
+        self._a0 = 1.0 # old value of a - most relevant for ibrav=0, when a is set
+                       # to 1.0
         if self.qeConf != None:
             self.setLatticeFromPWInput(self.qeConf)
         else:
@@ -191,13 +192,12 @@ class QELattice(object):
         if ibrav == None:
             raise NonImplementedError('ibrav should be specified')
         self._ibrav = ibrav
-        self._a0 = a
         if self._ibrav == 0:
 #            print 'Found "generic" cell:'
             if base == None:
                 raise NonImplementedError('base must be specified')
             if a == None: a = 1.0
-            qeBase = numpy.array(base, dtype = float)*a
+            qeBase = numpy.array(base, dtype = float)/self._a0*a
 #            print qeBase
             self._a = 1.0
             if 'generic' not in self._type:
@@ -277,7 +277,8 @@ class QELattice(object):
             alpha = degrees(acos(self._cBC))
             beta = degrees(acos(self._cAC))
             gamma = degrees(acos(self._cAB))
-            self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)            
+            self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)
+        self._a0 = a
         self._base = qeBase
 
     # def toString(self):
