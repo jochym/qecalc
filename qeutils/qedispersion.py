@@ -181,6 +181,43 @@ class QEDispersion():
             # need to add greek labels
         pylab.show()
 
+    def save(self, filename):
+        """
+        saves dispersions to 'filename.dat' file and generates 'filename.plt'
+        gnuplot script
+        """
+        xmin = numpy.min(self.axis)
+        xmax = numpy.max(self.axis)
+        ymin = numpy.min(self.dispersion)
+        ymax = numpy.max(self.dispersion)
+        s = """xmin=%f
+xmax=%f
+ymin=%f
+ymax=%f
+set xrange [%f:%f]
+set yrange [%f:%f]\n"""%(xmin,xmax,ymin,ymax,xmin,xmax,ymin,ymax)
+        for i in range(len(self.points)):
+            xcoord = self.axis[ self.points[i][1] ]
+            s = s + 'set arrow from %f,%f to %f,%f nohead lt -1 lw 1\n'%(xcoord,\
+                                                              ymin,xcoord, ymax)
+        columns = ""
+        for i in range(self.dispersion.shape[1]):
+            columns = columns + ':' + str(i+1)
+        dataFileName = filename + '.dat'
+        plotParameters = 'with lines lw 3'
+        s = s + 'plot "%s" using 1:2 %s'%(dataFileName, plotParameters)
+        for i in range(self.dispersion.shape[1])[1:]:
+            s = s + ' , "%s" using 1:%d %s'%(dataFileName, i+2, plotParameters)
+        s = s + '\n'
+        dataString = ''
+        for i, x in enumerate(self.axis):
+            dataString = dataString + '%f    '%x
+            for j in range(self.dispersion.shape[1]):
+                dataString = dataString + '%f    '%self.dispersion[i,j]
+            dataString = dataString + '\n'
+        open(dataFileName, 'w').write(dataString)
+        s = s + 'pause -1'
+        open(filename + '.plt', 'w').write(s)
 
 if __name__ == "__main__":
     print "Hello World";
