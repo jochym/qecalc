@@ -175,7 +175,7 @@ class QEStructure():
                     self.optConstraints.append(numpy.array(constraint, dtype = int))
                     atomSymbol = words[0]
                     if self.atomicPositionsType == 'alat':
-                        coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a0)
+                        coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a)
                     if self.atomicPositionsType == 'crystal':
                         coords = numpy.array(coords[0:3])
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))

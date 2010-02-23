@@ -46,8 +46,9 @@ class QELattice(object):
         self._type = 'celldm'
         self._primitiveLattice = Lattice()
         self._standardLattice = Lattice()
+        # Lattice vectors in bohrs on angstrom:
         self._base = None
-        self._a0 = 1.0 # old value of a - most relevant for ibrav=0, when a is set
+      #  self._a0 = 1.0 # old value of a - most relevant for ibrav=0, when a is set
                        # to 1.0
         if self.qeConf != None:
             self.setLatticeFromPWInput(self.qeConf)
@@ -196,10 +197,12 @@ class QELattice(object):
 #            print 'Found "generic" cell:'
             if base == None:
                 raise NonImplementedError('base must be specified')
-            if a == None: a = 1.0
-            qeBase = numpy.array(base, dtype = float)/self._a0*a
+            if a == None:
+				raise # a and the base must be provided for ibrav = 0
+            qeBase = numpy.array(base, dtype = float)#*self._a/a
+            self._a = a
 #            print qeBase
-            self._a = 1.0
+            #self._a = 1.0
             if 'generic' not in self._type:
                 self._type = 'generic cubic'
             self._primitiveLattice.setLatBase(qeBase)
@@ -278,7 +281,7 @@ class QELattice(object):
             beta = degrees(acos(self._cAC))
             gamma = degrees(acos(self._cAB))
             self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)
-        self._a0 = a
+        #self._a0 = a
         self._base = qeBase
 
     # def toString(self):
@@ -353,7 +356,7 @@ class QELattice(object):
                     if '!' not in line:
                         words = line.split()
                         base.append([float(w) for w in words])
-                return a, None, None, None, None, None, numpy.array(base)
+                return a, None, None, None, None, None, numpy.array(base)*a
             if ibrav > 0 and ibrav < 4:
                 return a, a, a, cBC, cAC, cAB, None
             if ibrav == 4:
@@ -465,7 +468,7 @@ class QELattice(object):
                 qeConf.namelist('system').add('cosBC', self._cBC)
             else:
                 if 'generic' in self._type:
-                    qeConf.namelist('system').add('celldm(1)', 1.0)
+                    qeConf.namelist('system').add('celldm(1)', self._a)
                     self._ibrav = 0
                     qeConf.namelist('system').add('ibrav', self._ibrav)
                     if self._type == 'generic hexagonal':
@@ -476,7 +479,7 @@ class QELattice(object):
                     qeConf.card('cell_parameters').setArg(cardArg)
                     qeConf.card('cell_parameters').removeLines()
                     for i in range(3):
-                        v = self._primitiveLattice.base[i,:]
+                        v = self._primitiveLattice.base[i,:]/self._a
                         qeConf.card('cell_parameters').addLine(\
                                        self.formatString%(v[0], v[1], v[2]))
 
@@ -602,19 +605,19 @@ class QELattice(object):
     # lattice parameters
 
 
-    def _get_a0(self):
-        if self._a0 != None:
-            return self._a0
-        else:
-            return self._a
-    a0 = property(_get_a0, doc ="old lattice parameter a0")
+ #   def _get_a0(self):
+ #       if self._a0 != None:
+ #           return self._a0
+ #       else:
+ #           return self._a
+ #   a0 = property(_get_a0, doc ="old lattice parameter a0")
 
     def _get_a(self):
         return self._a
 
     def _set_a(self, value):
-        self._a = value
-        self.setLattice(ibrav = self._ibrav, a = self._a, base = self._base)
+        #self._a = value
+        self.setLattice(ibrav = self._ibrav, a = value, base = self._base)
 
     a = property(_get_a, _set_a, doc ="lattice parameter a")
 
@@ -623,8 +626,8 @@ class QELattice(object):
         return self._b
 
     def _set_b(self, value):
-        self._b = value
-        self.setLattice(ibrav = self._ibrav, b = self._b)
+        #self._b = value
+        self.setLattice(ibrav = self._ibrav, b = value)
 
     b = property(_get_b, _set_b, doc ="""lattice parameter b""")
 
@@ -633,8 +636,8 @@ class QELattice(object):
         return self._c
 
     def _set_c(self, value):
-        self._c = value
-        self.setLattice(ibrav = self._ibrav, c = self._c)
+        #self._c = value
+        self.setLattice(ibrav = self._ibrav, c = value)
 
     c = property(_get_c, _set_c, doc ="""lattice parameter c""")
 
@@ -643,8 +646,8 @@ class QELattice(object):
         return self._cBC
 
     def _set_cBC(self, value):
-        self._cBC = value
-        self.setLattice(ibrav = self._ibrav, cBC = self._cBC)
+        #self._cBC = value
+        self.setLattice(ibrav = self._ibrav, cBC = value)
 
     cBC = property(_get_cBC, _set_cBC, doc ="""lattice parameter cBC""")
 
@@ -653,8 +656,8 @@ class QELattice(object):
         return self._cAC
 
     def _set_cAC(self, value):
-        self._cAC = value
-        self.setLattice(ibrav = self._ibrav, cAC = self._cAC)
+        #self._cAC = value
+        self.setLattice(ibrav = self._ibrav, cAC = value)
 
     cAC = property(_get_cAC, _set_cAC, doc ="""lattice parameter cAC""")
 
@@ -663,8 +666,8 @@ class QELattice(object):
         return self._cAB
 
     def _set_cAB(self, value):
-        self._cAB = value
-        self.setLattice(ibrav = self._ibrav, cAB = self._cAB)
+        #self._cAB = value
+        self.setLattice(ibrav = self._ibrav, cAB = value)
 
     cAB = property(_get_cAB, _set_cAB, doc ="""lattice parameter cAB""")
 
@@ -677,7 +680,7 @@ class QELattice(object):
         ibravOld = self._ibrav
         self._ibrav = value
         if value == 0:
-            base = self._base/self._a
+            base = self._base#/self._a
             if ibravOld != 4:
                 self._type = 'generic cubic'
             else:
@@ -700,7 +703,7 @@ class QELattice(object):
         if 'generic' in value:
             self._type = value
             self._ibrav = 0
-            base = self._base/self._a
+            base = self._base #/self._a
             self.setLattice(ibrav = self._ibrav, a = self._a, base = base)
         else:
             if self._ibrav == 0:

@@ -1,3 +1,5 @@
+News
+- added export ofdispersions into gnuplot
 News in version 0.2.3
 - fixed bugs in parsers and calcs
 - prefix variable in Setting wil override all prefixes in tasks
