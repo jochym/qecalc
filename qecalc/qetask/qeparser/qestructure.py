@@ -228,7 +228,9 @@ class QEStructure():
                
         
         #set lattice and  convert to bohr units
-        qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
+        #qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
+        qeLattice = QELattice(ibrav = 0, base = diffpyLattice.base)
+        qeLattice.a = 1.889725989*qeLattice.a
         
         
         self.lattice = qeLattice
