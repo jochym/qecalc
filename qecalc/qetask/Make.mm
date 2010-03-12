@@ -41,6 +41,7 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
+    cptask.py \
     d3task.py \
     dostask.py \
     dynmattask.py \

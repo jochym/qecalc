@@ -41,6 +41,7 @@ distclean::
 
 EXPORT_PYTHON_MODULES = \
     baseoutput.py \
+    cp.py \
     d3.py \
     dos.py \
     dynmat.py \
