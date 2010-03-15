@@ -12,7 +12,7 @@
 #
 
 PROJECT = vnfb
-PACKAGE = utils/qecalcutils
+PACKAGE = qeutils/qecalcutils
 
 BUILD_DIRS = \
 
