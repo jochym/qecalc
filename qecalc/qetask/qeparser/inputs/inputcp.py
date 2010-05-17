@@ -11,6 +11,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+# XXX: Borrowed from inputpw.py. Modify fields according to the documentation
 
 namelists = ('control',
              'system',
