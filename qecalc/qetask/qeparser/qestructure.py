@@ -126,8 +126,27 @@ class QEStructure():
         #print 'Input structure from output file: ', self.toString()
         #Parse end:
         # Find all geometry optimization steps
+
         posList =  [i for i,line in enumerate(pwscfOut) if '!    total energy' in line]
+
         lastSection = pwscfOut[posList[-1]:]
+
+        # check if geometry is there:
+        cellCheck = False
+        atomCheck = False
+        for i, line in enumerate(lastSection):
+            if 'CELL_PARAMETERS (alat)' in line:
+                cellCheck = True
+            if 'ATOMIC_POSITIONS (alat)' in line:
+                atomCheck = True
+
+        if not cellCheck or not atomCheck:
+            if len(posList) > 1:
+                lastSection = pwscfOut[posList[-2]:]
+            else:
+                return
+
+
         for i, line in enumerate(lastSection):
             if 'CELL_PARAMETERS (alat)' in line:
                 latticeVectors = [[float(f)*a_0 for f in lastSection[i + 1].split() ],
@@ -190,7 +209,7 @@ class QEStructure():
             atomicSpeciesLines = self.qeConf.card('atomic_species').lines()
             for line in atomicSpeciesLines:
                 if '!' not in line:
-                    if line.strip() != '':                            
+                    if line.strip() != '':                     
                         atomicSpeciesWords = line.split()
                         element = atomicSpeciesWords[0]
                         mass = 0
