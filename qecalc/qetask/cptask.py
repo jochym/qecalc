@@ -51,7 +51,7 @@ class CPTask(QETask):
 
 
     def cmdLine(self):
-        return self._getCmdLine('cp.x', 'cpInput', 'pcputput')
+        return self._getCmdLine('cp.x', 'cpInput', 'cpOutput')
 
 
     def name(self):
