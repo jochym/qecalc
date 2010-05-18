@@ -78,7 +78,7 @@ class QEStructure():
         """
         Loads structure from PWSCF output file. If there was geometry
         optimization (relax or vc-relax), the structure will be reinitialized
-        from the last step of the optimization
+        from the last step of the optimization. Assumes output is in ALAT units
         """
         file = open(pwscfOutputFile)
         pwscfOut = file.readlines()
@@ -185,7 +185,7 @@ class QEStructure():
         if 'atomic_positions' in self.qeConf.cards:        
             atomicLines = self.qeConf.card('atomic_positions').lines()
             self.atomicPositionsType = self.qeConf.card('atomic_positions').arg()
-            if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
+            if self.atomicPositionsType == 'angstrom':
                 raise NotImplementedError\
          ('atomic positions in bohr and angstrom are not currently supported')
             if self.atomicPositionsType == None:
@@ -203,6 +203,8 @@ class QEStructure():
                         coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a)
                     if self.atomicPositionsType == 'crystal':
                         coords = numpy.array(coords[0:3])
+                    if self.atomicPositionsType == 'bohr':
+                        coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3]))
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
         # parse mass ATOMIC_SPECIES section:
          
@@ -461,7 +463,11 @@ class QEStructure():
                 if self.atomicPositionsType == 'crystal':
                     coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
-                    raise NonImplementedError
+                    if self.atomicPositionsType == 'bohr':
+                        coords = self.lattice.diffpy().cartesian(atom.xyz)
+                        coords = self.formatString%(coords[0], coords[1], coords[2])
+                    else:
+                        raise NonImplementedError
             line = '%-3s'%self._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
             qeConf.card('atomic_positions').addLine(line)
         
