@@ -185,9 +185,9 @@ class QEStructure():
         if 'atomic_positions' in self.qeConf.cards:        
             atomicLines = self.qeConf.card('atomic_positions').lines()
             self.atomicPositionsType = self.qeConf.card('atomic_positions').arg()
-            if self.atomicPositionsType == 'angstrom':
-                raise NotImplementedError\
-         ('atomic positions in bohr and angstrom are not currently supported')
+#            if self.atomicPositionsType == 'angstrom':
+#                raise NotImplementedError\
+#         ('atomic positions in bohr and angstrom are not currently supported')
             if self.atomicPositionsType == None:
                 self.atomicPositionsType = 'alat'
             for line in atomicLines:
@@ -203,7 +203,7 @@ class QEStructure():
                         coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*self.lattice.a)
                     if self.atomicPositionsType == 'crystal':
                         coords = numpy.array(coords[0:3])
-                    if self.atomicPositionsType == 'bohr':
+                    if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
                         coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3]))
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
         # parse mass ATOMIC_SPECIES section:
@@ -463,7 +463,7 @@ class QEStructure():
                 if self.atomicPositionsType == 'crystal':
                     coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
-                    if self.atomicPositionsType == 'bohr':
+                    if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
                         coords = self.lattice.diffpy().cartesian(atom.xyz)
                         coords = self.formatString%(coords[0], coords[1], coords[2])
                     else:
