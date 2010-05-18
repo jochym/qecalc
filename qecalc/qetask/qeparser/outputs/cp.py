@@ -30,6 +30,7 @@ class Output(BaseOutput):
                        'forces': [],
                        'etot':   [],
                        'time':   [],
+                       'steps':  [],
                      }
 
         #read Espresso output into memory:
@@ -60,6 +61,7 @@ class Output(BaseOutput):
                     trajectory['etot'].append(float(line.split()[3]))
                 if '* Physical Quantities at step:' in line:
                     trajectory['time'].append(float(line.split()[5])*dt*2.4189e-5)
+                    trajectory['steps'].append(int(line.split()[5]))
 
 
 
