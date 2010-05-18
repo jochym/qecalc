@@ -27,7 +27,9 @@ outdir: temp/
 [cp.x]
 # pw input/output files
 cpInput:  cp.in
-cpOutput: nh3cp.out
+cpOutput: K37WIG3Idefault.in.out
+
+#nh3cp.out
 
 """
 
@@ -36,6 +38,8 @@ if __name__ == "__main__":
     cp.syncSetting()
     cp.output.parse()
     print cp.output.property('trajectory')['pos']
+    print cp.output.property('trajectory')['vel']
+    print cp.output.property('trajectory')['forces']
 
 __author__="Nikolay Markovskiy"
 __date__ ="$May 17, 2010 6:34:30 PM$"

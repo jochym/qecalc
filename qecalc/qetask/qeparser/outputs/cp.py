@@ -25,8 +25,9 @@ class Output(BaseOutput):
     def getTrajectory(self, setting):
 
         trajectory = {
-                       'pos': [],
-                       'vel': [],}
+                       'pos':    [],
+                       'vel':    [],
+                       'forces': [],}
 
         #read Espresso output into memory:
         file = open(setting.get('cpOutput'))
@@ -40,18 +41,37 @@ class Output(BaseOutput):
                 iEnd = len(cpOut) - 1
             for i in range(iStart, iEnd):
                 line = cpOut[i]
-                if 'ATOMIC_POSITIONS' in line:                
-                    atoms = []
-                    j = i + 1
-                    while cpOut[j].strip() != "":
-                        coord = [ float(w) for w in cpOut[j].split()[1:]]
-                        atoms.append(coord)
-                        j = j + 1
-                    trajectory['pos'].append(atoms)
+                if 'ATOMIC_POSITIONS' in line:
+                    self._appendAtomicProperty(i, cpOut, 'pos', trajectory)
+                if 'ATOMIC_VELOCITIES' in line:
+                    self._appendAtomicProperty(i, cpOut, 'vel', trajectory)
+                if 'Forces acting on atoms (au):' in line:
+                    self._appendAtomicProperty(i, cpOut, 'forces', trajectory)
+#                    atoms = []
+#                    j = i + 1
+#                    while cpOut[j].strip() != "":
+#                        coord = [ float(w) for w in cpOut[j].split()[1:]]
+#                        atoms.append(coord)
+#                        j = j + 1
+#                    trajectory['pos'].append(atoms)
+                    
         #print cpOut
         #print trajectory
         return [(trajectory, None)]
-        
+
+    def _appendAtomicProperty(self, iPos, cpOut, propName, trajectory):
+        """
+        iPos - position number where the atomic property of interest starts
+               (E.g. atomic_positions)
+        propName = desired name in trajectory dictionary
+        """
+        atoms = []
+        j = iPos + 1
+        while cpOut[j].strip() != "":
+            coord = [ float(w) for w in cpOut[j].split()[1:]]
+            atoms.append(coord)
+            j = j + 1
+        trajectory[propName].append(atoms)
 
 if __name__ == "__main__":
     print "Hello World";
