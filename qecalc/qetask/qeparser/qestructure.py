@@ -186,7 +186,8 @@ class QEStructure():
             atomicLines = self.qeConf.card('atomic_positions').lines()
             self.atomicPositionsType = self.qeConf.card('atomic_positions').arg()
             if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
-                raise NotImplementedError
+                raise NotImplementedError\
+         ('atomic positions in bohr and angstrom are not currently supported')
             if self.atomicPositionsType == None:
                 self.atomicPositionsType = 'alat'
             for line in atomicLines:

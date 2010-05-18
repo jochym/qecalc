@@ -67,10 +67,10 @@ class CPInput(QEInput):
         return self.namelist('control').param('outdir', quotes = False)
 
 textA = """
- &control
-    title = ' Ammonia Molecule ',
-    calculation = 'cp',
-    restart_mode = 'from_scratch',
+  &control
+    title = 'Ammonia',
+    calculation = 'fpmd',
+    restart_mode = 'from_scratch', ! 'restart',
     ndr = 51,
     ndw = 51,
     nstep  = 100,
@@ -83,7 +83,7 @@ textA = """
     ekin_conv_thr = 1.d-4,
     prefix = 'nh3_mol'
     pseudo_dir='./',
-    outdir='./tmp/',
+    outdir='temp/',
  /
  &system
     ibrav = 14,
@@ -98,15 +98,21 @@ textA = """
     nbnd = 4,
     nelec = 8,
     ecutwfc = 80.0,
-    xc_type = 'BLYP'
-    nr1b = 10,
-    nr2b = 10,
-    nr3b = 10,
-/
+!    ecfixed = 68.0,
+!    qcutz = 68.0,
+!    q2sigma = 8.0,
+    input_dft = 'BLYP'
+ /
  &electrons
     emass = 400.d0,
     emass_cutoff = 2.5d0,
+    orthogonalization = 'ortho',
+    ortho_eps = 5.d-8,
+    ortho_max = 15,
     electron_dynamics = 'sd',
+!    electron_damping = 0.3,
+    electron_velocities = 'zero',
+    electron_temperature = 'not_controlled',
  /
  &ions
     ion_dynamics = 'damp',
@@ -119,12 +125,13 @@ textA = """
  /
  &cell
     cell_dynamics = 'none',
+    cell_velocities = 'zero',
     press = 0.0d0,
  /
 ATOMIC_SPECIES
- N 16.0d0 N.BLYP.UPF 4
- H  1.0d0 H.fpmd.UPF 4
-ATOMIC_POSITIONS (alat)
+ N 16.0 N.BLYP.UPF 4
+ H  1.0 H.fpmd.UPF 4
+ATOMIC_POSITIONS (bohr)
    N     0.000825    0.000825   0.0000
    H     0.159883333   -0.020358333   -0.0184
    H    -0.019208333    0.159883333   -0.017866667
@@ -132,7 +139,7 @@ ATOMIC_POSITIONS (alat)
 """
 
 if __name__ == "__main__":
-    # comment out structure before testing...
+
     inp = CPInput(config=textA)
     inp.parse()
     print inp.toString()
