@@ -29,6 +29,7 @@ class Output(BaseOutput):
                        'vel':    [],
                        'forces': [],
                        'etot':   [],
+                       'time':   [],
                      }
 
         #read Espresso output into memory:
@@ -36,6 +37,12 @@ class Output(BaseOutput):
         cpOut = file.readlines()
         posList =  [i for i,line in enumerate(cpOut) \
                                     if '* Physical Quantities at step:' in line]
+
+        for line in cpOut:
+            if 'MD Simulation time step' in line:
+                dt = float(line.split()[5])
+                break
+                
         for i, iStart in enumerate(posList):
             if i < len(posList) - 1:
                 iEnd = posList[i+1]
@@ -51,6 +58,10 @@ class Output(BaseOutput):
                     self._appendAtomicProperty(iLine, cpOut, 'forces', trajectory)
                 if 'total energy =' in line:
                     trajectory['etot'].append(float(line.split()[3]))
+                if '* Physical Quantities at step:' in line:
+                    trajectory['time'].append(float(line.split()[5])*dt*2.4189e-5)
+
+
 
         return [(trajectory, None)]
 

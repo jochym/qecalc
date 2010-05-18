@@ -41,6 +41,7 @@ if __name__ == "__main__":
     print cp.output.property('trajectory')['vel']
     print cp.output.property('trajectory')['forces']
     print cp.output.property('trajectory')['etot']
+    print cp.output.property('trajectory')['time']
 
 __author__="Nikolay Markovskiy"
 __date__ ="$May 17, 2010 6:34:30 PM$"
