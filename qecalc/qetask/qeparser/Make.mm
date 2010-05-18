@@ -53,6 +53,7 @@ EXPORT_PYTHON_MODULES = \
     phinput.py \
     phqpoints.py \
     pwinput.py \
+    cpinput.py \
     pwkpoints.py \
     qeinput.py \
     qelattice.py \

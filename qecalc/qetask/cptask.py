@@ -15,7 +15,7 @@
 
 
 from qetask import QETask
-from qeparser.pwinput import PWInput
+from qeparser.cpinput import CPInput
 from qeparser.qeoutput import QEOutput
 
 class CPTask(QETask):
@@ -46,7 +46,7 @@ class CPTask(QETask):
             name = sectionName
 
         self.setting.section(name, configDic)
-        self.input = PWInput( self.setting.get('cpInput') )
+        self.input = CPInput( self.setting.get('cpInput') )
         self.output = QEOutput(self.setting, type='cp')
 
 
@@ -77,3 +77,4 @@ class CPTask(QETask):
         species = self.input.structure.atomicSpecies
         for specie in species.keys():
             setattr(self.setting._paths, 'ps' + specie, self.setting.get('pseudo_dir') + species[specie].pseudopotential )
+
