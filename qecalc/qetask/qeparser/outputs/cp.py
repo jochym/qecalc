@@ -27,7 +27,9 @@ class Output(BaseOutput):
         trajectory = {
                        'pos':    [],
                        'vel':    [],
-                       'forces': [],}
+                       'forces': [],
+                       'etot':   [],
+                     }
 
         #read Espresso output into memory:
         file = open(setting.get('cpOutput'))
@@ -36,27 +38,20 @@ class Output(BaseOutput):
                                     if '* Physical Quantities at step:' in line]
         for i, iStart in enumerate(posList):
             if i < len(posList) - 1:
-                iEnd = i+1
+                iEnd = posList[i+1]
             else:
                 iEnd = len(cpOut) - 1
-            for i in range(iStart, iEnd):
-                line = cpOut[i]
+            for iLine in range(iStart, iEnd):
+                line = cpOut[iLine]
                 if 'ATOMIC_POSITIONS' in line:
-                    self._appendAtomicProperty(i, cpOut, 'pos', trajectory)
+                    self._appendAtomicProperty(iLine, cpOut, 'pos', trajectory)
                 if 'ATOMIC_VELOCITIES' in line:
-                    self._appendAtomicProperty(i, cpOut, 'vel', trajectory)
+                    self._appendAtomicProperty(iLine, cpOut, 'vel', trajectory)
                 if 'Forces acting on atoms (au):' in line:
-                    self._appendAtomicProperty(i, cpOut, 'forces', trajectory)
-#                    atoms = []
-#                    j = i + 1
-#                    while cpOut[j].strip() != "":
-#                        coord = [ float(w) for w in cpOut[j].split()[1:]]
-#                        atoms.append(coord)
-#                        j = j + 1
-#                    trajectory['pos'].append(atoms)
-                    
-        #print cpOut
-        #print trajectory
+                    self._appendAtomicProperty(iLine, cpOut, 'forces', trajectory)
+                if 'total energy =' in line:
+                    trajectory['etot'].append(float(line.split()[3]))
+
         return [(trajectory, None)]
 
     def _appendAtomicProperty(self, iPos, cpOut, propName, trajectory):
