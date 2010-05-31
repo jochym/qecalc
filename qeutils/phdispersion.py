@@ -71,17 +71,21 @@ class PHDispersion(QEDispersion):
         print idxs
         for k in range(1, dispersion.shape[0]):
             idx = []
+            scl = []
             for i, o1 in zip( idxs[k-1], dispersion[k-1]):
                 for j, o2 in enumerate(dispersion[k]):
                     if ( abs((pol[k,j,:].conj()*pol[k-1,i,:]).sum()) >  thrsh_scl):
                    # if ( ( abs((self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum()) >  thrsh_scl) or \
                    # ( abs((self.pol[k,j,:]).real*(self.pol[k-1,i,:]).real).sum()  >  thrsh_scl) ):
                         #omg.append(o2)
+                        scl.append( (pol[k,j,:].conj()*pol[k-1,i,:]).sum() )
                         idx.append(j)
                         break
             #if len(idx) != 9:
             if len(idx) != dispersion.shape[1]:
                 print "OMG!!! ", k, self.dispersion[k-1], self.dispersion[k], idx, '\n'
+                print 'scl = ', scl
+                raise
             #dispersion.append(omg)
             idxs.append(idx)
         return idxs
@@ -103,13 +107,20 @@ class PHDispersion(QEDispersion):
                 idxs.append( iii )
                 continue
             idx = []
+            scl = []
             for i, o1 in zip( idxs[k-1], self.dispersion[k-1]):
                 for j, o2 in enumerate(self.dispersion[k]):
+                    scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
                     if ( abs((self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum()) >  thrsh_scl):
+                        #scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
                         idx.append(j)
                         break
             if len(idx) != 9:
                 print "solveAllCrossings OMG!!! ", k, self.dispersion[k-1], self.dispersion[k], idx, '\n'
+                print self.pol[k,idx,:]
+                print self.pol[k-1,idxs[k-1],:]
+                print 'scl = ', scl
+                raise
             #dispersion.append(omg)
             idxs.append(idx)
         dispersion = []

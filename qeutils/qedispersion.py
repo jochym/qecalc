@@ -23,7 +23,9 @@ hexSymPoints = {
             'K' :     [1./3., 1./3., 0.0],
             'H' :     [1.0/3.0, 1.0/3.0, 1.0/2.0],
             'L' :     [0.0, 0.5, 0.5],
-            'A' :     [0.0, 0.0, 1.0/2.0]
+            'A' :     [0.0, 0.0, 1.0/2.0],
+            'G' :     [0.01, 0.0, 0.0]
+            
 }
 
 #Simple cubic symmetry points:
@@ -113,8 +115,12 @@ class QEDispersion():
             for i, ipnt in enumerate(nPoints):
                 numPoints.append(ipnt + numPoints[i])
             for symbol, ipnt in zip(path, numPoints ):
-                kPoints.append(symPoints[symbol])
-                self.points.append((symbol, ipnt))
+                if isinstance(symbol,list):
+                    kPoints.append(symbol)
+                    self.points.append(('Generic', ipnt))
+                else:
+                    kPoints.append(symPoints[symbol])
+                    self.points.append((symbol, ipnt))
         else:
             raise Exception("Dispersion path generator does not support this lattice symmetry")
     
