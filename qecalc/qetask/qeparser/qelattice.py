@@ -13,11 +13,11 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 try:
+    from diffpy.Structure import Structure
+    from diffpy.Structure.lattice import Lattice, cosd
+except ImportError:
     from matter import Structure, Lattice
     from matter.Lattice import cosd
-except ImportError:
-    from  diffpy.Structure import Structure
-    from diffpy.Structure.lattice import Lattice, cosd
 
 #from matter import Lattice
 #from matter.Lattice import cosd

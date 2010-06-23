@@ -200,17 +200,17 @@ class QEDispersion():
 xmax=%f
 ymin=%f
 ymax=%f
-set xrange [%f:%f]
-set yrange [%f:%f]\n"""%(xmin,xmax,ymin,ymax,xmin,xmax,ymin,ymax)
+set xrange [xmin:xmax]
+set yrange [ymin:ymax]\n"""%(xmin,xmax,ymin,ymax)
         for i in range(len(self.points)):
             xcoord = self.axis[ self.points[i][1] ]
-            s = s + 'set arrow from %f,%f to %f,%f nohead lt -1 lw 1\n'%(xcoord,\
-                                                              ymin,xcoord, ymax)
+            s = s + 'set arrow from %f,ymin to %f,ymax nohead lt -1 lw 1\n'%(xcoord,\
+                                                              xcoord)
         columns = ""
         for i in range(self.dispersion.shape[1]):
             columns = columns + ':' + str(i+1)
         dataFileName = filename + '.dat'
-        plotParameters = 'with lines lw 3'
+        plotParameters = 'with dots lw 3'
         s = s + 'plot "%s" using 1:2 %s'%(dataFileName, plotParameters)
         for i in range(self.dispersion.shape[1])[1:]:
             s = s + ' , "%s" using 1:%d %s'%(dataFileName, i+2, plotParameters)

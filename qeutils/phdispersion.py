@@ -29,8 +29,8 @@ class PHDispersion(QEDispersion):
         self.matdynTask.input.save()
 
         self.matdynTask.launch()
-        pol, self.dispersion, qpoints =  self.matdynTask.output.property('multi phonon')
-        self.pol = pol.reshape(pol.shape[0], pol.shape[1], pol.shape[2]*pol.shape[3])
+        self.pol, self.dispersion, qpoints =  self.matdynTask.output.property('multi phonon')
+        #self.pol = pol.reshape(pol.shape[0], pol.shape[1], pol.shape[2]*pol.shape[3])
         #self.dispersion = disp
 
     def setPhononPath(self, *pathNPoints):
@@ -92,6 +92,49 @@ class PHDispersion(QEDispersion):
 
 
     def solveAllCrossings(self, thrsh_scl = 0.8):
+        self.pol = self.pol.reshape(self.pol.shape[0], self.pol.shape[1], self.pol.shape[2]*self.pol.shape[3])
+        idxs = [range(self.dispersion.shape[1])]
+        dk0 = self.path[1] - self.path[0]
+        eps = 1.0e-10;
+        for k in range(1, self.dispersion.shape[0]):
+            dk = self.path[k] - self.path[k-1]
+            #if ( abs((dk - dk0).sum()) > eps ):
+            if 1 == 2:
+                print "dk0!", dk0, dk
+                dk0 = dk
+                iii =  self._launchIndexFromLine( qstart = self.path[0], \
+                       qend = self.path[k], nPoints = 300,  \
+                       thrsh_scl = thrsh_scl)[-1]
+                print k, self.path[k]
+                print iii
+                idxs.append( iii )
+                continue
+            idx = []
+            scl = []
+            for i, o1 in zip( idxs[k-1], self.dispersion[k-1]):
+                for j, o2 in enumerate(self.dispersion[k]):
+                    scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
+                    if ( abs((self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum()) >  thrsh_scl):
+                        #scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
+                        idx.append(j)
+                        break
+            if len(idx) != 9:
+                print "solveAllCrossings OMG!!! ", k, self.dispersion[k-1], \
+                                                   self.dispersion[k], idx, '\n'
+                print self.pol[k,idx,:]
+                print self.pol[k-1,idxs[k-1],:]
+                print 'scl = ', scl
+                raise
+            #dispersion.append(omg)
+            idxs.append(idx)
+        dispersion = []
+        for k, idx in enumerate(idxs):
+            dispersion.append( self.dispersion[k, idx])
+    
+        self.dispersion = numpy.array(dispersion)
+
+    def solveAllCrossings2(self, thrsh_scl = 0.8):
+        from numpy import real
         idxs = [range(self.dispersion.shape[1])]
         dk0 = self.path[1] - self.path[0]
         eps = 1.0e-10;
@@ -107,21 +150,68 @@ class PHDispersion(QEDispersion):
                 idxs.append( iii )
                 continue
             idx = []
-            scl = []
+            #for ii in idxs[k-1]:
+            #    print  (self.pol[k-1,4,:].conj()*self.pol[k-1,ii,:]).sum()
             for i, o1 in zip( idxs[k-1], self.dispersion[k-1]):
+                mscl = 0.0
+                mwdiff = 1.0
+               # mscl = numpy.zeros(self.pol.shape[2])
+                jj = -1
                 for j, o2 in enumerate(self.dispersion[k]):
-                    scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
-                    if ( abs((self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum()) >  thrsh_scl):
-                        #scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
-                        idx.append(j)
+                    scl = []                    
+                    weightk = []
+                    weightkm1 = []
+                    sc = 0.0
+                    for iAtom in range(0, self.pol.shape[2]):
+                        weightk.append( real(self.pol[k,j,iAtom,:].conj()*self.pol[k,j,iAtom,:]).sum() )
+                        weightkm1.append( real(self.pol[k-1,i,iAtom,:].conj()*self.pol[k-1,i,iAtom,:]).sum() )
+                        sc = sc + abs((self.pol[k,j,iAtom,:].conj()*self.pol[k-1,i,iAtom,:]).sum())
+
+                    #if ( sc >  thrsh_scl ) :
+                    #    scl.append( sc )
+                    #else:
+                        #scl = []
+                    #    break
+
+
+                    #wdiff = (abs( (numpy.array(weightk) - numpy.array(weightkm1))/numpy.array(weightkm1) )).sum()
+                    wdiff = (abs( (numpy.array(weightk) - numpy.array(weightkm1)) )).sum()
+                    #print wdiff
+                    
+                    #if wdiff < 0.1 and wdiff < mwdiff:
+                    #    print 'weights  k miuns k-1:', wdiff
+                    #    mwdiff = wdiff
+                    #    jj = j
+                    if  sc >  thrsh_scl:
+                        jj = j
                         break
-            if len(idx) != 9:
+                    #if len(scl) == self.dispersion.shape[1]:
+                    #    print len(scl), scl
+                    #    if ((numpy.array(scl) - mscl).sum() > 0):
+                    #    if ( sc > mscl ):
+                    #        mscl = sc #numpy.array(scl)
+                            #print mscl
+                    #        jj = j
+
+                    #sc = (((self.pol[k,j,:]*self.pol[k-1,i,:].conj()).sum()))
+                    # implement weights criteria!
+                    #if ( sc >  thrsh_scl ) : #and abs( (self.pol[k,j,:] - self.pol[k-1,i,:]).sum)):
+                        #scl.append( (self.pol[k,j,:].conj()*self.pol[k-1,i,:]).sum() )
+                        #if msc <= sc:
+                        #    msc = sc
+                        #    jj = j
+                if jj >=0:
+                    idx.append(jj)
+                else:
+                    break            
+            if jj < 0:
                 print "solveAllCrossings OMG!!! ", k, self.dispersion[k-1], self.dispersion[k], idx, '\n'
-                print self.pol[k,idx,:]
-                print self.pol[k-1,idxs[k-1],:]
-                print 'scl = ', scl
+                #print self.pol[k,idx,:]
+                #print self.pol[k-1,idxs[k-1],:]
+                print 'mscl = ', mscl
                 raise
             #dispersion.append(omg)
+            print idx
             idxs.append(idx)
         dispersion = []
         for k, idx in enumerate(idxs):

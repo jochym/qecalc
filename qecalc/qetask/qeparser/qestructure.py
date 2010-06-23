@@ -14,14 +14,14 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 try:
-    from matter import Structure, Atom, Lattice
-    from matter.Lattice import cosd
-    from matter.SymmetryUtilities import equalPositions
-except ImportError:
     from diffpy.Structure.structure import Structure
     from diffpy.Structure.atom import Atom
     from diffpy.Structure.lattice import cosd, Lattice
     from diffpy.Structure.SymmetryUtilities import equalPositions
+except ImportError:
+    from matter import Structure, Atom, Lattice
+    from matter.Lattice import cosd
+    from matter.SymmetryUtilities import equalPositions
 
 
 #from matter import Structure, Atom, Lattice
