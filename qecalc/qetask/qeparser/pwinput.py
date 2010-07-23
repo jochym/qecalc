@@ -29,38 +29,38 @@ class PWInput(QEInput):
         self.structure.parseInput()
         self.kpoints.parse()
 
-    def toString(self):       
-        s = ''
-        namelistOrder = {
-        0 : 'control',
-        1 : 'system',
-        2 : 'electrons',
-        3 : 'ions',
-        4 : 'cell',
-        5 : 'phonon',
-        6 : 'ee'
-        }
-
-        cardOrder = {
-        0 : 'atomic_species',
-        1 : 'atomic_positions',
-        2 : 'k_points',
-        3 : 'cell_parameters',
-        4:  'occupations',
-        5 : 'climbing_images',
-        6 : 'constraints',
-        7 : 'collective_vars'
-        }
-        for i in range(len(namelistOrder)):
-            if namelistOrder[i] in self.namelists:
-                s += self.namelists[namelistOrder[i]].toString()
-                s += '\n'
-
-        for i in range(len(cardOrder)):
-            if cardOrder[i] in self.cards:
-                s += self.cards[cardOrder[i]].toString()
-                s += '\n'
-        return s
+#    def toString(self):       
+#        s = ''
+#        namelistOrder = {
+#        0 : 'control',
+#        1 : 'system',
+#        2 : 'electrons',
+#        3 : 'ions',
+#        4 : 'cell',
+#        5 : 'phonon',
+#        6 : 'ee'
+#        }
+#
+#        cardOrder = {
+#        0 : 'atomic_species',
+#        1 : 'atomic_positions',
+#        2 : 'k_points',
+#        3 : 'cell_parameters',
+#        4:  'occupations',
+#        5 : 'climbing_images',
+#        6 : 'constraints',
+#        7 : 'collective_vars'
+#        }
+#        for i in range(len(namelistOrder)):
+#            if namelistOrder[i] in self.namelists:
+#                s += self.namelists[namelistOrder[i]].toString()
+#                s += '\n'
+#
+#        for i in range(len(cardOrder)):
+#            if cardOrder[i] in self.cards:
+#                s += self.cards[cardOrder[i]].toString()
+#                s += '\n'
+#        return s
 
     def outDir(self):
         self.parse()

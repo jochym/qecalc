@@ -30,7 +30,7 @@ class PhononGenerator:
         return self._input["volume"]
       
        
-    def launch(self, pickleName = None, input = None, volume = None):
+    def launch(self, pickleName = None, input = None, volume = None, prefix = ''):
         """
         Performs series of multiple phonon calculations at provided volume expansions
         Loads output from VolumeOptimizer either as a pickle or a dictionary (input)
@@ -44,13 +44,14 @@ class PhononGenerator:
         for v in  volume:
             if v in self.volume():
                 i = self.volume().index(v)
+                self._mphon.pw.input.parse()
                 self._mphon.pw.input.structure.load( source = 'pwconfig', \
                                                configString = self._config()[i] )
                 
-                #print self._mphon.pw.input.structure.toString()
-                #self._mphon.pw.input.structure.save()
-                #self._mphon.pw.launch()
-                self._pack( prefix = i )
+                #print self._mphon.pw.input.toString()
+                self._mphon.pw.input.save()
+                self._mphon.launch()
+                self._pack( prefix = str(i) + prefix)
                 
                                 
     def _config(self):
@@ -73,7 +74,7 @@ class PhononGenerator:
         
         print fileStr
         
-        archiveName = str(prefix) + 'l.tgz'
+        archiveName = str(prefix) + '.tgz'
         os.system('tar -zcf ' + archiveName + ' ' + fileStr )
         
         
