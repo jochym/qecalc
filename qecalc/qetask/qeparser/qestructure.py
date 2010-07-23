@@ -168,6 +168,26 @@ class QEStructure():
                     coords = self.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
     
+   
+    def _setStructureFromPWConfig(self, filename = None, configString = None ):
+        from qecalc.qetask.qeparser.pwinput import PWInput
+        if filename == None and configString == None:
+            raise Exception("Either filename or configString should be set")
+        input = PWInput(filename = filename, config = configString)
+        input.parse()
+        
+        input.structure.qeConf = self.qeConf
+        input.structure.lattice.qeConf = self.qeConf
+        input.structure.filename = self.filename
+        
+        self.structure = input.structure.structure
+        self.lattice = input.structure.lattice
+        self.atomicSpecies = input.structure.atomicSpecies
+        self.optConstraints = input.structure.optConstraints
+        self.nat = input.structure.nat
+        self.ntyp = input.structure.ntyp
+        self.atomicPositionsType = input.structure.atomicPositionsType    
+   
     
     def setStructureFromQEInput(self):
         """ Loads structure from PWSCF config file"""
@@ -226,18 +246,19 @@ class QEStructure():
 
     def load(self, source, **args):
         task = {
-            'diffpy': self.setStructureFromDiffpyStructure
+            'diffpy': self._setStructureFromDiffpyStructure,
+            'pwconfig': self._setStructureFromPWConfig
         }
         if source == 'diffpy':
             if 'ibrav' in args and args['ibrav'] != 0:
-                task['diffpy'] = self.setReducedStructureFromDiffpyStructure
+                task['diffpy'] = self._setReducedStructureFromDiffpyStructure
 
         task[source](**args)
         
         self.updatePWInput(qeConf = self.qeConf)
 
 
-    def setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
+    def _setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
@@ -301,7 +322,7 @@ class QEStructure():
         self.ntyp = len(self.atomicSpecies)        
      
                         
-    def setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList = [], psList = []):
+    def _setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList = [], psList = []):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
