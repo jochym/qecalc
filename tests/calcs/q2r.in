@@ -1,6 +1,0 @@
- &input
-   fildyn='mgb2.dyn',
-   zasr='simple',
-   flfrc='mgb2666.fc'
- /
- 

@@ -20,13 +20,13 @@ from pwkpoints import PWKpoints
 class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
         QEInput.__init__(self,filename, config, type='pw')
-        self.structure = QEStructure(self)
+        self.structure = QEStructure()
         self.kpoints = PWKpoints(self)
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
         (self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
-        self.structure.parseInput()
+        self.structure.parseInput(self)
         self.kpoints.parse()
 
 #    def toString(self):       
@@ -61,6 +61,116 @@ class PWInput(QEInput):
 #                s += self.cards[cardOrder[i]].toString()
 #                s += '\n'
 #        return s
+
+    def _update(self, qeConf = None):
+        if qeConf == None:
+            qeConf = self        
+
+        lattice = self.structure.lattice
+        structure = self.structure   
+
+        #************************* updateLattice:*******************************
+        if 'system' not in qeConf.namelists:
+            qeConf.createNamelist('system')
+        # clear geometry from qeConf:
+        qeConf.namelist('system').remove('a')
+        qeConf.namelist('system').remove('b')
+        qeConf.namelist('system').remove('c')
+        qeConf.namelist('system').remove('cosab')
+        qeConf.namelist('system').remove('cosbc')
+        qeConf.namelist('system').remove('cosac')
+        qeConf.namelist('system').remove('celldm(1)')
+        qeConf.namelist('system').remove('celldm(2)')
+        qeConf.namelist('system').remove('celldm(3)')
+        qeConf.namelist('system').remove('celldm(4)')
+        qeConf.namelist('system').remove('celldm(5)')
+        qeConf.namelist('system').remove('celldm(6)')
+        if 'cell_parameters' in qeConf.cards:
+            qeConf.removeCard('cell_parameters')
+        if lattice._type == 'celldm':
+            qeConf.namelist('system').add('ibrav', lattice._ibrav)
+            qeConf.namelist('system').add('celldm(1)', lattice._a)
+            qeConf.namelist('system').add('celldm(2)', float(lattice._b)/lattice._a)
+            qeConf.namelist('system').add('celldm(3)', float(lattice._c)/lattice._a)
+            if lattice._ibrav < 14:
+                qeConf.namelist('system').add('celldm(4)', lattice._cAB)
+            else:
+                qeConf.namelist('system').add('celldm(4)', lattice._cBC)
+                qeConf.namelist('system').add('celldm(5)', lattice._cAC)
+                qeConf.namelist('system').add('celldm(6)', lattice._cAB)
+        else:
+            if self._type == 'traditional':
+                qeConf.namelist('system').add('ibrav', lattice._ibrav)
+                qeConf.namelist('system').add('A', lattice._a)
+                qeConf.namelist('system').add('B', lattice._b)
+                qeConf.namelist('system').add('C', lattice._c)
+                qeConf.namelist('system').add('cosAB', lattice._cAB)
+                qeConf.namelist('system').add('cosAC', lattice._cAC)
+                qeConf.namelist('system').add('cosBC', lattice._cBC)
+            else:
+                if 'generic' in lattice._type:
+                    qeConf.namelist('system').add('celldm(1)', lattice._a)
+                    lattice._ibrav = 0
+                    qeConf.namelist('system').add('ibrav', lattice._ibrav)
+                    if lattice._type == 'generic hexagonal':
+                        cardArg = 'hexagonal'
+                    if lattice._type == 'generic cubic' or lattice._type == None:
+                        cardArg = 'cubic'
+                    qeConf.createCard('cell_parameters')
+                    qeConf.card('cell_parameters').setArg(cardArg)
+                    qeConf.card('cell_parameters').removeLines()
+                    for i in range(3):
+                        v = lattice._primitiveLattice.base[i,:]/float(lattice._a)
+                        qeConf.card('cell_parameters').addLine(\
+                                       lattice.formatString%(v[0], v[1], v[2]))
+        
+        #************************* updateStructure:*****************************
+        
+        if 'system' not in qeConf.namelists:
+            qeConf.addNamelist('system')            
+        qeConf.namelist('system').remove('ntyp')
+        qeConf.namelist('system').remove('nat')
+        if structure.ntyp != None:
+            qeConf.namelist('system').add('ntyp', structure.ntyp)
+        if structure.nat != None:
+            qeConf.namelist('system').add('nat', structure.nat)
+        
+        if len(qeConf.namelist('system').params) == 0:
+            qeConf.removeNamelist('system')  
+
+        if 'atomic_positions' in qeConf.cards:
+            qeConf.removeCard('atomic_positions')
+        qeConf.createCard('atomic_positions')
+        qeConf.card('atomic_positions').setArg(structure.atomicPositionsType)
+        for atom, constraint in zip(structure.structure, structure.optConstraints):
+            if structure.atomicPositionsType == 'alat':
+                coords = structure.lattice.diffpy().cartesian(atom.xyz)/structure.lattice.a
+                coords = structure.formatString%(coords[0], coords[1], coords[2])
+            else:
+                if structure.atomicPositionsType == 'crystal':
+                    coords = structure.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                else:
+                    if structure.atomicPositionsType == 'bohr' or structure.atomicPositionsType == 'angstrom':
+                        coords = structure.lattice.diffpy().cartesian(atom.xyz)
+                        coords = structure.formatString%(coords[0], coords[1], coords[2])
+                    else:
+                        raise NonImplementedError
+            line = '%-3s'%structure._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
+            qeConf.card('atomic_positions').addLine(line)
+        
+        if len(qeConf.card('atomic_positions').lines()) == 0:
+            qeConf.removeCard('atomic_positions')
+
+        # update ATOMIC_SPECIES card
+        if 'atomic_species' in qeConf.cards:
+            qeConf.removeCard('atomic_species')
+        qeConf.createCard('atomic_species')
+        for element, specie in structure.atomicSpecies.items():
+            qeConf.card('atomic_species').addLine(specie.toString())
+        
+        if len(qeConf.card('atomic_species').lines()) == 0:
+            qeConf.removeCard('atomic_species')                
+
 
     def outDir(self):
         self.parse()

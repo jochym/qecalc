@@ -108,21 +108,24 @@ class Output(BaseOutput):
         d3tensor = []
         qpoints = []
         numberq = 0
-        for index, line in enumerate(lines):
-            if 'q = (' in line:
-                numberq = numberq + 1
-                qpoints.append([float(f) for f in lines[index].split()[3:6]])
-                for mode in range(0,3*natom):
-                    for i in range(0,natom):
-                        for j in range(0,natom):
-                            for idir in range(0,3):
-                                _itemp = index+mode*(natom*natom*7 + 3)+\
-                                         (i*natom+j)*7 + 6 + idir*natom
-                                temp = lines[_itemp]+lines[_itemp + 1]
-                                _val = [float(f) for f in temp.split()]
-                                d3tensor.append(complex(_val[0],_val[1]))
-                                d3tensor.append(complex(_val[2],_val[3]))
-                                d3tensor.append(complex(_val[4],_val[5]))
+        try:
+            for index, line in enumerate(lines):            
+                if 'q = (' in line:
+                    numberq = numberq + 1
+                    qpoints.append([float(f) for f in lines[index].split()[3:6]])
+                    for mode in range(0,3*natom):
+                        for i in range(0,natom):
+                            for j in range(0,natom):
+                                for idir in range(0,3):
+                                    _itemp = index+mode*(natom*natom*7 + 3)+\
+                                             (i*natom+j)*7 + 6 + idir*2    # was natom instead of 2
+                                    temp = lines[_itemp]+lines[_itemp + 1]  
+                                    _val = [float(f) for f in temp.split()]
+                                    d3tensor.append(complex(_val[0],_val[1]))
+                                    d3tensor.append(complex(_val[2],_val[3]))
+                                    d3tensor.append(complex(_val[4],_val[5]))
+        except: 
+            raise
 
         return  \
         (np.rollaxis(np.array(d3tensor).reshape(\

@@ -45,7 +45,7 @@ class PWTask(QETask):
             name = sectionName
 
         self.setting.section(name, configDic)
-        self.input = PWInput( self.setting.get('pwInput') )
+        self.input = PWInput( self.setting.pwInput ) #self.setting.get('pwInput') )
         self.output = QEOutput(self.setting, type='pw')
 
 

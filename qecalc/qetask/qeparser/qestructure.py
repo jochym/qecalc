@@ -39,22 +39,25 @@ class AtomicSpecies():
         self.element = element
         self.pseudopotential = pseudopotential
         self.mass = mass
-    def toString(self):
+    def __str__(self):
         return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.pseudopotential
+    def toString(self):
+        return str(self)
+        #return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.pseudopotential
 
 
 
 class QEStructure():
     
-    def __init__(self, qeConf):
+    def __init__(self):
         """the structure is initialized from PWSCF config file
            'lattice' and 'structure' are automatically updated"""
-        self.filename = qeConf.filename
+        #self.filename = qeConf.filename
         self.atomicSpecies = OrderedDict()
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self.optConstraints = []
-        self.qeConf = qeConf
+        #self.qeConf = qeConf
         self.lattice = QELattice()
         self.structure = Structure(lattice = self.lattice.diffpy())
         self.nat = None
@@ -62,14 +65,40 @@ class QEStructure():
         self.atomicPositionsType = 'crystal'       
         
 
+    def __str__(self):
+        """simple string representation"""        
+        s = str(self.lattice) + '\n'
+        if self.atomicPositionsType == 'alat':
+            s = s + 'Atomic positions in units of lattice parametr "a":\n'        
+        if self.atomicPositionsType == 'crystal':
+            s = s + 'Atomic positions in crystal coordinates:\n'
+        for atom, constraint in zip(self.structure, self.optConstraints):
+            if self.atomicPositionsType == 'alat':
+                coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
+                coords = self.formatString%(coords[0], coords[1], coords[2])
+            else:
+                if self.atomicPositionsType == 'crystal':
+                    coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+                else:
+                    raise NonImplementedError
+            s = s + '%-3s'%self._element(atom) + '    ' + coords + '  ' \
+                    + str(constraint)[1:-1] + '\n'
+        s = s + '\n'
+        
+        for element, specie in self.atomicSpecies.items():
+            s = s + specie.toString() + '\n'
+            
+        return s
+
+
     def atomLabels(self):
         labels = []
         for l in self.atomicSpecies:
             labels.append(l)
         return labels
         
-    def parseInput(self):
-        self.setStructureFromQEInput()
+    def parseInput(self, qeConf):
+        self.setStructureFromQEInput(qeConf)
         
     def parseOutput(self, pwscfOutputFile):
         self.setStructureFromPWOutput(pwscfOutputFile)
@@ -176,9 +205,9 @@ class QEStructure():
         input = PWInput(filename = filename, config = configString)
         input.parse()
         
-        input.structure.qeConf = self.qeConf
-        input.structure.lattice.qeConf = self.qeConf
-        input.structure.filename = self.filename
+        #input.structure.qeConf = self.qeConf
+        input.structure.lattice.qeConf = self.lattice.qeConf
+        #input.structure.filename = self.filename
         
         self.structure = input.structure.structure
         self.lattice = input.structure.lattice
@@ -186,25 +215,25 @@ class QEStructure():
         self.optConstraints = input.structure.optConstraints
         self.nat = input.structure.nat
         self.ntyp = input.structure.ntyp
-        self.atomicPositionsType = input.structure.atomicPositionsType    
+        self.atomicPositionsType = input.structure.atomicPositionsType
    
     
-    def setStructureFromQEInput(self):
+    def setStructureFromQEInput(self, qeConf):
         """ Loads structure from PWSCF config file"""
         self.atomicSpecies = OrderedDict()
-        self.lattice.setLatticeFromPWInput(self.qeConf)
+        self.lattice.setLatticeFromPWInput(qeConf)
         #self.lattice = QELattice(qeConf = self.qeConf)
         self.structure = Structure(lattice = self.lattice.diffpy())
         self.nat = self.ntyp = None
-        self.filename = self.qeConf.filename
+        #self.filename = self.qeConf.filename
         self.optConstraints = []
         
-        if 'system' in self.qeConf.namelists:        
-            self.nat  = int(self.qeConf.namelist('system').param('nat'))
-            self.ntyp  = int(self.qeConf.namelist('system').param('ntyp'))
-        if 'atomic_positions' in self.qeConf.cards:        
-            atomicLines = self.qeConf.card('atomic_positions').lines()
-            self.atomicPositionsType = self.qeConf.card('atomic_positions').arg()
+        if 'system' in self.lattice.qeConf.namelists:
+            self.nat  = int(self.lattice.qeConf.namelist('system').param('nat'))
+            self.ntyp  = int(self.lattice.qeConf.namelist('system').param('ntyp'))
+        if 'atomic_positions' in self.lattice.qeConf.cards:        
+            atomicLines = self.lattice.qeConf.card('atomic_positions').lines()
+            self.atomicPositionsType = self.lattice.qeConf.card('atomic_positions').arg()
 #            if self.atomicPositionsType == 'angstrom':
 #                raise NotImplementedError\
 #         ('atomic positions in bohr and angstrom are not currently supported')
@@ -228,8 +257,8 @@ class QEStructure():
                     self.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
         # parse mass ATOMIC_SPECIES section:
          
-        if 'atomic_species' in self.qeConf.cards:
-            atomicSpeciesLines = self.qeConf.card('atomic_species').lines()
+        if 'atomic_species' in self.lattice.qeConf.cards:
+            atomicSpeciesLines = self.lattice.qeConf.card('atomic_species').lines()
             for line in atomicSpeciesLines:
                 if '!' not in line:
                     if line.strip() != '':                     
@@ -255,7 +284,8 @@ class QEStructure():
 
         task[source](**args)
         
-        self.updatePWInput(qeConf = self.qeConf)
+        self.lattice.qeConf._update()
+        #self.updatePWInput(qeConf = self.qeConf)
 
 
     def _setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
@@ -414,98 +444,21 @@ class QEStructure():
         #self.lattice = setLatticeFromDiffpyLattice(structure.lattice, ibrav)
 
 
-    # def toString(self):
-        # s = self.lattice.toString() + '\n'
-        # if self.atomicPositionsType == 'alat':
-            # s = s + 'Atomic positions in units of lattice parametr "a":\n'        
-        # if self.atomicPositionsType == 'crystal':
-            # s = s + 'Atomic positions in crystal coordinates:\n'
-        # for atom, constraint in zip(self.structure, self.optConstraints):
-            # if self.atomicPositionsType == 'alat':      
-                # coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
-                # coords = self.formatString%(coords[0], coords[1], coords[2])
-            # else:
-                # if self.atomicPositionsType == 'crystal':
-                    # coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
-                # else:
-                    # raise NonImplementedError
-            # s = s + '%-3s'%self._element(atom) + '    ' + coords + '  ' \
-                    # + str(constraint)[1:-1] + '\n'
-
-        # s = s + '\n'
-        # for element, specie in self.atomicSpecies.items():
-            # s = s + specie.toString() + '\n'
-
-        # return s
-
     def toString(self, string = None):
         if string != None:
             string = self.lattice.toString(string = string)
             qeConf = QEInput(config = string)
             qeConf.parse()
         else:
-            if self.qeConf != None:
-                qeConf = self.qeConf
+            if self.lattice.qeConf != None:
+                qeConf = self.lattice.qeConf
             else:
                 qeConf = QEInput(config = '')
 
-        self.updatePWInput(qeConf)
+        #self.updatePWInput(qeConf)
         return qeConf.toString()
 
-        
-    def updatePWInput(self, qeConf = None):
-
-        if qeConf == None:
-            qeConf = self.qeConf
-
-        self.lattice.updatePWInput(qeConf)
-
-        if 'system' not in qeConf.namelists:
-            qeConf.addNamelist('system')            
-        qeConf.namelist('system').remove('ntyp')
-        qeConf.namelist('system').remove('nat')
-        if self.ntyp != None:
-            qeConf.namelist('system').add('ntyp', self.ntyp)
-        if self.nat != None:
-            qeConf.namelist('system').add('nat', self.nat)
-        
-        if len(qeConf.namelist('system').params) == 0:
-            qeConf.removeNamelist('system')  
-
-        if 'atomic_positions' in qeConf.cards:
-            qeConf.removeCard('atomic_positions')
-        qeConf.createCard('atomic_positions')
-        qeConf.card('atomic_positions').setArg(self.atomicPositionsType)
-        for atom, constraint in zip(self.structure, self.optConstraints):
-            if self.atomicPositionsType == 'alat':
-                coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
-                coords = self.formatString%(coords[0], coords[1], coords[2])
-            else:
-                if self.atomicPositionsType == 'crystal':
-                    coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
-                else:
-                    if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
-                        coords = self.lattice.diffpy().cartesian(atom.xyz)
-                        coords = self.formatString%(coords[0], coords[1], coords[2])
-                    else:
-                        raise NonImplementedError
-            line = '%-3s'%self._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
-            qeConf.card('atomic_positions').addLine(line)
-        
-        if len(qeConf.card('atomic_positions').lines()) == 0:
-            qeConf.removeCard('atomic_positions')
-
-        # update ATOMIC_SPECIES card
-        if 'atomic_species' in qeConf.cards:
-            qeConf.removeCard('atomic_species')
-        qeConf.createCard('atomic_species')
-        for element, specie in self.atomicSpecies.items():
-            qeConf.card('atomic_species').addLine(specie.toString())
-        
-        if len(qeConf.card('atomic_species').lines()) == 0:
-            qeConf.removeCard('atomic_species')        
-
-
+ 
     def save(self, fname = None):
         """Writes/updates structure into PW config file,
            if the file does not exist, new one will be created"""
@@ -517,12 +470,69 @@ class QEStructure():
         else:
             filename = self.filename
             self.lattice.save(filename)
-            qeConf = self.qeConf
+            qeConf = self.lattice.qeConf
             
-        self.updatePWInput(qeConf)
+        #self.updatePWInput(qeConf)
         qeConf.save(filename)
-
+     
+    
+    def updatePWInput(self, qeConf = None): pass        
+#    def updatePWInputOld(self, qeConf = None):
+#
+#        if qeConf == None:
+#            qeConf = self.qeConf
+#
+#        self.lattice._updatePWInput(qeConf)
+#
+#        if 'system' not in qeConf.namelists:
+#            qeConf.addNamelist('system')            
+#        qeConf.namelist('system').remove('ntyp')
+#        qeConf.namelist('system').remove('nat')
+#        if self.ntyp != None:
+#            qeConf.namelist('system').add('ntyp', self.ntyp)
+#        if self.nat != None:
+#            qeConf.namelist('system').add('nat', self.nat)
+#        
+#        if len(qeConf.namelist('system').params) == 0:
+#            qeConf.removeNamelist('system')  
+#
+#        if 'atomic_positions' in qeConf.cards:
+#            qeConf.removeCard('atomic_positions')
+#        qeConf.createCard('atomic_positions')
+#        qeConf.card('atomic_positions').setArg(self.atomicPositionsType)
+#        for atom, constraint in zip(self.structure, self.optConstraints):
+#            if self.atomicPositionsType == 'alat':
+#                coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
+#                coords = self.formatString%(coords[0], coords[1], coords[2])
+#            else:
+#                if self.atomicPositionsType == 'crystal':
+#                    coords = self.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
+#                else:
+#                    if self.atomicPositionsType == 'bohr' or self.atomicPositionsType == 'angstrom':
+#                        coords = self.lattice.diffpy().cartesian(atom.xyz)
+#                        coords = self.formatString%(coords[0], coords[1], coords[2])
+#                    else:
+#                        raise NonImplementedError
+#            line = '%-3s'%self._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
+#            qeConf.card('atomic_positions').addLine(line)
+#        
+#        if len(qeConf.card('atomic_positions').lines()) == 0:
+#            qeConf.removeCard('atomic_positions')
+#
+#         update ATOMIC_SPECIES card
+#        if 'atomic_species' in qeConf.cards:
+#            qeConf.removeCard('atomic_species')
+#        qeConf.createCard('atomic_species')
+#        for element, specie in self.atomicSpecies.items():
+#            qeConf.card('atomic_species').addLine(specie.toString())
+#        
+#        if len(qeConf.card('atomic_species').lines()) == 0:
+#            qeConf.removeCard('atomic_species')        
         
+        #if qeConf.config != None:
+        #    qeConf.config = qeConf.toString()
+        #if qeConf.filename != None:
+        #    qeConf.save()
 
     def diffpy(self):
         return self.structure
