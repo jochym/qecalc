@@ -1,0 +1,37 @@
+&CONTROL
+    calculation = 'scf',
+    tstress = .true.,
+    tprnfor = .true.,
+    prefix = 'mgb2',
+    pseudo_dir = './',
+    lkpoint_dir = .false.,
+    outdir = 'temp/',
+/
+&SYSTEM
+    ibrav = 4,
+    nspin = 1,
+    nbnd = 12,
+    occupations = 'smearing',
+    degauss = 0.025,
+    smearing = 'methfessel-paxton',
+    ecutwfc = 16,
+    ecutrho = 64.0,
+    celldm(1) = 6,
+    celldm(2) = 1,
+    celldm(3) = 1.09554894488,
+    celldm(4) = -0.5,
+    ntyp = 2,
+    nat = 3,
+/
+&ELECTRONS
+    conv_thr = 1.0d-7,
+/
+ATOMIC_SPECIES
+ Mg  24.3050 mg.ncpp
+ B   11.0000 b.ncpp
+ATOMIC_POSITIONS (alat)
+ Mg      0.00000000  0.00000000  0.00000000
+ B       0.50000000  0.28867513  0.54777447
+ B       0.00000000  0.57735027  0.54777447
+K_POINTS (automatic)
+ 4 4 4 0 0 0

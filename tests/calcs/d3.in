@@ -1,0 +1,11 @@
+Anharm at Gamma
+&INPUTPH
+    prefix = 'mgb2',
+    fildrho = 'mgb2.drho_G',
+    fild0rho = 'mgb2.drho_G',
+    amass(1) = 24.305,
+    amass(2) = 11.000,
+    outdir = 'temp/',
+    fildyn = 'mgb2.anh_G',
+/
+0.0 0.0 0.0

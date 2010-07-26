@@ -1,0 +1,5 @@
+&INPUT
+    fildyn = 'mgb2.dyn',
+    zasr = 'simple',
+    flfrc = 'mgb2.fc',
+/
