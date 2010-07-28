@@ -36,7 +36,7 @@ from orderedDict import OrderedDict
 
 class AtomicSpecies():
     def __init__(self, element = 'H', mass = 1.0, pseudopotential = ''):
-        self.element = element
+        self._element = element
         self.pseudopotential = pseudopotential
         self.mass = mass
     def __str__(self):
@@ -44,6 +44,13 @@ class AtomicSpecies():
     def toString(self):
         return str(self)
         #return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.pseudopotential
+    def _get_element(self):
+        return self._element
+
+    def _set_element(self, value):
+        self._element = value
+
+    element = property(_get_element, _set_element, doc ="element")        
 
 
 
@@ -56,14 +63,56 @@ class QEStructure():
         self.atomicSpecies = OrderedDict()
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
-        self.optConstraints = []
+        self._optConstraints = []
         #self.qeConf = qeConf
         self.lattice = QELattice()
         self.structure = Structure(lattice = self.lattice.diffpy())
-        self.nat = None
-        self.ntyp = None
-        self.atomicPositionsType = 'crystal'       
+        self._nat = None
+        self._ntyp = None
+        self._atomicPositionsType = 'crystal'       
         
+    def _get_nat(self):
+        return self._nat
+
+    def _set_nat(self, value):
+        self._nat = value
+        self.lattice.qeConf._update()
+
+    nat = property(_get_nat, _set_nat, doc ="number of atoms")
+    
+ 
+    def _get_ntyp(self):
+        return self._ntyp
+
+    def _set_ntyp(self, value):
+        self._nat = value
+        self.lattice.qeConf._update()
+
+    ntyp = property(_get_ntyp, _set_ntyp, doc ="number of types")
+    
+    
+    def _get_atomicPositionsType(self):
+        return self._atomicPositionsType
+
+    def _set_atomicPositionsType(self, value):
+        self._atomicPositionsType = value
+        self.lattice.qeConf._update()
+
+    atomicPositionsType = property(_get_atomicPositionsType, \
+                                   _set_atomicPositionsType, \
+                           doc ="type of atomic positions (crystal, alat ...)")    
+
+
+    def _get_optConstraints(self):
+        return self._optConstraints
+
+    def _set_optConstraints(self, value):
+        self._optConstraints = value
+        self.lattice.qeConf._update()
+
+    optConstraints = property(_get_optConstraints, _set_optConstraints, \
+                               doc ="optimization constraints list")
+                
 
     def __str__(self):
         """simple string representation"""        
