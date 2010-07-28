@@ -12,7 +12,7 @@
     nspin = 1,
     nbnd = 12,
     occupations = 'smearing',
-    degauss = 0.025,
+    degauss = 0.05,
     smearing = 'methfessel-paxton',
     ecutwfc = 16,
     ecutrho = 64.0,
@@ -34,4 +34,4 @@ ATOMIC_POSITIONS (alat)
  B       0.50000000  0.28867513  0.54777447
  B       0.00000000  0.57735027  0.54777447
 K_POINTS (automatic)
- 4 4 4 0 0 0
+ 4 4 4  0 0 0

@@ -56,7 +56,7 @@ class AtomicSpecies():
 
 class QEStructure():
     
-    def __init__(self):
+    def __init__(self, qeConf = None):
         """the structure is initialized from PWSCF config file
            'lattice' and 'structure' are automatically updated"""
         #self.filename = qeConf.filename
@@ -64,7 +64,7 @@ class QEStructure():
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self._optConstraints = []
-        #self.qeConf = qeConf
+        self._qeConf = qeConf
         self.lattice = QELattice()
         self.structure = Structure(lattice = self.lattice.diffpy())
         self._nat = None
@@ -147,6 +147,7 @@ class QEStructure():
         return labels
         
     def parseInput(self, qeConf):
+        self._qeConf = qeConf 
         self.setStructureFromQEInput(qeConf)
         
     def parseOutput(self, pwscfOutputFile):
@@ -353,7 +354,7 @@ class QEStructure():
         #qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
         qeLattice = QELattice(ibrav = 0, base = diffpyLattice.base)
         qeLattice.a = 1.889725989*qeLattice.a
-        
+        qeLattice.qeConf = self._qeConf
         
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
@@ -425,6 +426,7 @@ class QEStructure():
         qeLattice = QELattice(ibrav = ibrav, a = a, b = b, c = c,  cBC =  cBC, \
                               cAC = cAC, cAB = cAB)
 
+        qeLattice.qeConf = self._qeConf
         self.lattice = qeLattice
         # make a deep copy (does not wok now)
         #reducedStructure = Structure(diffpyStructure)

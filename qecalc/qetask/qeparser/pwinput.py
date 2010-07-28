@@ -20,7 +20,7 @@ from pwkpoints import PWKpoints
 class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
         QEInput.__init__(self,filename, config, type='pw')
-        self.structure = QEStructure()
+        self.structure = QEStructure(self)
         self.kpoints = PWKpoints(self)
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
