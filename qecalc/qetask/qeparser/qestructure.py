@@ -153,13 +153,13 @@ class QEStructure():
     def parseOutput(self, pwscfOutputFile):
         self.setStructureFromPWOutput(pwscfOutputFile)
 
-    def setStructureFromPWOutput(self, pwscfOutputFile): 
+    def setStructureFromPWOutput(self, pwoutput): 
         """
         Loads structure from PWSCF output file. If there was geometry
         optimization (relax or vc-relax), the structure will be reinitialized
         from the last step of the optimization. Assumes output is in ALAT units
         """
-        file = open(pwscfOutputFile)
+        file = open(pwoutput)
         pwscfOut = file.readlines()
         pseudoList = []
         atomList = []
@@ -326,7 +326,8 @@ class QEStructure():
     def load(self, source, **args):
         task = {
             'diffpy': self._setStructureFromDiffpyStructure,
-            'pwconfig': self._setStructureFromPWConfig
+            'pwconfig': self._setStructureFromPWConfig,
+            'pwoutput': self.setStructureFromPWOutput,
         }
         if source == 'diffpy':
             if 'ibrav' in args and args['ibrav'] != 0:
