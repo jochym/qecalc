@@ -19,8 +19,6 @@ except ImportError:
     from matter import Structure, Lattice
     from matter.Lattice import cosd
 
-#from matter import Lattice
-#from matter.Lattice import cosd
 
 from math import sqrt, degrees
 import numpy
@@ -50,13 +48,14 @@ class QELattice(object):
         self.qeConf = qeConf
         self._type = 'celldm'
         self._primitiveLattice = Lattice()
+        # equivalent representation in diffpyLattice object
         self._standardLattice = Lattice()
         # Lattice vectors in bohrs on angstrom:
         self._base = None
       #  self._a0 = 1.0 # old value of a - most relevant for ibrav=0, when a is set
                        # to 1.0
         if self.qeConf != None:
-            self.setLatticeFromPWInput(self.qeConf)
+            self._setLatticeFromPWInput(self.qeConf)
         else:
             if ibrav > 0 and base != None:
                 self.setLatticeFromQEVectors(ibrav, base)
@@ -608,7 +607,7 @@ class QELattice(object):
         return QEBase[ibrav]
 
 
-    def setLatticeFromPWInput(self, qeConf = None):
+    def _setLatticeFromPWInput(self, qeConf = None):
             
         if qeConf == None:
             qeConf = self.qeConf
@@ -639,7 +638,7 @@ class QELattice(object):
     def _setLatticeFromPWSCF(self, fname):
         self.qeConf = QEInput(fname)
         self.qeConf.parse()
-        setLatticeFromPWInput(self, qeConf)
+        _setLatticeFromPWInput(self, qeConf)
         
         
     def _parsePWInput(self, ibrav, qeConf = None):

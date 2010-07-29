@@ -60,6 +60,7 @@ EXPORT_PYTHON_MODULES = \
     qeoutput.py \
     qeparser.py \
     qestructure.py \
+    qeatom.py \
 
 
 

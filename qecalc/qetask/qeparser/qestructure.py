@@ -148,18 +148,25 @@ class QEStructure():
         
     def parseInput(self, qeConf):
         self._qeConf = qeConf 
-        self.setStructureFromQEInput(qeConf)
+        self._setStructureFromQEInput(qeConf)
         
     def parseOutput(self, pwscfOutputFile):
-        self.setStructureFromPWOutput(pwscfOutputFile)
+        self._setStructureFromPWOutput(pwscfOutputFile)
 
-    def setStructureFromPWOutput(self, pwoutput): 
+    def _setStructureFromPWOutput(self, filename = None, outputString = None): 
         """
         Loads structure from PWSCF output file. If there was geometry
         optimization (relax or vc-relax), the structure will be reinitialized
         from the last step of the optimization. Assumes output is in ALAT units
         """
-        file = open(pwoutput)
+        if filename == None and outputString == None:
+            raise QEStructureError("Either filename or outputString should be set")
+        
+        if filename != None:
+            file = open(filename)            
+        else:
+            import StringIO
+            file = StringIO.StringIO(outputString)
         pwscfOut = file.readlines()
         pseudoList = []
         atomList = []
@@ -268,10 +275,10 @@ class QEStructure():
         self.atomicPositionsType = input.structure.atomicPositionsType
    
     
-    def setStructureFromQEInput(self, qeConf):
+    def _setStructureFromQEInput(self, qeConf):
         """ Loads structure from PWSCF config file"""
         self.atomicSpecies = OrderedDict()
-        self.lattice.setLatticeFromPWInput(qeConf)
+        self.lattice._setLatticeFromPWInput(qeConf)
         #self.lattice = QELattice(qeConf = self.qeConf)
         self.structure = Structure(lattice = self.lattice.diffpy())
         self.nat = self.ntyp = None
@@ -326,8 +333,8 @@ class QEStructure():
     def load(self, source, **args):
         task = {
             'diffpy': self._setStructureFromDiffpyStructure,
-            'pwconfig': self._setStructureFromPWConfig,
-            'pwoutput': self.setStructureFromPWOutput,
+            'pwinput': self._setStructureFromPWConfig,
+            'pwoutput': self._setStructureFromPWOutput,
         }
         if source == 'diffpy':
             if 'ibrav' in args and args['ibrav'] != 0:
@@ -349,6 +356,8 @@ class QEStructure():
         diffpyLattice = structure.lattice
         
         self.structure = structure
+        
+        self.atomicSpecies = OrderedDict()
                
         
         #set lattice and  convert to bohr units
@@ -410,13 +419,16 @@ class QEStructure():
         psList - list of strings with pseudopotential names
         diffpyStructure object will be modified with reduced atomic positions
         """
+        import copy
 
         #self.atomicSpecies = OrderedDict()
         #self.optConstraints = []
         #self.atomicPositionsType = 'crystal'
 
-        diffpyLattice = structure.lattice
+        diffpyLattice = copy.deepcopy(structure.lattice)
 
+        self.atomicSpecies = OrderedDict()
+        
         a = diffpyLattice.a
         b = diffpyLattice.b
         c = diffpyLattice.c
@@ -429,9 +441,9 @@ class QEStructure():
 
         qeLattice.qeConf = self._qeConf
         self.lattice = qeLattice
-        # make a deep copy (does not wok now)
-        #reducedStructure = Structure(diffpyStructure)
-        reducedStructure = structure
+        # make a deep copy:
+        reducedStructure = Structure(atoms = structure)
+        #reducedStructure = structure
 
         reducedStructure.placeInLattice(Lattice(base=qeLattice.diffpy().base))
 

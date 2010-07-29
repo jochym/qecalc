@@ -99,7 +99,7 @@ class PWInput(QEInput):
                 qeConf.namelist('system').add('celldm(5)', lattice._cAC)
                 qeConf.namelist('system').add('celldm(6)', lattice._cAB)
         else:
-            if self._type == 'traditional':
+            if lattice._type == 'traditional':
                 qeConf.namelist('system').add('ibrav', lattice._ibrav)
                 qeConf.namelist('system').add('A', lattice._a)
                 qeConf.namelist('system').add('B', lattice._b)

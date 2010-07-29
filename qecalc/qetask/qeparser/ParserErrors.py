@@ -14,4 +14,24 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-from qecalc.qetask.qeparser.ParserErrors import *
+
+class QEStructureError(Exception):
+    """Exception for inappropriate structure operation
+    """
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return self.value
+    
+    
+class QELatticeError(Exception):
+    """Exception for inappropriate lattice operation
+    """
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return self.value    
