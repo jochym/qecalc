@@ -184,26 +184,16 @@ class QELattice(object):
         self._base = qeBase
         
         if self.qeConf != None and updateInput == True:
-            #self._updatePWInput()
-            self.qeConf._update()       
+            #self.updatePWInput()
+            self.qeConf.update()       
 
 
 
 
     def toString(self, string = None):
-        
+        """Deprecated"""        
         return str(self)        
-#        if string != None:        
-#            qeConf = QEInput(config = string)
-#            qeConf.parse()                
-#        else:
-#            if self.qeConf != None:
-#                qeConf = self.qeConf
-#            else:
-#                qeConf = QEInput(config = '')
-#                
-#        self._updatePWInput(qeConf)
-#        return qeConf.toString()
+
 
     def latticeParams(self):
         return [self._a, self._b,self._c, self._cBC, self._cAC, self._cAB]
@@ -216,76 +206,11 @@ class QELattice(object):
         return self._primitiveLattice
 
 
-    def getLatticeParamsFromPWSCF(self, ibrav, fname):
-        qeConf = QEInput(fname)
-        qeConf.parse()
-        return self._parsePWInput(ibrav, qeConf)
-
-
-    def updatePWInput(self, qeConf = None): pass
-#    def _updatePWInputOld(self, qeConf = None):
-#        
-#        if qeConf == None:
-#            qeConf = self.qeConf
-#        if qeConf == None:
-#            raise NotImplementedError("writeLatticeToPWSCF: qeConf was not properly initialized")        
-#        
-#        if 'system' not in qeConf.namelists:
-#            qeConf.createNamelist('system')
-#        # clear geometry from qeConf:
-#        qeConf.namelist('system').remove('a')
-#        qeConf.namelist('system').remove('b')
-#        qeConf.namelist('system').remove('c')
-#        qeConf.namelist('system').remove('cosab')
-#        qeConf.namelist('system').remove('cosbc')
-#        qeConf.namelist('system').remove('cosac')
-#        qeConf.namelist('system').remove('celldm(1)')
-#        qeConf.namelist('system').remove('celldm(2)')
-#        qeConf.namelist('system').remove('celldm(3)')
-#        qeConf.namelist('system').remove('celldm(4)')
-#        qeConf.namelist('system').remove('celldm(5)')
-#        qeConf.namelist('system').remove('celldm(6)')
-#        if 'cell_parameters' in qeConf.cards:
-#            qeConf.removeCard('cell_parameters')
-#        if self._type == 'celldm':
-#            qeConf.namelist('system').add('ibrav', self._ibrav)
-#            qeConf.namelist('system').add('celldm(1)', self._a)
-#            qeConf.namelist('system').add('celldm(2)', self._b/self._a)
-#            qeConf.namelist('system').add('celldm(3)', self._c/self._a)
-#            if self._ibrav < 14:
-#                qeConf.namelist('system').add('celldm(4)', self._cAB)
-#            else:
-#                qeConf.namelist('system').add('celldm(4)', self._cBC)
-#                qeConf.namelist('system').add('celldm(5)', self._cAC)
-#                qeConf.namelist('system').add('celldm(6)', self._cAB)
-#        else:
-#            if self._type == 'traditional':
-#                qeConf.namelist('system').add('ibrav', self._ibrav)
-#                qeConf.namelist('system').add('A', self._a)
-#                qeConf.namelist('system').add('B', self._b)
-#                qeConf.namelist('system').add('C', self._c)
-#                qeConf.namelist('system').add('cosAB', self._cAB)
-#                qeConf.namelist('system').add('cosAC', self._cAC)
-#                qeConf.namelist('system').add('cosBC', self._cBC)
-#            else:
-#                if 'generic' in self._type:
-#                    qeConf.namelist('system').add('celldm(1)', self._a)
-#                    self._ibrav = 0
-#                    qeConf.namelist('system').add('ibrav', self._ibrav)
-#                    if self._type == 'generic hexagonal':
-#                        cardArg = 'hexagonal'
-#                    if self._type == 'generic cubic' or self._type == None:
-#                        cardArg = 'cubic'
-#                    qeConf.createCard('cell_parameters')
-#                    qeConf.card('cell_parameters').setArg(cardArg)
-#                    qeConf.card('cell_parameters').removeLines()
-#                    for i in range(3):
-#                        v = self._primitiveLattice.base[i,:]/self._a
-#                        qeConf.card('cell_parameters').addLine(\
-#                                       self.formatString%(v[0], v[1], v[2]))
-#        
-#        qeConf.structure.updatePWInput()
-
+    def updatePWInput(self, qeConf = None):
+        """
+        Deprecated
+        """
+        self.qeConf.update()
 
 
     def save(self, fname = None):
@@ -304,10 +229,8 @@ class QELattice(object):
             filename = qeConf.filename
         
         
-        qeConf._update()   
-        #self._updatePWInput(qeConf)
-        
-        
+        qeConf.update()   
+                
         qeConf.save(filename)
         
         
@@ -605,135 +528,7 @@ class QELattice(object):
                     
         }
         return QEBase[ibrav]
-
-
-    def _setLatticeFromPWInput(self, qeConf = None):
-            
-        if qeConf == None:
-            qeConf = self.qeConf
-        else:
-            self.qeConf = qeConf
-        if qeConf == None:
-            raise NotImplementedError("writeLatticeToPWSCF: qeConf was not properly initialized")
     
-    
-        #self.setLattice(ibrav = 1,a = 1,b = 1,c = 1, cBC = 0,cAC = 0 ,cAB = 0)
-        #if 'system' not in self.qeConf.namelists:
-        #    if 'cell_parameters' not in self.qeConf.cards:
-        #        return
-        #    else:
-        #jr        self.ibrav = 0
-    
-        if 'ibrav' in self.qeConf.namelists['system'].params:
-            ibrav  = int(self.qeConf.namelist('system').param('ibrav'))
-            if ibrav >= 0:
-                a, b, c, cBC, cAC, cAB, base = self._parsePWInput(ibrav, qeConf)
-            else:
-                raise NotImplementedError("ibrav should be integer >= 0")
-        else:
-            raise NotImplementedError("config file should have ibrav defined")
-        self.setLattice(ibrav, a, b, c, cBC, cAC, cAB, base, updateInput = False)
-
-
-    def _setLatticeFromPWSCF(self, fname):
-        self.qeConf = QEInput(fname)
-        self.qeConf.parse()
-        _setLatticeFromPWInput(self, qeConf)
-        
-        
-    def _parsePWInput(self, ibrav, qeConf = None):
-        if qeConf == None:
-            qeConf = self.qeConf
-        if qeConf == None:
-            raise NotImplementedError("writeLatticeToPWSCF: qeConf was not properly initialized")
-        cBC = 0.0
-        cAC = 0.0
-        cAB = 0.0
-        # reset Lattice:
-        #self.setLattice(1. ,1 , 1, cBC ,cAC ,cAB)
-        if 'celldm(1)' in qeConf.namelists['system'].params:
-            self._type = 'celldm' # celldm(i), i=1,6
-            a = float(qeConf.namelist('system').param('celldm(1)'))
-
-            if ibrav == 0:
-                # lattice is set in the units of celldm(1)
-                # need to parse CELL_PARAMETERS
-                #if 'cell_parameters' not in qeConf.cards:
-                #    return  #qeConf.createCard('cell_parameters')
-                cellParLines = qeConf.card('cell_parameters').lines()
-                #print cellParLines
-                cellParType = qeConf.card('cell_parameters').arg()
-                if cellParType == 'cubic' or cellParType == None:
-                    self._type = 'generic cubic'
-                else:
-                    if cellParType == 'hexagonal':
-                        self._type = 'generic hexagonal'
-                # convert card into list
-                base = []
-                for line in cellParLines:
-                    if '!' not in line:
-                        words = line.split()
-                        base.append([float(w) for w in words])
-                return a, None, None, None, None, None, numpy.array(base)*a
-            if ibrav > 0 and ibrav < 4:
-                return a, a, a, cBC, cAC, cAB, None
-            if ibrav == 4:
-                cAB = cosd(120.0)
-            if ibrav == 4 or ibrav == 6 or ibrav == 7:
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
-                return a, a, c_a*a, cBC, cAC, cAB, None
-            if ibrav == 5:
-                cAB = float(qeConf.namelist('system').param('celldm(4)'))
-                return a, a, a, cAB, cAB, cAB, None
-            if ibrav > 7 and ibrav < 12:
-                b_a = float(qeConf.namelist('system').param('celldm(2)'))
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
-                return a, b_a*a, c_a*a, cBC, cAC, cAB, None
-            if ibrav == 12 or ibrav == 13:
-                b_a = float(qeConf.namelist('system').param('celldm(2)'))
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
-                cAB = float(qeConf.namelist('system').param('celldm(4)'))
-                return a, b_a*a, c_a*a, cBC, cAC, cAB, None
-            if ibrav == 14:
-                b_a = float(qeConf.namelist('system').param('celldm(2)'))
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
-                cBC = float(qeConf.namelist('system').param('celldm(4)'))
-                cAC = float(qeConf.namelist('system').param('celldm(5)'))
-                cAB = float(qeConf.namelist('system').param('celldm(6)'))
-                return a, b_a*a, c_a*a, cBC, cAC, cAB, None
-        else:
-            if ibrav == 0:
-                print "Should specify celldm(1) if use 'generic' lattice"
-                raise NotImplementedError
-            a = float(qeConf.namelist('system').param('A'))
-            self._type = 'traditional'   # A, B, C, cosAB, cosAC, cosBC
-            if ibrav > 0 and ibrav < 4:
-                return a, a, a, cBC, cAC, cAB, None
-            if ibrav == 4:
-                cAB = cosd(120.0)
-            if ibrav == 4 or ibrav == 6 or ibrav == 7:
-                c = float(qeConf.namelist('system').param('C'))
-                return a, a, c, cBC, cAC, cAB, None
-            if ibrav == 5:
-                cAB = float(qeConf.namelist('system').param('cosAB'))
-                return a, a, a, cAB, cAB, cAB, None
-            if ibrav > 7 and ibrav < 12:
-                b = float(qeConf.namelist('system').param('B'))
-                c = float(qeConf.namelist('system').param('C'))
-                return a, b, c, cBC, cAC, cAB, None
-            if ibrav == 12 or ibrav == 13:
-                b = float(qeConf.namelist('system').param('B'))
-                c = float(qeConf.namelist('system').param('C'))
-                cAB = float(qeConf.namelist('system').param('cosAB'))
-                return a, b, c, cBC, cAC, cAB, None
-            if ibrav == 14:
-                b = float(qeConf.namelist('system').param('B'))
-                c = float(qeConf.namelist('system').param('C'))
-                cBC = float(qeConf.namelist('system').param('cosBC'))
-                cAC = float(qeConf.namelist('system').param('cosAC'))
-                cAB = float(qeConf.namelist('system').param('cosAB'))
-                return a, b, c, cBC, cAC, cAB, None        
-
 
 if __name__ == '__main__':
     pass ;

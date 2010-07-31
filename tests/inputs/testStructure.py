@@ -86,22 +86,20 @@ class TestStructureMethods(unittest.TestCase):
             self.input = PWInput( filename = 'pw.in' )
             
         self.input.parse()        
-    
-    
-    def test_load_pwoutput(self):
+
+
+    def test_read_pwoutput(self):
         
         filename = os.path.join(testdata_dir, 'mgalb4_pw.out')        
-        self.input.structure.load(source = 'pwoutput', \
-                                  filename = filename)
+        self.input.structure.read(filename, 'pwoutput')
         
         answer = """"Simple Hexagonal or Trigonal(P)" cell:\n 5.70000000  0.00000000  0.00000000\n-2.85000000  4.93634480  0.00000000\n 0.00000000  0.00000000  12.54000000\n\nAtomic positions in units of lattice parametr "a":\nAl      0.00000000  0.00000000  0.00000000  \nB       0.50000000  0.28867510  0.52052140  \nB       0.00000000  0.57735030  0.52052140  \nMg      0.00000000  0.00000000  1.11205140  \nB       0.50000000  0.28867510  1.70358160  \nB       0.00000000  0.57735030  1.70358160  \n\nAl  26.9825 al.ncpp\nB   11.0000 b.ncpp\nMg  24.3050 mg.ncpp\n"""
-                        
+    
         self.assertEqual(str(self.input.structure), answer)
         
         filename = os.path.join(testdata_dir, 'fev3_pwgeom.out')  
-        self.input.structure.load(source = 'pwoutput', \
-                                  filename = filename)
-        
+        self.input.structure.read(filename, 'pwoutput')
+
         # after geometry optimization:
         answer = """"Face Centered Cubic" cell:
 -5.50788176  0.00000000  5.50788176
@@ -120,9 +118,9 @@ Fe  55.8470 Fe.pbe-sp-van_ak.UPF
         self.assertEqual(str(self.input.structure), answer)
 
 
-    def test_load_pwinput(self):
+    def test_read_pwinput(self):
         filename = os.path.join(testdata_dir, 'al_pw.in')
-        self.input.structure.load(source = 'pwinput', filename = filename)
+        self.input.structure.read(filename, 'pwinput')
         
         answer = """"Face Centered Cubic" cell:
 -3.85000000  0.00000000  3.85000000

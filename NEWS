@@ -1,4 +1,7 @@
-News
+- Added 'read' method to QEStructure to initialize structure from pw input, output,
+  and various structure formats(pdb, xyz, cif, etc) 
+- Moved all structure parsing capabilities into separate parsing objects  
+- Refactored Structure and Lattice objects. See HISTORY for changes
 - changed ibrav=0 behaviour in QELattice - celldm(1) is not set automatically to 1 anymore
 - added export ofdispersions into gnuplot
 News in version 0.2.3

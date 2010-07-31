@@ -62,7 +62,16 @@ class PWInput(QEInput):
 #                s += '\n'
 #        return s
 
-    def _update(self, qeConf = None):
+    def update(self, qeConf = None):
+        """
+        Loads current mathematical representation of Structure and Lattice 
+        into  QEInput parsing object. 
+        
+        Will be deprecated soon. Currently it is already automatically called \
+        for most  of Lattice  and structure operations.
+        E.g. 'input.structure.lattice.a = new_a'   will automatically update
+        input       
+        """
         if qeConf == None:
             qeConf = self        
 

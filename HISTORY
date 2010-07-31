@@ -1,0 +1,21 @@
+
+2010, July 30
+QEStructure:
+Removed: 
+setStructureFromPWOutput(pwscfOutputFile), 
+setStructureFromPWConfig(filename = None, configString = None)
+setStructureFromQEInput()
+
+Deprecated:
+updatePWInput(qeConf = None)
+
+QELattice:
+
+Removed:
+setLatticeFromPWInput()
+parsePWInput(ibrav, qeConf = None)
+setLatticeFromPWSCF(fname)
+getLatticeParamsFromPWSCF(ibrav, fname):
+
+Deprecated:
+updatePWInput(qeConf = None)
