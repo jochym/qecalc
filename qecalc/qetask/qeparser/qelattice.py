@@ -31,11 +31,11 @@ class QELattice(object):
        Following parameters are dynamically linked to other properties 
        (E.g. lattice vectors):
        ibrav - lattice type
-                if ibrav = 0, only 'a' prameter is relevant
+                if ibrav = 0, only 'a' parameter is relevant
        a, b, c, cBC, cAC ,cAB - lattice parameters
        type - lattice type to save into PWSCF cfg file ('celldm');
               'traditional' - using a,b,c,cosAC, cosAB, cosBC;
-              'generic cubic', 'generic hexagonal' - assume exiasting
+              'generic cubic', 'generic hexagonal' - assume existing
               section 'CELL_PARAMETERS', 'generic' types also 
               assume/set ibrav = 0
         setLattice() will set everything at once

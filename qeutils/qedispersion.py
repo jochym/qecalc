@@ -69,8 +69,14 @@ class QEDispersion():
     def setValues(self, array):
         self.dispersion = array
 
+    
+    def setLattice(self, lattice):
+        self._lattice = lattice    
+
+
     def setPath(self, *pathNPoints):
         import copy
+        
 
         def addPoints(x,y): return [ \
             x[j] + y[j] for j in range(len(x))]
@@ -111,7 +117,7 @@ class QEDispersion():
             if self._lattice.ibrav == 3:
                 symPoints = BCCubSymPoints
 
-            numPoints = [0]
+            numPoints = [0]            
             for i, ipnt in enumerate(nPoints):
                 numPoints.append(ipnt + numPoints[i])
             for symbol, ipnt in zip(path, numPoints ):
@@ -225,8 +231,7 @@ set yrange [ymin:ymax]\n"""%(xmin,xmax,ymin,ymax)
         s = s + 'pause -1'
         open(filename + '.plt', 'w').write(s)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Sep 4, 2009 2:26:50 PM$"

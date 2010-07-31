@@ -185,16 +185,17 @@ class QEStructure():
                                 locals(), ['P_' + format], -1)
             parser = module.getParser(self._qeConf)
             new_structure = parser.parse(filename)
-            new_structure.lattice.qeConf.update()
-            self.__Init(new_structure)
-            return parser
-        else:
-            raise
-#            diffpyStruct = Structure().read(filename, format = format)
-#            new_structure = QEStructure(qeConf = self._qeConf)
-#            self._setStructureFromDiffpyStructure(new_structure, massList = [], psList = [], ibrav = 0):
-#            if 
-        #self.lattice.qeConf.update()
+        else:            
+            diffpyStruct = Structure()
+            parser = diffpyStruct.read(filename, format = format)
+            new_structure = QEStructure(qeConf = self._qeConf)
+            new_structure._setStructureFromDiffpyStructure(new_structure, \
+                                        massList = [], psList = [], ibrav = 0)
+
+        new_structure.lattice.qeConf.update()
+        self.__Init(new_structure)
+        return parser
+
         
     def readStr(self): pass
 

@@ -81,15 +81,18 @@ class MultiPhononCalc(QECalc):
         #self.matdyn = MatdynTask(filename)
 
 
-
-
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
         self.taskList = [self.pwph, self.q2r, self.matdyn]
 
-        self.dispersion = PHDispersion(self.pw.input.structure.lattice, self.matdyn)
+        self._dispersion = PHDispersion(self.pw.input.structure.lattice, self.matdyn)
 
         self.dos = PhononDOS(self.matdyn)
         
+    def _get_dispersion(self):
+        self._dispersion.matdynTask = self.matdyn
+        self._dispersion.setLattice(self.pw.input.structure.lattice)
+        return self._dispersion
+    dispersion = property(_get_dispersion, doc ="dispersion object") 
 
 
     def syncInputs(self):
@@ -109,8 +112,7 @@ class MultiPhononCalc(QECalc):
                              self.pw.input.namelist('control').param('outdir'))
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 19, 2009 1:37:29 PM$"
