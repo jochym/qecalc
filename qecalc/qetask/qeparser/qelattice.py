@@ -28,39 +28,45 @@ from qeinput import QEInput
 class QELattice(object):
     """Class QELattice for working with crystal lattices in QE notation
        Uses diffpy.Lattice class for storage
+       
        Following parameters are dynamically linked to other properties 
        (E.g. lattice vectors):
-       ibrav - lattice type
-                if ibrav = 0, only 'a' parameter is relevant
-       a, b, c, cBC, cAC ,cAB - lattice parameters
-       type - lattice type to save into PWSCF cfg file ('celldm');
+       ibrav -- lattice type, setting it into a different value will 
+               automatically update lattice vectors, QE parsing object and
+               structure (if exists)
+               if ibrav = 0, only 'a' parameter is relevant
+       a, b, c, cBC, cAC ,cAB -- lattice parameters, setting any of them will 
+           dynamically update the QE parsing object  (e.g. pw.input) 
+           and structure(if relevant). They are also ibrav sensitive. 
+           E.g.: if ibrav = 1 (simple cubic). Setting a to a different value
+           will also modify  b and c. 
+                                  
+       type -- lattice type to save into PWSCF cfg file ('celldm');
               'traditional' - using a,b,c,cosAC, cosAB, cosBC;
               'generic cubic', 'generic hexagonal' - assume existing
               section 'CELL_PARAMETERS', 'generic' types also 
               assume/set ibrav = 0
-        setLattice() will set everything at once
+      setLattice() will set everything at once
        """
 
+
     def __init__(self, ibrav = 1,a = 1. ,b = 1.,c = 1.,
-                 cBC = 0.,cAC = 0. ,cAB = 0., qeConf = None, base = None ):
-#        Lattice.__init__(self)
+                 cBC = 0.,cAC = 0. ,cAB = 0., base = None ):
         self.formatString = '%# .8f %# .8f %# .8f'
-        self.qeConf = qeConf
+        self.qeConf = None
         self._type = 'celldm'
-        self._primitiveLattice = Lattice()
-        # equivalent representation in diffpyLattice object
-        self._standardLattice = Lattice()
-        # Lattice vectors in bohrs on angstrom:
+        
+        # diffpyStructure container class, used for lattice operations
+        self.__primitiveLattice = Lattice()
+        
+        # Lattice vectors in bohr or angstrom:
         self._base = None
-      #  self._a0 = 1.0 # old value of a - most relevant for ibrav=0, when a is set
-                       # to 1.0
-        if self.qeConf != None:
-            self._setLatticeFromPWInput(self.qeConf)
+
+        # initialize the lattice if there is enough information 
+        if ibrav > 0 and base != None:
+            self.setLatticeFromQEVectors(ibrav, base)
         else:
-            if ibrav > 0 and base != None:
-                self.setLatticeFromQEVectors(ibrav, base)
-            else:
-                self.setLattice(ibrav ,a ,b , c, cBC ,cAC ,cAB, base)
+            self.setLattice(ibrav ,a ,b , c, cBC ,cAC ,cAB, base)
 
 
     def __str__(self):
@@ -75,12 +81,42 @@ class QELattice(object):
             st = st + '"' + qeBaseTuple[2] + '" cell:\n'
         
         for i in range(3):
-            v = self._primitiveLattice.base[i,:]
+            v = self.__primitiveLattice.base[i,:]
             st = st + self.formatString%(v[0], v[1], v[2])
             st = st + '\n'
       
         return st    
                 
+            
+    def cartesian(self, u):
+        """return cartesian coordinates of a lattice vector"""
+        return self.__primitiveLattice.cartesian(u)
+    
+
+    def fractional(self, rc):
+        """return fractional coordinates of a cartesian vector"""
+        return self.__primitiveLattice.fractional(u)
+
+
+    def recipCartesian(self, kPoint):
+        """Conversts a vector in fractional coordinates in reciprocal space into
+           a vector in cartesian coordinates"""
+        recip_base = self.diffpy().reciprocal().base*self._a
+        return numpy.dot( kPoint, recip_base)
+
+    def reciprocalBase(self):
+        """
+        Get reciprocal lattice vectors in units of 2*pi/a
+        """
+        return self.diffpy().reciprocal().base*self._a
+
+
+    def latticeParams(self):
+        """Returns tuple of six lattice parameters:
+            a, b, c, cos(BC), cos(AC), cos(AB)
+        """
+        return [self._a, self._b,self._c, self._cBC, self._cAC, self._cAB]        
+        
         
     def setLattice(self, ibrav, a = None, b = None, c = None,
                    cBC = None, cAC = None, cAB = None, base = None, updateInput = True):
@@ -104,8 +140,8 @@ class QELattice(object):
             #self._a = 1.0
             if 'generic' not in self._type:
                 self._type = 'generic cubic'
-            self._primitiveLattice.setLatBase(qeBase)
-            self._standardLattice.setLatBase(qeBase)
+            self.__primitiveLattice.setLatBase(qeBase)
+            #self._standardLattice.setLatBase(qeBase)
         else:
             # Make sure all lattice parameters are mutually consistent 
             # according to ibrav. base array is not used:
@@ -175,11 +211,11 @@ class QELattice(object):
             qeBaseTuple = self._getQEBaseFromParCos(self._ibrav, self._a, self._b,
                                                self._c, self._cBC, self._cAC, self._cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]            
-            self._primitiveLattice.setLatBase(qeBase)
+            self.__primitiveLattice.setLatBase(qeBase)
             alpha = degrees(acos(self._cBC))
             beta = degrees(acos(self._cAC))
             gamma = degrees(acos(self._cAB))
-            self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)
+            #self._standardLattice.setLatPar(self._a,self._b,self._c,alpha,beta,gamma)
         #self._a0 = a
         self._base = qeBase
         
@@ -195,15 +231,11 @@ class QELattice(object):
         return str(self)        
 
 
-    def latticeParams(self):
-        return [self._a, self._b,self._c, self._cBC, self._cAC, self._cAB]
-
-
     def diffpy(self):
         '''Returns diffpy.Lattice object. Do not use it for reading  QE
         (standard cell) lattice parameters. Use latticeParams, or a, b, c , ...
         instead'''
-        return self._primitiveLattice
+        return self.__primitiveLattice
 
 
     def updatePWInput(self, qeConf = None):
@@ -231,20 +263,7 @@ class QELattice(object):
         
         qeConf.update()   
                 
-        qeConf.save(filename)
-        
-        
-    def recipCartesian(self, kPoint):
-        """Conversts vector on fractional coordinates in reciprocal space into
-           a vector in cartesian coordinates"""
-        recip_base = self.diffpy().reciprocal().base*self._a
-        return numpy.dot( kPoint, recip_base)
-
-    def reciprocalBase(self):
-        """
-        Get reciprocal lattice vectors in units of 2*pi/a
-        """
-        return self.diffpy().reciprocal().base*self._a
+        qeConf.save(filename)        
 
 
     def setLatticeFromQEVectors(self, ibrav, vectors):

@@ -159,8 +159,8 @@ class QEStructure():
             self = structure        
     
     
-    def parseOutput(self, pwscfOutputFile):
-        self._setStructureFromPWOutput(pwscfOutputFile)
+#    def parseOutput(self, pwscfOutputFile):
+#        self._setStructureFromPWOutput(pwscfOutputFile)
 
 
     def read(self, filename, format = 'pwinput'):

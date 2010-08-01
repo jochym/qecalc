@@ -129,7 +129,7 @@ class PWInput(QEInput):
                     qeConf.card('cell_parameters').setArg(cardArg)
                     qeConf.card('cell_parameters').removeLines()
                     for i in range(3):
-                        v = lattice._primitiveLattice.base[i,:]/float(lattice._a)
+                        v = lattice.diffpy().base[i,:]/float(lattice._a)
                         qeConf.card('cell_parameters').addLine(\
                                        lattice.formatString%(v[0], v[1], v[2]))
         
