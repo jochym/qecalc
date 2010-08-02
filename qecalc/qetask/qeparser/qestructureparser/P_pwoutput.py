@@ -23,8 +23,8 @@ class P_pwoutput(QEStructureParser):
         from the last step of the optimization. Assumes output is in ALAT units
     """    
     
-    def __init__(self, qeConf):
-        QEStructureParser.__init__(self, qeConf)
+    def __init__(self, qeInput):
+        QEStructureParser.__init__(self, qeInput)
         self.format = "pwoutput"
     
     
@@ -44,10 +44,10 @@ class P_pwoutput(QEStructureParser):
     def __genStructure( self, file ):            
         # silly copy constructor:
         #from qecalc.qetask.qeparser.pwinput import PWInput
-        #new_qeConf = PWInput(config = self.qeConf.toString()) 
-        #new_qeConf.parse()
+        #new_qeInput = PWInput(config = self._qeInput.toString()) 
+        #new_qeInput.parse()
         #*************
-        stru = QEStructure(qeConf = self.qeConf)     
+        stru = QEStructure(qeInput = self._qeInput)     
         pwscfOut = file.readlines()
         pseudoList = []
         atomList = []
@@ -130,5 +130,5 @@ class P_pwoutput(QEStructureParser):
           
         return stru
     
-def getParser(qeConf):
-    return P_pwoutput(qeConf)    
+def getParser(qeInput):
+    return P_pwoutput(qeInput)    

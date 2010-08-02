@@ -50,20 +50,20 @@ class AtomicSpecies():
 
 class QEStructure( list ):
     
-    def __init__(self, qeConf = None):
+    def __init__(self, qeInput = None):
         """the structure is initialized from PWSCF config file
            'lattice' and 'structure' are automatically updated"""
-        #self.filename = qeConf.filename
+        #self.filename = qeInput.filename
         self.atomicSpecies = OrderedDict()
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self._optConstraints = []
         self.lattice = QELattice()
-        self.lattice.qeConf = qeConf
-        self._qeConf = qeConf
-        if qeConf != None:
-            self.lattice.qeConf.structure = self
-            self.lattice.qeConf.structure.lattice = self.lattice
+        self.lattice._qeInput = qeInput
+        self._qeInput = qeInput
+        if qeInput != None:
+            self.lattice._qeInput.structure = self
+            self.lattice._qeInput.structure.lattice = self.lattice
             
         self.structure = Structure(lattice = self.lattice.diffpy())
         self._nat = None
@@ -76,7 +76,7 @@ class QEStructure( list ):
 
     def _set_nat(self, value):
         self._nat = value
-        self.lattice.qeConf.update()
+        self.lattice._qeInput.update()
 
     nat = property(_get_nat, _set_nat, doc ="number of atoms")
     
@@ -86,7 +86,7 @@ class QEStructure( list ):
 
     def _set_ntyp(self, value):
         self._ntyp = value
-        self.lattice.qeConf.update()
+        self.lattice._qeInput.update()
 
     ntyp = property(_get_ntyp, _set_ntyp, doc ="number of types")
     
@@ -96,7 +96,7 @@ class QEStructure( list ):
 
     def _set_atomicPositionsType(self, value):
         self._atomicPositionsType = value
-        self.lattice.qeConf.update()
+        self.lattice._qeInput.update()
 
     atomicPositionsType = property(_get_atomicPositionsType, \
                                    _set_atomicPositionsType, \
@@ -108,7 +108,7 @@ class QEStructure( list ):
 
     def _set_optConstraints(self, value):
         self._optConstraints = value
-        self.lattice.qeConf.update()
+        self.lattice._qeInput.update()
 
     optConstraints = property(_get_optConstraints, _set_optConstraints, \
                                doc ="optimization constraints list")
@@ -146,14 +146,14 @@ class QEStructure( list ):
             labels.append(l)
         return labels
         
-    def parseInput(self, qeConf):
-        #self._qeConf = qeConf
+    def parseInput(self, qeInput):
+        #self._qeInput = qeInput
         from qestructureparser.qestructureparser import QEStructureParser
-        new_structure = QEStructureParser(qeConf).parseQEConf()
+        new_structure = QEStructureParser(qeInput).parseqeInput()
         self.__Init(new_structure)
-#        print self._qeConf.toString()
-        #self.lattice.qeConf.update()
-        #self._setStructureFromQEInput(qeConf)
+#        print self._qeInput.toString()
+        #self.lattice._qeInput.update()
+        #self._setStructureFromQEInput(qeInput)
     
     
     def __Init(self, structure):
@@ -181,23 +181,23 @@ class QEStructure( list ):
         """        
         from  qecalc.qetask.qeparser.qestructureparser import parser_index
         
-        if self._qeConf == None:                
-            self._qeConf = PWInput()
-            self._qeConf.parse()
+        if self._qeInput == None:                
+            self._qeInput = PWInput()
+            self._qeInput.parse()
         
         if format in parser_index:             
             module = __import__("qestructureparser.P_" + format, globals(), \
                                 locals(), ['P_' + format], -1)
-            parser = module.getParser(self._qeConf)
+            parser = module.getParser(self._qeInput)
             new_structure = parser.parse(filename)
         else:            
             diffpyStruct = Structure()
             parser = diffpyStruct.read(filename, format = format)
-            new_structure = QEStructure(qeConf = self._qeConf)
+            new_structure = QEStructure(qeInput = self._qeInput)
             new_structure._setStructureFromDiffpyStructure(diffpyStruct, \
                                         massList = [], psList = [], ibrav = 0)
 
-        new_structure.lattice.qeConf.update()
+        new_structure.lattice._qeInput.update()
         self.__Init(new_structure)
         return parser
 
@@ -218,7 +218,7 @@ class QEStructure( list ):
 
         task[source](**args)
         
-        self.lattice.qeConf.update()
+        self.lattice._qeInput.update()
 
 
     def _setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
@@ -239,7 +239,7 @@ class QEStructure( list ):
         #qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
         qeLattice = QELattice(ibrav = 0, base = diffpyLattice.base)
         qeLattice.a = 1.889725989*qeLattice.a
-        qeLattice.qeConf = self._qeConf
+        qeLattice._qeInput = self._qeInput
         
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
@@ -312,7 +312,7 @@ class QEStructure( list ):
         qeLattice = QELattice(ibrav = ibrav, a = a, b = b, c = c,  cBC =  cBC, \
                               cAC = cAC, cAB = cAB)
 
-        qeLattice.qeConf = self._qeConf
+        qeLattice._qeInput = self._qeInput
         self.lattice = qeLattice
         # make a deep copy:
         reducedStructure = Structure(atoms = structure)
@@ -384,16 +384,16 @@ class QEStructure( list ):
     def toString(self, string = None):
         if string != None:
             string = self.lattice.toString(string = string)
-            qeConf = QEInput(config = string)
-            qeConf.parse()
+            qeInput = QEInput(config = string)
+            qeInput.parse()
         else:
-            if self.lattice.qeConf != None:
-                qeConf = self.lattice.qeConf
+            if self.lattice._qeInput != None:
+                qeInput = self.lattice._qeInput
             else:
-                qeConf = QEInput(config = '')
+                qeInput = QEInput(config = '')
 
-        #self.updatePWInput(qeConf)
-        return qeConf.toString()
+        #self.updatePWInput(qeInput)
+        return qeInput.toString()
 
  
     def save(self, fname = None):
@@ -402,22 +402,22 @@ class QEStructure( list ):
         filename = fname
         if fname != None:
             self.lattice.save(filename)
-            qeConf = QEInput(fname)
-            qeConf.parse()
+            qeInput = QEInput(fname)
+            qeInput.parse()
         else:
             filename = self.filename
             self.lattice.save(filename)
-            qeConf = self.lattice.qeConf
+            qeInput = self.lattice._qeInput
             
-        #self.updatePWInput(qeConf)
-        qeConf.save(filename)
+        #self.updatePWInput(qeInput)
+        qeInput.save(filename)
      
     
-    def updatePWInput(self, qeConf = None):
+    def updatePWInput(self, qeInput = None):
         """
         Deprecated
         """
-        self._qeConf.update()
+        self._qeInput.update()
 
     def diffpy(self):
         return self.structure

@@ -16,8 +16,8 @@
 from qecalc.qetask.qeparser.qestructureparser import *
 
 class QEStructureParser():
-    def __init__(self, qeConf):
-        self.qeConf = qeConf
+    def __init__(self, qeInput):
+        self._qeInput = qeInput
         self.format = None
         self.filename = None
     
@@ -33,30 +33,30 @@ class QEStructureParser():
                 "parse not defined for '%s' format" % self.format
  
  
-    def parseQEConf(self, qeConf = None):
+    def parseqeInput(self, qeInput = None):
         """ Loads structure from PWSCF config class"""
         
-        if qeConf != None:
-            self.qeConf = qeConf
-        self.qeConf.autoUpdate = False
-        stru = QEStructure(qeConf = self.qeConf)
+        if qeInput != None:
+            self._qeInput = qeInput
+        self._qeInput.autoUpdate = False
+        stru = QEStructure(qeInput = self._qeInput)
         
-        # make qeConf consistent with the current instance of the structure
-        stru._qeConf.structure = stru        
+        # make qeInput consistent with the current instance of the structure
+        stru._qeInput.structure = stru        
                 
         stru.atomicSpecies = OrderedDict()
-        stru.lattice = self.__getLattice(self.qeConf)               
+        stru.lattice = self.__getLattice(self._qeInput)               
         
         stru.structure = Structure(lattice = stru.lattice.diffpy())       
         stru.nat = stru.ntyp = None
-        #self.filename = self.qeConf.filename
+        #self.filename = self._qeInput.filename
         stru.optConstraints = []
-        if 'system' in stru.lattice.qeConf.namelists:
-            stru.nat  = int(stru.lattice.qeConf.namelist('system').param('nat'))
-            stru.ntyp  = int(stru.lattice.qeConf.namelist('system').param('ntyp'))
-        if 'atomic_positions' in stru.lattice.qeConf.cards:        
-            atomicLines = stru.lattice.qeConf.card('atomic_positions').lines()
-            stru.atomicPositionsType = stru.lattice.qeConf.card('atomic_positions').arg()
+        if 'system' in stru.lattice._qeInput.namelists:
+            stru.nat  = int(stru.lattice._qeInput.namelist('system').param('nat'))
+            stru.ntyp  = int(stru.lattice._qeInput.namelist('system').param('ntyp'))
+        if 'atomic_positions' in stru.lattice._qeInput.cards:        
+            atomicLines = stru.lattice._qeInput.card('atomic_positions').lines()
+            stru.atomicPositionsType = stru.lattice._qeInput.card('atomic_positions').arg()
 #            if self.atomicPositionsType == 'angstrom':
 #                raise NotImplementedError\
 #         ('atomic positions in bohr and angstrom are not currently supported')
@@ -80,8 +80,8 @@ class QEStructureParser():
                     stru.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
         # parse mass ATOMIC_SPECIES section:
          
-        if 'atomic_species' in stru.lattice.qeConf.cards:
-            atomicSpeciesLines = stru.lattice.qeConf.card('atomic_species').lines()
+        if 'atomic_species' in stru.lattice._qeInput.cards:
+            atomicSpeciesLines = stru.lattice._qeInput.card('atomic_species').lines()
             for line in atomicSpeciesLines:
                 if '!' not in line:
                     if line.strip() != '':                     
@@ -94,24 +94,24 @@ class QEStructureParser():
                         if len(atomicSpeciesWords) > 2:
                             ps = atomicSpeciesWords[2]
                         stru.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
-        self.qeConf.autoUpdate = True                
+        self._qeInput.autoUpdate = True                
         return stru
                         
 
-    def __getLattice(self, qeConf ):
+    def __getLattice(self, qeInput ):
 
-        if qeConf == None:
-            raise QELatticeError("__getLattice: qeConf was not properly initialized")      
+        if qeInput == None:
+            raise QELatticeError("__getLattice: qeInput was not properly initialized")      
           
         lat = QELattice()
-        lat.qeConf = qeConf
+        lat._qeInput = qeInput
         
-        # make qeConf consistent with the current instance of the lattice
-        lat.qeConf.structure.lattice = lat
+        # make qeInput consistent with the current instance of the lattice
+        lat._qeInput.structure.lattice = lat
            
              
-        if 'ibrav' in lat.qeConf.namelists['system'].params:
-            ibrav  = int(lat.qeConf.namelist('system').param('ibrav'))            
+        if 'ibrav' in lat._qeInput.namelists['system'].params:
+            ibrav  = int(lat._qeInput.namelist('system').param('ibrav'))            
         else:
             raise QELatticeError("config file should have ibrav defined")
         if ibrav < 0:            
@@ -121,18 +121,18 @@ class QEStructureParser():
         cBC = 0.0
         cAC = 0.0
         cAB = 0.0
-        if 'celldm(1)' in qeConf.namelists['system'].params:
+        if 'celldm(1)' in qeInput.namelists['system'].params:
             lat._type = 'celldm'
-            a = float(qeConf.namelist('system').param('celldm(1)'))
+            a = float(qeInput.namelist('system').param('celldm(1)'))
 
             if ibrav == 0:
                 # lattice is set in the units of celldm(1)
                 # need to parse CELL_PARAMETERS
-                #if 'cell_parameters' not in qeConf.cards:
-                #    return  #qeConf.createCard('cell_parameters')
-                cellParLines = qeConf.card('cell_parameters').lines()
+                #if 'cell_parameters' not in qeInput.cards:
+                #    return  #qeInput.createCard('cell_parameters')
+                cellParLines = qeInput.card('cell_parameters').lines()
                 #print cellParLines
-                cellParType = qeConf.card('cell_parameters').arg()
+                cellParType = qeInput.card('cell_parameters').arg()
                 if cellParType == 'cubic' or cellParType == None:
                     lat._type = 'generic cubic'
                 else:
@@ -151,57 +151,57 @@ class QEStructureParser():
             if ibrav == 4:
                 cAB = cosd(120.0)
             if ibrav == 4 or ibrav == 6 or ibrav == 7:
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
+                c_a = float(qeInput.namelist('system').param('celldm(3)'))
                 latPar = [a, a, c_a*a, cBC, cAC, cAB, None]
             if ibrav == 5:
-                cAB = float(qeConf.namelist('system').param('celldm(4)'))
+                cAB = float(qeInput.namelist('system').param('celldm(4)'))
                 latPar = [a, a, a, cAB, cAB, cAB, None]
             if ibrav > 7 and ibrav < 12:
-                b_a = float(qeConf.namelist('system').param('celldm(2)'))
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
+                b_a = float(qeInput.namelist('system').param('celldm(2)'))
+                c_a = float(qeInput.namelist('system').param('celldm(3)'))
                 latPar = [a, b_a*a, c_a*a, cBC, cAC, cAB, None]
             if ibrav == 12 or ibrav == 13:
-                b_a = float(qeConf.namelist('system').param('celldm(2)'))
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
-                cAB = float(qeConf.namelist('system').param('celldm(4)'))
+                b_a = float(qeInput.namelist('system').param('celldm(2)'))
+                c_a = float(qeInput.namelist('system').param('celldm(3)'))
+                cAB = float(qeInput.namelist('system').param('celldm(4)'))
                 latPar = [a, b_a*a, c_a*a, cBC, cAC, cAB, None]
             if ibrav == 14:
-                b_a = float(qeConf.namelist('system').param('celldm(2)'))
-                c_a = float(qeConf.namelist('system').param('celldm(3)'))
-                cBC = float(qeConf.namelist('system').param('celldm(4)'))
-                cAC = float(qeConf.namelist('system').param('celldm(5)'))
-                cAB = float(qeConf.namelist('system').param('celldm(6)'))
+                b_a = float(qeInput.namelist('system').param('celldm(2)'))
+                c_a = float(qeInput.namelist('system').param('celldm(3)'))
+                cBC = float(qeInput.namelist('system').param('celldm(4)'))
+                cAC = float(qeInput.namelist('system').param('celldm(5)'))
+                cAB = float(qeInput.namelist('system').param('celldm(6)'))
                 latPar = [a, b_a*a, c_a*a, cBC, cAC, cAB, None]
         else:
             if ibrav == 0:
                 raise QELatticeError("Should specify celldm(1) if use 'generic' lattice")
-            a = float(qeConf.namelist('system').param('A'))
+            a = float(qeInput.namelist('system').param('A'))
             lat._type = 'traditional'   # A, B, C, cosAB, cosAC, cosBC
             if ibrav > 0 and ibrav < 4:
                 latPar = [a, a, a, cBC, cAC, cAB, None]
             if ibrav == 4:
                 cAB = cosd(120.0)
             if ibrav == 4 or ibrav == 6 or ibrav == 7:
-                c = float(qeConf.namelist('system').param('C'))
+                c = float(qeInput.namelist('system').param('C'))
                 latPar = [a, a, c, cBC, cAC, cAB, None]
             if ibrav == 5:
-                cAB = float(qeConf.namelist('system').param('cosAB'))
+                cAB = float(qeInput.namelist('system').param('cosAB'))
                 latPar = [a, a, a, cAB, cAB, cAB, None]
             if ibrav > 7 and ibrav < 12:
-                b = float(qeConf.namelist('system').param('B'))
-                c = float(qeConf.namelist('system').param('C'))
+                b = float(qeInput.namelist('system').param('B'))
+                c = float(qeInput.namelist('system').param('C'))
                 latPar = [a, b, c, cBC, cAC, cAB, None]
             if ibrav == 12 or ibrav == 13:
-                b = float(qeConf.namelist('system').param('B'))
-                c = float(qeConf.namelist('system').param('C'))
-                cAB = float(qeConf.namelist('system').param('cosAB'))
+                b = float(qeInput.namelist('system').param('B'))
+                c = float(qeInput.namelist('system').param('C'))
+                cAB = float(qeInput.namelist('system').param('cosAB'))
                 latPar = [a, b, c, cBC, cAC, cAB, None]
             if ibrav == 14:
-                b = float(qeConf.namelist('system').param('B'))
-                c = float(qeConf.namelist('system').param('C'))
-                cBC = float(qeConf.namelist('system').param('cosBC'))
-                cAC = float(qeConf.namelist('system').param('cosAC'))
-                cAB = float(qeConf.namelist('system').param('cosAB'))
+                b = float(qeInput.namelist('system').param('B'))
+                c = float(qeInput.namelist('system').param('C'))
+                cBC = float(qeInput.namelist('system').param('cosBC'))
+                cAC = float(qeInput.namelist('system').param('cosAC'))
+                cAB = float(qeInput.namelist('system').param('cosAB'))
                 latPar = [a, b, c, cBC, cAC, cAB, None]               
         
         a, b, c, cBC, cAC, cAB, base = latPar

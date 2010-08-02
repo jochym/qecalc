@@ -130,7 +130,7 @@ class QEAtom(object):
             self.xyz[:] = value
         else:
             self.xyz = self.lattice.fractional(value)
-            self.lattice.qeConf.update()
+            self.lattice._qeInput.update()
         return
 
     xyz_cartn = property(_get_xyz_cartn, _set_xyz_cartn, doc =

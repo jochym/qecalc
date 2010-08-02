@@ -53,7 +53,7 @@ class QELattice(object):
     def __init__(self, ibrav = 1,a = 1. ,b = 1.,c = 1.,
                  cBC = 0.,cAC = 0. ,cAB = 0., base = None ):
         self.formatString = '%# .8f %# .8f %# .8f'
-        self.qeConf = None
+        self._qeInput = None
         self._type = 'celldm'
         
         # diffpyStructure container class, used for lattice operations
@@ -219,9 +219,9 @@ class QELattice(object):
         #self._a0 = a
         self._base = qeBase
         
-        if self.qeConf != None and updateInput == True:
+        if self._qeInput != None and updateInput == True:
             #self.updatePWInput()
-            self.qeConf.update()       
+            self._qeInput.update()       
 
 
 
@@ -238,11 +238,11 @@ class QELattice(object):
         return self.__primitiveLattice
 
 
-    def updatePWInput(self, qeConf = None):
+    def updatePWInput(self, qeInput = None):
         """
         Deprecated
         """
-        self.qeConf.update()
+        self._qeInput.update()
 
 
     def save(self, fname = None):
@@ -254,16 +254,16 @@ class QELattice(object):
         if fname != None:
             if not exists(filename):
                 f = open(filename, 'w')
-            qeConf = PWInput(fname)
-            qeConf.parse()               
+            qeInput = PWInput(fname)
+            qeInput.parse()               
         else:
-            qeConf = self.qeConf
-            filename = qeConf.filename
+            qeInput = self._qeInput
+            filename = qeInput.filename
         
         
-        qeConf.update()   
+        qeInput.update()   
                 
-        qeConf.save(filename)        
+        qeInput.save(filename)        
 
 
     def setLatticeFromQEVectors(self, ibrav, vectors):

@@ -22,8 +22,8 @@ class P_pwinput(QEStructureParser):
         Parser for pw.x input format
     """
     
-    def __init__(self, qeConf):
-        QEStructureParser.__init__(self, qeConf)
+    def __init__(self, qeInput):
+        QEStructureParser.__init__(self, qeInput)
         self.format = "pwinput"
     
     
@@ -44,9 +44,9 @@ class P_pwinput(QEStructureParser):
         
         input.parse()
         
-        stru = QEStructure(qeConf = self.qeConf)
+        stru = QEStructure(qeInput = self._qeInput)
         
-        input.structure.lattice.qeConf = self.qeConf
+        input.structure.lattice._qeInput = self._qeInput
      
         stru.structure = input.structure.structure
         stru.lattice = input.structure.lattice
@@ -58,6 +58,6 @@ class P_pwinput(QEStructureParser):
         
         return stru
     
-def getParser(qeConf):
-    return P_pwinput(qeConf)
+def getParser(qeInput):
+    return P_pwinput(qeInput)
  
