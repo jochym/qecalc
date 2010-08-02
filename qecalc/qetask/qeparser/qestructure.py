@@ -48,7 +48,7 @@ class AtomicSpecies():
     element = property(_get_element, _set_element, doc ="element")        
 
 
-class QEStructure():
+class QEStructure( list ):
     
     def __init__(self, qeConf = None):
         """the structure is initialized from PWSCF config file
@@ -58,13 +58,18 @@ class QEStructure():
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self._optConstraints = []
-        self._qeConf = qeConf
         self.lattice = QELattice()
         self.lattice.qeConf = qeConf
+        self._qeConf = qeConf
+        if qeConf != None:
+            self.lattice.qeConf.structure = self
+            self.lattice.qeConf.structure.lattice = self.lattice
+            
         self.structure = Structure(lattice = self.lattice.diffpy())
         self._nat = None
         self._ntyp = None
-        self._atomicPositionsType = 'crystal'       
+        self._atomicPositionsType = 'crystal'                           
+         
         
     def _get_nat(self):
         return self._nat
@@ -80,7 +85,7 @@ class QEStructure():
         return self._ntyp
 
     def _set_ntyp(self, value):
-        self._nat = value
+        self._ntyp = value
         self.lattice.qeConf.update()
 
     ntyp = property(_get_ntyp, _set_ntyp, doc ="number of types")
@@ -189,7 +194,7 @@ class QEStructure():
             diffpyStruct = Structure()
             parser = diffpyStruct.read(filename, format = format)
             new_structure = QEStructure(qeConf = self._qeConf)
-            new_structure._setStructureFromDiffpyStructure(new_structure, \
+            new_structure._setStructureFromDiffpyStructure(diffpyStruct, \
                                         massList = [], psList = [], ibrav = 0)
 
         new_structure.lattice.qeConf.update()
@@ -244,8 +249,6 @@ class QEStructure():
             if self._element(a) not in atomNames:
                 atomNames.append(self._element(a))
         
-        #print atomNames
-        #print len(massList)
         for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
@@ -279,7 +282,7 @@ class QEStructure():
 #            self.optConstraints.append([])
 
         self.nat = len(structure)
-        self.ntyp = len(self.atomicSpecies)        
+        self.ntyp = len(self.atomicSpecies)
      
                         
     def _setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList = [], psList = []):

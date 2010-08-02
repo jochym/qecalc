@@ -133,6 +133,31 @@ Al      0.00000000  0.00000000  0.00000000
 Al  26.9800 Al.pz-vbc.UPF
 """
         self.assertEqual(str(self.input.structure), answer)
+        
+        
+    def test_read_cif(self):
+        filename = os.path.join(testdata_dir, 'PbTe.cif')
+        self.input.structure.read(filename, 'cif')
+        
+        answer = """"generic" cell:
+ 12.20951961  0.00000000  0.00000000
+ 0.00000000  12.20951961  0.00000000
+ 0.00000000  0.00000000  12.20951961
+
+Atomic positions in crystal coordinates:
+Pb2+     0.50000000  0.50000000  0.50000000  
+Pb2+     0.50000000  0.00000000  0.00000000  
+Pb2+     0.00000000  0.50000000  0.00000000  
+Pb2+     0.00000000  0.00000000  0.50000000  
+Te      0.00000000  0.00000000  0.00000000  
+Te      0.00000000  0.50000000  0.50000000  
+Te      0.50000000  0.00000000  0.50000000  
+Te      0.50000000  0.50000000  0.00000000  
+
+Pb2+ 0.0000 
+Te  0.0000 
+"""
+        self.assertEqual(str(self.input.structure), answer)        
    
         
     def test_load_diffpy(self): 

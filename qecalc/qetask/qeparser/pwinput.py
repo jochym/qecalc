@@ -22,6 +22,9 @@ class PWInput(QEInput):
         QEInput.__init__(self,filename, config, type='pw')
         self.structure = QEStructure(self)
         self.kpoints = PWKpoints(self)
+        # Boolean flag, if True, QEInput is updated on change of any property in
+        # structure, lattice, or atom
+        self.autoUpdate = True         
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
@@ -74,7 +77,8 @@ class PWInput(QEInput):
         """
         if qeConf == None:
             qeConf = self        
-
+        if self.autoUpdate is False:
+            return
         lattice = self.structure.lattice
         structure = self.structure   
 

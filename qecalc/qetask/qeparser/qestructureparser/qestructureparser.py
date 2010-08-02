@@ -38,15 +38,19 @@ class QEStructureParser():
         
         if qeConf != None:
             self.qeConf = qeConf
-        stru = QEStructure()        
+        self.qeConf.autoUpdate = False
+        stru = QEStructure(qeConf = self.qeConf)
+        
+        # make qeConf consistent with the current instance of the structure
+        stru._qeConf.structure = stru        
+                
         stru.atomicSpecies = OrderedDict()
-        stru.lattice = self.__getLattice(self.qeConf)
-        stru._qeConf = self.qeConf
-        stru.structure = Structure(lattice = stru.lattice.diffpy())
+        stru.lattice = self.__getLattice(self.qeConf)               
+        
+        stru.structure = Structure(lattice = stru.lattice.diffpy())       
         stru.nat = stru.ntyp = None
         #self.filename = self.qeConf.filename
         stru.optConstraints = []
-        
         if 'system' in stru.lattice.qeConf.namelists:
             stru.nat  = int(stru.lattice.qeConf.namelist('system').param('nat'))
             stru.ntyp  = int(stru.lattice.qeConf.namelist('system').param('ntyp'))
@@ -90,7 +94,7 @@ class QEStructureParser():
                         if len(atomicSpeciesWords) > 2:
                             ps = atomicSpeciesWords[2]
                         stru.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
-                        
+        self.qeConf.autoUpdate = True                
         return stru
                         
 
@@ -101,6 +105,9 @@ class QEStructureParser():
           
         lat = QELattice()
         lat.qeConf = qeConf
+        
+        # make qeConf consistent with the current instance of the lattice
+        lat.qeConf.structure.lattice = lat
            
              
         if 'ibrav' in lat.qeConf.namelists['system'].params:

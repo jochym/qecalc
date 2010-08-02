@@ -46,8 +46,8 @@ class P_pwoutput(QEStructureParser):
         #from qecalc.qetask.qeparser.pwinput import PWInput
         #new_qeConf = PWInput(config = self.qeConf.toString()) 
         #new_qeConf.parse()
-        #*************       
-        stru = QEStructure(qeConf = self.qeConf)        
+        #*************
+        stru = QEStructure(qeConf = self.qeConf)     
         pwscfOut = file.readlines()
         pseudoList = []
         atomList = []
