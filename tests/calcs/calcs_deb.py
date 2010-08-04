@@ -97,17 +97,14 @@ if __name__ == "__main__":
     d3calc = D3Calc(configString = configString, sectionList = ['pw.x', 'ph.x d3', 'd3.x'])
 
     calcList = [pwcalc, sphon, mphon, d3calc]
-'
-    try:
-        for calc in calcList:
-            testCalc(calc)
-        mphon.dispersion.launch('M', 'Gamma', 'A', 'L', 50, 50, 50)
-        mphon.dispersion.plot()
 
-        print "Test completed successfully";
+    for calc in calcList:
+        testCalc(calc)
+    mphon.dispersion.launch('M', 'Gamma', 'A', 'L', 50, 50, 50)
+    mphon.dispersion.plot()
 
-    except:
-        print "Test did NOT complete successfully";
+    print "Test completed successfully";
+
     os.system('rm -rf *.out *.freq *.modes *.dyn*  *.mold *.axsf *.fc temp/ *_G CRASH')
 
     

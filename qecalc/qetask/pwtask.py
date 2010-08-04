@@ -75,4 +75,4 @@ class PWTask(QETask):
         # Solve for pseudopotential locations
         species = self.input.structure.atomicSpecies
         for specie in species.keys():
-            setattr(self.setting._paths, 'ps' + specie, self.setting.get('pseudo_dir') + species[specie].pseudopotential )
+            setattr(self.setting._paths, 'ps' + specie, self.setting.get('pseudo_dir') + species[specie].potential )

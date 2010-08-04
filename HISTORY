@@ -1,5 +1,24 @@
 
+2010, August 4
+Major refactoring of QEStructure.
+Changes in interface:
+atomicSpecies.pseudopotential -> atomicSpecies.potential
+
+QEStructure.ntyp and QEStructure.nat and QEStructure.atomicSpecies are 
+dynamically updated read only properties
+
+QEStructure is a list of atoms and  is inherited from diffpy.Structure, 
+all the relevant methods are redefined to preserve the functionality, 
+similar to diffpyStructure.
+
+Added methods to QELattice, similar to diffpy.Structure.Lattice
+
+QEAtom is redefined version of diffpy.Structure.Atom - added mass and potential
+fields. Removed anisotropy information
+
+
 2010, July 30
+
 QEStructure:
 Removed: 
 setStructureFromPWOutput(pwscfOutputFile), 

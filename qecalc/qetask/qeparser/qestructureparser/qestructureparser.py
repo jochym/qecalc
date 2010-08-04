@@ -44,22 +44,14 @@ class QEStructureParser():
         # make qeInput consistent with the current instance of the structure
         stru._qeInput.structure = stru        
                 
-        stru.atomicSpecies = OrderedDict()
         stru.lattice = self.__getLattice(self._qeInput)               
         
-        stru.structure = Structure(lattice = stru.lattice.diffpy())       
-        stru.nat = stru.ntyp = None
+        stru.structure = Structure(lattice = stru.lattice.diffpy())
         #self.filename = self._qeInput.filename
         stru.optConstraints = []
-        if 'system' in stru.lattice._qeInput.namelists:
-            stru.nat  = int(stru.lattice._qeInput.namelist('system').param('nat'))
-            stru.ntyp  = int(stru.lattice._qeInput.namelist('system').param('ntyp'))
         if 'atomic_positions' in stru.lattice._qeInput.cards:        
             atomicLines = stru.lattice._qeInput.card('atomic_positions').lines()
             stru.atomicPositionsType = stru.lattice._qeInput.card('atomic_positions').arg()
-#            if self.atomicPositionsType == 'angstrom':
-#                raise NotImplementedError\
-#         ('atomic positions in bohr and angstrom are not currently supported')
             if stru.atomicPositionsType == None:
                 stru.atomicPositionsType = 'alat'
             for line in atomicLines:
@@ -78,8 +70,12 @@ class QEStructureParser():
                     if stru.atomicPositionsType == 'bohr' or stru.atomicPositionsType == 'angstrom':
                         coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3]))
                     stru.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+                    stru.addNewAtom(atype = atomSymbol, xyz = numpy.array(coords[0:3]))
         # parse mass ATOMIC_SPECIES section:
-         
+        atomicSpecies = {}
+        # default values:
+        for a in stru:
+            atomicSpecies[a.element] = (0, '')
         if 'atomic_species' in stru.lattice._qeInput.cards:
             atomicSpeciesLines = stru.lattice._qeInput.card('atomic_species').lines()
             for line in atomicSpeciesLines:
@@ -93,7 +89,13 @@ class QEStructureParser():
                             mass = float(atomicSpeciesWords[1])
                         if len(atomicSpeciesWords) > 2:
                             ps = atomicSpeciesWords[2]
-                        stru.atomicSpecies[element] =  AtomicSpecies(element, mass, ps)
+                        atomicSpecies[element] =  (float(mass), ps)
+        
+        for a in stru:
+            mass = atomicSpecies[a.element][0]
+            ps  = atomicSpecies[a.element][1]
+            a.mass = mass
+            a.potential = ps
         self._qeInput.autoUpdate = True                
         return stru
                         
@@ -131,7 +133,6 @@ class QEStructureParser():
                 #if 'cell_parameters' not in qeInput.cards:
                 #    return  #qeInput.createCard('cell_parameters')
                 cellParLines = qeInput.card('cell_parameters').lines()
-                #print cellParLines
                 cellParType = qeInput.card('cell_parameters').arg()
                 if cellParType == 'cubic' or cellParType == None:
                     lat._type = 'generic cubic'

@@ -115,7 +115,49 @@ Fe      0.75000000  0.25000000  0.25000000
 V   50.9415 V.pbe-sp-van.UPF
 Fe  55.8470 Fe.pbe-sp-van_ak.UPF
 """
+
+        answer_toString="""&CONTROL
+    calculation = 'scf',
+    restart_mode = 'from_scratch',
+    tstress = .true.,
+    tprnfor = .true.,
+    prefix = 'mgalb4',
+    pseudo_dir = '/home/user/pslib',
+    outdir = '/scratch/user',
+/
+&SYSTEM
+    ibrav = 2,
+    nbnd = 21,
+    nspin = 1,
+    occupations = 'smearing',
+    degauss = 0.025,
+    smearing = 'methfessel-paxton',
+    ecutwfc = 64.0,
+    ecutrho = 256.0,
+    celldm(1) = 11.0157635161,
+    celldm(2) = 1.0,
+    celldm(3) = 1.0,
+    celldm(4) = 0.0,
+    ntyp = 2,
+    nat = 4,
+/
+&ELECTRONS
+    conv_thr = 1.0d-10,
+    mixing_beta = 0.4,
+/
+ATOMIC_SPECIES
+ V   50.9415 V.pbe-sp-van.UPF
+ Fe  55.8470 Fe.pbe-sp-van_ak.UPF
+ATOMIC_POSITIONS (alat)
+ V       0.00000000  0.00000000  0.00000000
+ V       0.50000000  0.00000000  0.00000000
+ V       0.25000000  0.25000000  0.25000000
+ Fe      0.75000000  0.25000000  0.25000000
+K_POINTS (automatic)
+ 32 32 16 0 0 0
+"""
         self.assertEqual(str(self.input.structure), answer)
+        self.assertEqual(self.input.toString(), answer_toString)
 
 
     def test_read_pwinput(self):
@@ -132,7 +174,46 @@ Al      0.00000000  0.00000000  0.00000000
 
 Al  26.9800 Al.pz-vbc.UPF
 """
+
+        answer_toString = """&CONTROL
+    calculation = 'scf',
+    restart_mode = 'from_scratch',
+    tstress = .true.,
+    tprnfor = .true.,
+    prefix = 'mgalb4',
+    pseudo_dir = '/home/user/pslib',
+    outdir = '/scratch/user',
+/
+&SYSTEM
+    ibrav = 2,
+    nbnd = 21,
+    nspin = 1,
+    occupations = 'smearing',
+    degauss = 0.025,
+    smearing = 'methfessel-paxton',
+    ecutwfc = 64.0,
+    ecutrho = 256.0,
+    celldm(1) = 7.7,
+    celldm(2) = 1.0,
+    celldm(3) = 1.0,
+    celldm(4) = 0.0,
+    ntyp = 1,
+    nat = 1,
+/
+&ELECTRONS
+    conv_thr = 1.0d-10,
+    mixing_beta = 0.4,
+/
+ATOMIC_SPECIES
+ Al  26.9800 Al.pz-vbc.UPF
+ATOMIC_POSITIONS (alat)
+ Al      0.00000000  0.00000000  0.00000000
+K_POINTS (automatic)
+ 32 32 16 0 0 0
+"""
+        
         self.assertEqual(str(self.input.structure), answer)
+        self.assertEqual(self.input.toString(), answer_toString)
         
         
     def test_read_cif(self):
@@ -237,7 +318,21 @@ V   50.9415 V.pbe-n-van.UPF
 Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
 """
         self.assertEqual(str(self.input.structure), answer)
- 
+
+
+    def test_list(self):
+        
+        answer = """Al   0.000000 0.000000 0.000000 26.982500 al_1.ncpp
+B    0.666667 0.333333 0.234036 11.000000 B.pbe-n-van_ak.UPF
+B    0.333333 0.666667 0.234036 11.000000 B.pbe-n-van_ak.UPF
+Mg   0.000000 0.000000 0.499998 24.305000 mg.ncpp
+B    0.666667 0.333333 0.765961 11.000000 B.pbe-n-van_ak.UPF
+B    0.333333 0.666667 0.765961 11.000000 B.pbe-n-van_ak.UPF
+"""
+        s = ''
+        for a in self.input.structure:
+            s = s + str(a) + '\n'
+        self.assertEqual(s, answer)        
 if __name__ == '__main__':
     unittest.main()
         

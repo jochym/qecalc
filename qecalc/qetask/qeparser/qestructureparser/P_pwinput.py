@@ -48,14 +48,9 @@ class P_pwinput(QEStructureParser):
         
         input.structure.lattice._qeInput = self._qeInput
      
-        stru.structure = input.structure.structure
-        stru.lattice = input.structure.lattice
-        stru.atomicSpecies = input.structure.atomicSpecies
-        stru.optConstraints = input.structure.optConstraints
-        stru.nat = input.structure.nat
-        stru.ntyp = input.structure.ntyp
-        stru.atomicPositionsType = input.structure.atomicPositionsType
-        
+        # create a shallow copy of all source attributes
+        stru.__dict__.update(input.structure.__dict__)
+        stru[:] = input.structure
         return stru
     
 def getParser(qeInput):

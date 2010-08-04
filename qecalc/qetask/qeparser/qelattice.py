@@ -92,11 +92,27 @@ class QELattice(object):
         """return cartesian coordinates of a lattice vector"""
         return self.__primitiveLattice.cartesian(u)
     
-
     def fractional(self, rc):
         """return fractional coordinates of a cartesian vector"""
         return self.__primitiveLattice.fractional(u)
 
+    def dot(self, u, v):
+        """return dot product of 2 lattice vectors"""
+        return self.__primitiveLattice.dot(u, v)
+
+    def norm(self, u):
+        """return norm of a lattice vector"""
+        return self.__primitiveLattice.norm(u)
+
+    def dist(self, u, v):
+        """Return distance of 2 points in lattice coordinates.
+        """
+        return __primitiveLattice.dist(u, v)
+
+    def angle(self, u, v):
+        """Return angle(u, v) --> angle of 2 lattice vectors in degrees.
+        """
+        return __primitiveLattice.angle(u, v)
 
     def recipCartesian(self, kPoint):
         """Conversts a vector in fractional coordinates in reciprocal space into

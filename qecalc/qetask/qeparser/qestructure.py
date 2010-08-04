@@ -13,9 +13,11 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+from qeatom import QEAtom as Atom
+
 try:
     from diffpy.Structure.structure import Structure
-    from diffpy.Structure.atom import Atom
+#    from diffpy.Structure.atom import Atom 
     from diffpy.Structure.lattice import cosd, Lattice
     from diffpy.Structure.SymmetryUtilities import equalPositions
 except ImportError:
@@ -29,32 +31,14 @@ from qeinput import QEInput
 from orderedDict import OrderedDict
 
 
-class AtomicSpecies():
-    def __init__(self, element = 'H', mass = 1.0, pseudopotential = ''):
-        self._element = element
-        self.pseudopotential = pseudopotential
-        self.mass = mass
-    def __str__(self):
-        return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.pseudopotential
-    def toString(self):
-        return str(self)
-        #return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.pseudopotential
-    def _get_element(self):
-        return self._element
-
-    def _set_element(self, value):
-        self._element = value
-
-    element = property(_get_element, _set_element, doc ="element")        
-
-
-class QEStructure( list ):
+class QEStructure( Structure ):
     
     def __init__(self, qeInput = None):
         """the structure is initialized from PWSCF config file
            'lattice' and 'structure' are automatically updated"""
+           
+        Structure.__init__(self)
         #self.filename = qeInput.filename
-        self.atomicSpecies = OrderedDict()
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self._optConstraints = []
@@ -66,29 +50,138 @@ class QEStructure( list ):
             self.lattice._qeInput.structure.lattice = self.lattice
             
         self.structure = Structure(lattice = self.lattice.diffpy())
-        self._nat = None
-        self._ntyp = None
         self._atomicPositionsType = 'crystal'                           
          
+         
+    def addNewAtom(self, *args, **kwargs):
+        """Add new Atom instance to the end of this Structure.
+
+        All arguments are forwarded to Atom constructor.
+
+        No return value.
+        """
+        kwargs['lattice'] = self.lattice
+        a = Atom(*args, **kwargs)
+        list.append(self, a)
+        self._uncache('labels')
+        return
+    
+
+    def placeInLattice(self, new_lattice):
+        """place structure into new_lattice coordinate system
+
+        sets lattice to new_lattice and recalculate fractional coordinates
+        of all atoms so their absolute positionls remain the same
+
+        return self
+        """
+        Tx = numpy.dot(self.lattice.diffpy().base, new_lattice.diffpy().recbase)
+        Tu = numpy.dot(self.lattice.diffpy().normbase, new_lattice.diffpy().recnormbase)
+        for a in self:
+            a.xyz = numpy.dot(a.xyz, Tx)
+        tmpInput = self.latice._qeInput
+        self.lattice = new_lattice
+        self.lattice._qeInput = tmpInput
+        self.lattice._qeInput.structure = self        
+        return self
         
+
+    ##############################################################################
+    # overloaded list methods - taken from diffpy.Structure
+    ##############################################################################
+
+    def append(self, a, copy=True):
+        """Append atom to a structure and update its lattice attribute.
+
+        a    -- instance of Atom
+        copy -- flag for appending a copy of a.
+                When False, append a and update a.owner.
+
+        No return value.
+        """
+        self._uncache('labels')
+        adup = copy and Atom(a) or a
+        adup.lattice = self.lattice
+        list.append(self, adup)
+        return
+
+    def insert(self, idx, a, copy=True):
+        """Insert atom a before position idx in this Structure.
+
+        idx  -- position in atom list
+        a    -- instance of Atom
+        copy -- flag for inserting a copy of a.
+                When False, append a and update a.lattice.
+
+        No return value.
+        """
+        self._uncache('labels')
+        adup = copy and Atom(a) or a
+        adup.lattice = self.lattice
+        list.insert(self, idx, adup)
+        return
+
+    def extend(self, atoms, copy=True):
+        """Extend Structure by appending copies from a list of atoms.
+
+        atoms -- list of Atom instances
+        copy  -- flag for extending with copies of Atom instances.
+                 When False extend with atoms and update their lattice
+                 attributes.
+
+        No return value.
+        """
+        self._uncache('labels')
+        if copy:    adups = [Atom(a) for a in atoms]
+        else:       adups = atoms
+        for a in adups: a.lattice = self.lattice
+        list.extend(self, adups)
+        return
+
+    def __setitem__(self, idx, a, copy=True):
+        """Set idx-th atom to a.
+
+        idx  -- index of atom in this Structure
+        a    -- instance of Atom
+        copy -- flag for setting to a copy of a.
+                When False, set to a and update a.lattice.
+
+        No return value.
+        """
+        self._uncache('labels')
+        adup = copy and Atom(a) or a
+        adup.lattice = self.lattice
+        list.__setitem__(self, idx, adup)
+        return
+
+    def __setslice__(self, lo, hi, atoms, copy=True):
+        """Set Structure slice from lo to hi-1 to the sequence of atoms.
+
+        lo    -- low index for the slice
+        hi    -- high index of the slice
+        atoms -- sequence of Atom instances
+        copy  -- flag for using copies of Atom instances.  When False, set
+                 to existing instances and update their lattice attributes.
+
+        No return value.
+        """
+        self._uncache('labels')
+        if copy:    adups = [Atom(a) for a in atoms]
+        else:       adups = atoms
+        for a in adups: a.lattice = self.lattice
+        list.__setslice__(self, lo, hi, adups)
+        return
+    
+            
     def _get_nat(self):
-        return self._nat
-
-    def _set_nat(self, value):
-        self._nat = value
-        self.lattice._qeInput.update()
-
-    nat = property(_get_nat, _set_nat, doc ="number of atoms")
+        return len(self)
+    nat = property(_get_nat, doc ="number of atoms")
     
  
     def _get_ntyp(self):
-        return self._ntyp
-
-    def _set_ntyp(self, value):
-        self._ntyp = value
-        self.lattice._qeInput.update()
-
-    ntyp = property(_get_ntyp, _set_ntyp, doc ="number of types")
+        return len(self.atomicSpecies)
+    
+    ntyp = property(_get_ntyp, doc ="number of types")
     
     
     def _get_atomicPositionsType(self):
@@ -101,6 +194,18 @@ class QEStructure( list ):
     atomicPositionsType = property(_get_atomicPositionsType, \
                                    _set_atomicPositionsType, \
                            doc ="type of atomic positions (crystal, alat ...)")    
+
+
+    def _get_atomicSpecies(self):
+        atomicSpecies = OrderedDict()
+        for a in self:
+            atomicSpecies[a.element] = AtomicSpecies(element = a.element, \
+                                        mass = a.mass, potential = a.potential)
+        
+        return atomicSpecies
+
+    atomicSpecies = property(_get_atomicSpecies, \
+              doc ="returns an ordered dictionary with atomic species' objects")   
 
 
     def _get_optConstraints(self):
@@ -147,13 +252,9 @@ class QEStructure( list ):
         return labels
         
     def parseInput(self, qeInput):
-        #self._qeInput = qeInput
         from qestructureparser.qestructureparser import QEStructureParser
         new_structure = QEStructureParser(qeInput).parseqeInput()
         self.__Init(new_structure)
-#        print self._qeInput.toString()
-        #self.lattice._qeInput.update()
-        #self._setStructureFromQEInput(qeInput)
     
     
     def __Init(self, structure):
@@ -162,10 +263,6 @@ class QEStructure( list ):
             self.__dict__.update(structure.__dict__)
             self.lattice.__dict__.update(structure.lattice.__dict__)
             self = structure        
-    
-    
-#    def parseOutput(self, pwscfOutputFile):
-#        self._setStructureFromPWOutput(pwscfOutputFile)
 
 
     def read(self, filename, format = 'pwinput'):
@@ -206,11 +303,8 @@ class QEStructure( list ):
 
 
     def load(self, source, **args):
-        #from qecalc.qetask.qeparser.qesrtuctureparser import *
         task = {
             'diffpy': self._setStructureFromDiffpyStructure,
- #           'pwinput': self._setStructureFromPWConfig,
- #           'pwoutput': self._setStructureFromPWOutput,
         }
         if source == 'diffpy':
             if 'ibrav' in args and args['ibrav'] != 0:
@@ -225,18 +319,12 @@ class QEStructure( list ):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
-        psList - list of strings with pseudopotential names
+        psList - list of strings with potential names
         diffpyStructure object will be modified with reduced atomic positions
         """      
         diffpyLattice = structure.lattice
         
-        self.structure = structure
-        
-        self.atomicSpecies = OrderedDict()
-               
-        
-        #set lattice and  convert to bohr units
-        #qeLattice = QELattice(ibrav = 0, a = 1.889725989, base = diffpyLattice.base)
+        self.structure = structure        
         qeLattice = QELattice(ibrav = 0, base = diffpyLattice.base)
         qeLattice.a = 1.889725989*qeLattice.a
         qeLattice._qeInput = self._qeInput
@@ -244,11 +332,12 @@ class QEStructure( list ):
         self.lattice = qeLattice
         self.lattice.type = 'generic cubic'
 
-        atomNames = []
+        atomNames = []        
         for a in structure:
             if self._element(a) not in atomNames:
                 atomNames.append(self._element(a))
         
+        atomicSpecies = {}
         for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
@@ -258,50 +347,31 @@ class QEStructure( list ):
                 ps = ''
             else:
                 ps = psList[i]               
-            self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+            atomicSpecies[elem] =  (mass, ps)
         
         for atom in structure:
-            self.optConstraints.append([])        
+            self.optConstraints.append([])       
         
-        # for i, atom in enumerate(structure):
-            # elem = self._element(atom)
-            # if len(massList) - 1 < i:
-                # mass = 0
-            # else:
-                # mass = massList[i]
-            # if len(psList) - 1 < i:
-                # ps = ''
-            # else:
-                # ps = psList[i]
-            # self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
-            # self.optConstraints.append([])
-
-#        for atom, mass, ps in zip(structure, massList, psList):
-#            elem = self._element(atom)
-#            self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
-#            self.optConstraints.append([])
-
-        self.nat = len(structure)
-        self.ntyp = len(self.atomicSpecies)
-     
+        self[:] = []
+        for atom in structure:
+            elem = self._element(atom)
+            self.addNewAtom(atype = elem, xyz = atom.xyz, \
+                            mass = atomicSpecies[elem][0], \
+                            potential = atomicSpecies[elem][1],\
+                            lattice = self.lattice)             
+             
                         
     def _setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList = [], psList = []):
         """
         structure - diffpy.Structure object
         ibrav - Lattice index
-        psList - list of strings with pseudopotential names
+        psList - list of strings with potential names
         diffpyStructure object will be modified with reduced atomic positions
         """
         import copy
 
-        #self.atomicSpecies = OrderedDict()
-        #self.optConstraints = []
-        #self.atomicPositionsType = 'crystal'
-
         diffpyLattice = copy.deepcopy(structure.lattice)
 
-        self.atomicSpecies = OrderedDict()
-        
         a = diffpyLattice.a
         b = diffpyLattice.b
         c = diffpyLattice.c
@@ -316,7 +386,6 @@ class QEStructure( list ):
         self.lattice = qeLattice
         # make a deep copy:
         reducedStructure = Structure(atoms = structure)
-        #reducedStructure = structure
 
         reducedStructure.placeInLattice(Lattice(base=qeLattice.diffpy().base))
 
@@ -337,8 +406,7 @@ class QEStructure( list ):
             if self._element(a) not in atomNames:
                 atomNames.append(self._element(a))
         
-        #print atomNames
-        #print len(massList)
+        atomicSpecies = {}
         for i, elem in enumerate(atomNames):
             if len(massList) - 1 < i:
                 mass = 0
@@ -347,38 +415,24 @@ class QEStructure( list ):
             if len(psList) - 1 < i:
                 ps = ''
             else:
-                ps = psList[i]      
-            #print mass, ps
-            # atomDict[a] = 
-        # for i, atom in enumerate(reducedStructure):
-            # elem = self._element(atom)
-            # if len(massList) - 1 < i:
-                # mass = 0
-            # else:
-                # mass = massList[i]
-            # if len(psList) - 1 < i:
-                # ps = ''
-            # else:
-                # ps = psList[i]            
-            self.atomicSpecies[elem] =  AtomicSpecies(elem, mass, ps)
+                ps = psList[i]
+            atomicSpecies[elem] =  (mass, ps)
+               
+        self[:] = []
         
-        for atom in reducedStructure:
-            self.optConstraints.append([])
-
         # convert to bohr units
         self.lattice.setLattice(ibrav, self.lattice.a*1.889725989, \
                                  self.lattice.b*1.889725989,
                                  self.lattice.c*1.889725989)
 
-        self.nat = len(reducedStructure)
-        self.ntyp = len(self.atomicSpecies)
-
-        # use rstrip to avoid duplicate line feed
-        #print reducedStructure.writeStr(format='discus').rstrip()
-        #print reducedStructure.writeStr(format='discus')
-        #print reducedStructure.writeStr().rstrip()
-        #print reducedStructure
-        #self.lattice = setLatticeFromDiffpyLattice(structure.lattice, ibrav)
+        for atom in reducedStructure:
+            self.optConstraints.append([])
+        for atom in reducedStructure:
+            elem = self._element(atom)
+            self.addNewAtom(atype = elem, xyz = atom.xyz, \
+                            mass = atomicSpecies[elem][0], \
+                            potential = atomicSpecies[elem][1],\
+                            lattice = self.lattice)
 
 
     def toString(self, string = None):
@@ -392,7 +446,6 @@ class QEStructure( list ):
             else:
                 qeInput = QEInput(config = '')
 
-        #self.updatePWInput(qeInput)
         return qeInput.toString()
 
  
@@ -409,7 +462,6 @@ class QEStructure( list ):
             self.lattice.save(filename)
             qeInput = self.lattice._qeInput
             
-        #self.updatePWInput(qeInput)
         qeInput.save(filename)
      
     
@@ -425,7 +477,7 @@ class QEStructure( list ):
 
     def _element(self, atom):
         """
-        Is needed for suport both diffpy and matter classess
+        Is needed for support both diffpy and matter classes
         """
         if 'element' in dir(atom):
             return atom.element
@@ -434,5 +486,15 @@ class QEStructure( list ):
                 return atom.symbol
             else:
                 raise
+            
+class AtomicSpecies():
+    def __init__(self, element = 'H', mass = 1.0, potential = ''):
+        self.element = element
+        self.potential = potential
+        self.mass = mass
+    def __str__(self):
+        return '%-3s'%self.element + ' ' + '%.4f'%self.mass + ' ' + self.potential
+    def toString(self):
+        return str(self)              
 
 if __name__ == '__main__': pass

@@ -82,7 +82,7 @@ class QEAtom(object):
         self.potential = None
         self.lattice = None
         # assign them as needed
-        if isinstance(atype, Atom):
+        if isinstance(atype, QEAtom):
             atype_dup = atype.__copy__()
             self.__dict__.update(atype_dup.__dict__)
         else:
@@ -99,14 +99,14 @@ class QEAtom(object):
     def __repr__(self):
         """simple string representation"""
         xyz = self.xyz
-        s = "%-4s %8.6f %8.6f %8.6f %6.4f" % \
-                (self.element, xyz[0], xyz[1], xyz[2])
+        s = "%-4s %8.6f %8.6f %8.6f %8.6f %s" % \
+                (self.element, xyz[0], xyz[1], xyz[2], self.mass, self.potential)
         return s
 
     def __copy__(self):
         """Return a copy of this instance.
         """
-        adup = Atom(self.element)
+        adup = QEAtom(self.element)
         adup.__dict__.update(self.__dict__)
         # create copies for what should be copied
         adup.xyz = numpy.array(self.xyz)

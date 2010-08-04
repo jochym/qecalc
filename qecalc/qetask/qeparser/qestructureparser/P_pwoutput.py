@@ -42,17 +42,11 @@ class P_pwoutput(QEStructureParser):
             
             
     def __genStructure( self, file ):            
-        # silly copy constructor:
-        #from qecalc.qetask.qeparser.pwinput import PWInput
-        #new_qeInput = PWInput(config = self._qeInput.toString()) 
-        #new_qeInput.parse()
-        #*************
         stru = QEStructure(qeInput = self._qeInput)     
         pwscfOut = file.readlines()
         pseudoList = []
         atomList = []
         massList = []
-        stru.atomicSpecies = OrderedDict()
         stru.atomicPositionsType = 'alat'  
         # parse beginning:
         for i, line in enumerate(pwscfOut):
@@ -61,13 +55,13 @@ class P_pwoutput(QEStructureParser):
             if 'bravais-lattice index' in line:
                 ibrav = int(line.split('=')[1])
             if 'number of atoms/cell' in line:
-                stru.nat = int(line.split('=')[1])
+                nat = int(line.split('=')[1])
             if 'number of atomic types' in line:
-                stru.ntyp = int(line.split('=')[1])
+                ntyp = int(line.split('=')[1])
             if 'PseudoPot.' in line:
                 pseudoList.append(line.split('read from file')[1].strip())
             if 'atomic species   valence    mass     pseudopotential' in line:
-                for j in range(stru.ntyp):
+                for j in range(ntyp):
                     atomList.append(pwscfOut[i+j+1].split()[0])
                     massList.append(float(pwscfOut[i+j+1].split()[2]))
             if 'crystal axes: (cart. coord. in units of a_0)' in line:
@@ -77,7 +71,7 @@ class P_pwoutput(QEStructureParser):
                 stru.lattice.setLatticeFromQEVectors(ibrav, latticeVectors)
             if 'site n.     atom                  positions (a_0 units)' in line:
                 stru.structure = Structure(lattice = stru.lattice.diffpy())
-                for n in range(stru.nat):
+                for n in range(nat):
                     words = pwscfOut[i + n + 1].split()
                     atomSymbol = words[1]
                     coords = [float(w) for w in words[6:9]]
@@ -85,10 +79,17 @@ class P_pwoutput(QEStructureParser):
                     stru.optConstraints.append(numpy.array(constraint, dtype = int))
                     coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     stru.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+                    stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
 
+        nat = len(stru)
+        atomicSpecies = {}     
         for a, m, p in zip(atomList, massList, pseudoList):
-            stru.atomicSpecies[a] = AtomicSpecies(a, m, p)
-
+            atomicSpecies[a] = ( m, p)
+            
+        for a in stru:
+            if a.element in atomicSpecies:
+                a.mass = atomicSpecies[a.element][0]
+                a.potential  = atomicSpecies[a.element][1]            
         #Parse end:
         # Find all geometry optimization steps
 
@@ -108,7 +109,7 @@ class P_pwoutput(QEStructureParser):
                 lastSection = pwscfOut[posList[-2]:]
             else:
                 return stru
-            
+        
         for i, line in enumerate(lastSection):
             if 'CELL_PARAMETERS (alat)' in line:
                 latticeVectors = [[float(f)*a_0 for f in lastSection[i + 1].split() ],
@@ -116,8 +117,9 @@ class P_pwoutput(QEStructureParser):
                                   [float(f)*a_0 for f in lastSection[i + 3].split() ]]
                 stru.lattice.setLatticeFromQEVectors(ibrav, latticeVectors)
             if 'ATOMIC_POSITIONS (alat)' in line:
+                stru[:] = []
                 stru.structure = Structure(lattice = stru.lattice.diffpy())
-                for n in range(stru.nat):
+                for n in range(nat):
                     words = lastSection[i + n + 1].split()
                     atomSymbol = words[0]
                     coords = [float(w) for w in words[1:4]]
@@ -126,8 +128,12 @@ class P_pwoutput(QEStructureParser):
                         constraint = [int(c) for c in words[4:7]]
                     stru.optConstraints.append(numpy.array(constraint, dtype = int))
                     coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
-                    stru.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))        
-          
+                    stru.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+                    stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))  
+        for a in stru:
+            if a.element in atomicSpecies:
+                a.mass = atomicSpecies[a.element][0]
+                a.potential  = atomicSpecies[a.element][1]      
         return stru
     
 def getParser(qeInput):
