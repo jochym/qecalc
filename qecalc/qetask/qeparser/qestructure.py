@@ -296,7 +296,38 @@ class QEStructure( Structure ):
         return parser
 
         
-    def readStr(self): pass
+    def readStr(self, s, format = 'pwinput'):
+        """Load structure from a file, any original data become lost.
+
+        filename -- file to be loaded
+        format   -- structure formats
+                    'pwinput'  - pw.x input
+                    'pwoutput' - pw.x output
+
+        Return instance of data Parser used to process file.  This
+        can be inspected for information related to particular format.
+        """        
+        from  qecalc.qetask.qeparser.qestructureparser import parser_index
+        
+        if self._qeInput == None:                
+            self._qeInput = PWInput()
+            self._qeInput.parse()
+        
+        if format in parser_index:             
+            module = __import__("qestructureparser.P_" + format, globals(), \
+                                locals(), ['P_' + format], -1)
+            parser = module.getParser(self._qeInput)
+            new_structure = parser.parseStr(s)
+        else:            
+            diffpyStruct = Structure()
+            parser = diffpyStruct.readStr(s, format = format)
+            new_structure = QEStructure(qeInput = self._qeInput)
+            new_structure._setStructureFromDiffpyStructure(diffpyStruct, \
+                                        massList = [], psList = [], ibrav = 0)
+
+        new_structure.lattice._qeInput.update()
+        self.__Init(new_structure)
+        return parser
 
 
     def load(self, source, **args):

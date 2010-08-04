@@ -97,7 +97,7 @@ if __name__ == "__main__":
     d3calc = D3Calc(configString = configString, sectionList = ['pw.x', 'ph.x d3', 'd3.x'])
 
     calcList = [pwcalc, sphon, mphon, d3calc]
-'
+
     try:
         for calc in calcList:
             testCalc(calc)

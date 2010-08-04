@@ -14,7 +14,7 @@ similar to diffpyStructure.
 Added methods to QELattice, similar to diffpy.Structure.Lattice
 
 QEAtom is redefined version of diffpy.Structure.Atom - added mass and potential
-fields. Removed anisotropy information
+fields. Also contains QELattice and QEInput pointers. Removed anisotropy information
 
 
 2010, July 30

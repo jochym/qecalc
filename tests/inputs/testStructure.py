@@ -332,7 +332,72 @@ B    0.333333 0.666667 0.765961 11.000000 B.pbe-n-van_ak.UPF
         s = ''
         for a in self.input.structure:
             s = s + str(a) + '\n'
-        self.assertEqual(s, answer)        
+        self.assertEqual(s, answer)     
+
+
+    def test_diffpy(self):
+        answer = """lattice=Lattice(base=array([[  5.7889    ,   0.        ,   0.        ],
+       [ -2.89445   ,   5.01333446,   0.        ],
+       [  0.        ,   0.        ,  12.87515038]]))
+Al   0.000000 0.000000 0.000000 1.0000
+B    0.666667 0.333333 0.234036 1.0000
+B    0.333333 0.666667 0.234036 1.0000
+Mg   0.000000 0.000000 0.499998 1.0000
+B    0.666667 0.333333 0.765961 1.0000
+B    0.333333 0.666667 0.765961 1.0000"""
+        self.assertEqual(str(self.input.structure.diffpy()), answer)
+        
+        
+    def test_readStr(self):
+        al_pw_str = """&CONTROL
+    calculation = 'scf',
+    restart_mode = 'from_scratch',
+    pseudo_dir = '/home/user/pslib',
+    outdir = 'temp/',
+    prefix = 'al',
+    tprnfor = .true.,
+    tstress = .true.,
+/
+&SYSTEM
+    ibrav = 2,
+    ecutwfc = 17.5,
+    occupations = 'smearing',
+    smearing = 'marzari-vanderbilt',
+    degauss = 0.05,
+    celldm(1) = 7.7,
+    celldm(2) = 1.0,
+    celldm(3) = 1.0,
+    celldm(4) = 0.0,
+    ntyp = 1,
+    nat = 1,
+/
+&ELECTRONS
+    diagonalization = 'david',
+    mixing_beta = 0.7,
+/
+ATOMIC_SPECIES
+ Al  26.9800 Al.pz-vbc.UPF
+ATOMIC_POSITIONS (alat)
+ Al      0.00000000  0.00000000  0.00000000
+K_POINTS
+ 3
+ 0.0625000  0.0625000  0.0625000   1.00
+ 0.0625000  0.0625000  0.1875000   3.00
+ 0.0625000  0.0625000  0.3125000   3.00"""
+        answer = """"Face Centered Cubic" cell:
+-3.85000000  0.00000000  3.85000000
+ 0.00000000  3.85000000  3.85000000
+-3.85000000  3.85000000  0.00000000
+
+Atomic positions in units of lattice parametr "a":
+Al      0.00000000  0.00000000  0.00000000  
+
+Al  26.9800 Al.pz-vbc.UPF
+"""
+        self.input.structure.readStr(al_pw_str)
+    
+        self.assertEqual(str(self.input.structure), answer) 
+        
 if __name__ == '__main__':
     unittest.main()
         
