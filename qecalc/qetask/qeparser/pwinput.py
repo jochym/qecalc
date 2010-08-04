@@ -123,7 +123,7 @@ class PWInput(QEInput):
             qeInput.removeCard('atomic_positions')
         qeInput.createCard('atomic_positions')
         qeInput.card('atomic_positions').setArg(structure.atomicPositionsType)
-        for atom, constraint in zip(structure.structure, structure.optConstraints):
+        for atom, constraint in zip(structure, structure.optConstraints):
             if structure.atomicPositionsType == 'alat':
                 coords = structure.lattice.diffpy().cartesian(atom.xyz)/structure.lattice.a
                 coords = structure.formatString%(coords[0], coords[1], coords[2])

@@ -46,7 +46,6 @@ class QEStructureParser():
                 
         stru.lattice = self.__getLattice(self._qeInput)               
         
-        stru.structure = Structure(lattice = stru.lattice.diffpy())
         #self.filename = self._qeInput.filename
         stru.optConstraints = []
         if 'atomic_positions' in stru.lattice._qeInput.cards:        
@@ -69,7 +68,6 @@ class QEStructureParser():
                         coords = numpy.array(coords[0:3])
                     if stru.atomicPositionsType == 'bohr' or stru.atomicPositionsType == 'angstrom':
                         coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3]))
-                    stru.structure.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
                     stru.addNewAtom(atype = atomSymbol, xyz = numpy.array(coords[0:3]))
         # parse mass ATOMIC_SPECIES section:
         atomicSpecies = {}

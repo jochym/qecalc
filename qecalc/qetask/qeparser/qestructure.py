@@ -13,15 +13,14 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qeatom import QEAtom as Atom
+from qeatom import QEAtom
 
 try:
     from diffpy.Structure.structure import Structure
-#    from diffpy.Structure.atom import Atom 
     from diffpy.Structure.lattice import cosd, Lattice
     from diffpy.Structure.SymmetryUtilities import equalPositions
 except ImportError:
-    from matter import Structure, Atom, Lattice
+    from matter import Structure, Lattice
     from matter.Lattice import cosd
     from matter.SymmetryUtilities import equalPositions
 
@@ -47,9 +46,7 @@ class QEStructure( Structure ):
         self._qeInput = qeInput
         if qeInput != None:
             self.lattice._qeInput.structure = self
-            self.lattice._qeInput.structure.lattice = self.lattice
-            
-        self.structure = Structure(lattice = self.lattice.diffpy())
+            self.lattice._qeInput.structure.lattice = self.lattice            
         self._atomicPositionsType = 'crystal'                           
          
          
@@ -61,7 +58,7 @@ class QEStructure( Structure ):
         No return value.
         """
         kwargs['lattice'] = self.lattice
-        a = Atom(*args, **kwargs)
+        a = QEAtom(*args, **kwargs)
         list.append(self, a)
         self._uncache('labels')
         return
@@ -93,14 +90,14 @@ class QEStructure( Structure ):
     def append(self, a, copy=True):
         """Append atom to a structure and update its lattice attribute.
 
-        a    -- instance of Atom
+        a    -- instance of QEAtom
         copy -- flag for appending a copy of a.
                 When False, append a and update a.owner.
 
         No return value.
         """
         self._uncache('labels')
-        adup = copy and Atom(a) or a
+        adup = copy and QEAtom(a) or a
         adup.lattice = self.lattice
         list.append(self, adup)
         return
@@ -109,14 +106,14 @@ class QEStructure( Structure ):
         """Insert atom a before position idx in this Structure.
 
         idx  -- position in atom list
-        a    -- instance of Atom
+        a    -- instance of QEAtom
         copy -- flag for inserting a copy of a.
                 When False, append a and update a.lattice.
 
         No return value.
         """
         self._uncache('labels')
-        adup = copy and Atom(a) or a
+        adup = copy and QEAtom(a) or a
         adup.lattice = self.lattice
         list.insert(self, idx, adup)
         return
@@ -124,15 +121,15 @@ class QEStructure( Structure ):
     def extend(self, atoms, copy=True):
         """Extend Structure by appending copies from a list of atoms.
 
-        atoms -- list of Atom instances
-        copy  -- flag for extending with copies of Atom instances.
+        atoms -- list of QEAtom instances
+        copy  -- flag for extending with copies of QEAtom instances.
                  When False extend with atoms and update their lattice
                  attributes.
 
         No return value.
         """
         self._uncache('labels')
-        if copy:    adups = [Atom(a) for a in atoms]
+        if copy:    adups = [QEAtom(a) for a in atoms]
         else:       adups = atoms
         for a in adups: a.lattice = self.lattice
         list.extend(self, adups)
@@ -166,7 +163,7 @@ class QEStructure( Structure ):
         No return value.
         """
         self._uncache('labels')
-        if copy:    adups = [Atom(a) for a in atoms]
+        if copy:    adups = [QEAtom(a) for a in atoms]
         else:       adups = atoms
         for a in adups: a.lattice = self.lattice
         list.__setslice__(self, lo, hi, adups)
@@ -226,7 +223,7 @@ class QEStructure( Structure ):
             s = s + 'Atomic positions in units of lattice parametr "a":\n'        
         if self.atomicPositionsType == 'crystal':
             s = s + 'Atomic positions in crystal coordinates:\n'
-        for atom, constraint in zip(self.structure, self.optConstraints):
+        for atom, constraint in zip(self, self.optConstraints):
             if self.atomicPositionsType == 'alat':
                 coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
                 coords = self.formatString%(coords[0], coords[1], coords[2])
@@ -323,8 +320,7 @@ class QEStructure( Structure ):
         diffpyStructure object will be modified with reduced atomic positions
         """      
         diffpyLattice = structure.lattice
-        
-        self.structure = structure        
+            
         qeLattice = QELattice(ibrav = 0, base = diffpyLattice.base)
         qeLattice.a = 1.889725989*qeLattice.a
         qeLattice._qeInput = self._qeInput
@@ -399,8 +395,6 @@ class QEStructure( Structure ):
         # reducedStructure is not replaced with a list.
         reducedStructure[:] = [a for a in reducedStructure if not a in duplicates]
 
-        self.structure = reducedStructure
-
         atomNames = []
         for a in reducedStructure:
             if self._element(a) not in atomNames:
@@ -472,7 +466,11 @@ class QEStructure( Structure ):
         self._qeInput.update()
 
     def diffpy(self):
-        return self.structure
+        stru = Structure(lattice = self.lattice.diffpy())
+        for atom in self:
+            stru.addNewAtom(atype = atom.element, xyz = atom.xyz, \
+                                              lattice = self.lattice.diffpy() )
+        return stru
 
 
     def _element(self, atom):
