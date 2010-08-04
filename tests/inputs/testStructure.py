@@ -397,6 +397,24 @@ Al  26.9800 Al.pz-vbc.UPF
         self.input.structure.readStr(al_pw_str)
     
         self.assertEqual(str(self.input.structure), answer) 
+
+
+    def test_fileInit(self):
+        from qecalc.qetask.qeparser.qestructure import QEStructure
+        filename = os.path.join(testdata_dir, 'al_pw.in')
+        stru = QEStructure(filename = filename)
+        answer = """"Face Centered Cubic" cell:
+-3.85000000  0.00000000  3.85000000
+ 0.00000000  3.85000000  3.85000000
+-3.85000000  3.85000000  0.00000000
+
+Atomic positions in units of lattice parametr "a":
+Al      0.00000000  0.00000000  0.00000000  
+
+Al  26.9800 Al.pz-vbc.UPF
+"""
+        
+        self.assertEqual(str(stru), answer) 
         
 if __name__ == '__main__':
     unittest.main()

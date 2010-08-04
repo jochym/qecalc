@@ -32,16 +32,23 @@ from orderedDict import OrderedDict
 
 class QEStructure( Structure ):
     
-    def __init__(self, qeInput = None):
+    def __init__(self, qeInput = None, filename = None):
         """the structure is initialized from PWSCF config file
            'lattice' and 'structure' are automatically updated"""
            
         Structure.__init__(self)
-        #self.filename = qeInput.filename
         self.formatString = '%# .8f %# .8f %# .8f'
         # optConstraints three 1/0 for each coordinate of each atom
         self._optConstraints = []
         self.lattice = QELattice()
+        
+        if filename != None:
+            from qecalc.qetask.qeparser.pwinput import PWInput
+            qeInput = PWInput(filename = filename)
+            qeInput.parse()
+            self.parseInput(qeInput)
+            return
+        
         self.lattice._qeInput = qeInput
         self._qeInput = qeInput
         if qeInput != None:
@@ -259,7 +266,7 @@ class QEStructure( Structure ):
         if structure is not None:
             self.__dict__.update(structure.__dict__)
             self.lattice.__dict__.update(structure.lattice.__dict__)
-            self = structure        
+            self[:] = structure     
 
 
     def read(self, filename, format = 'pwinput'):
