@@ -29,25 +29,27 @@ class QELattice(object):
     """Class QELattice for working with crystal lattices in QE notation
        Uses diffpy.Lattice class for storage
        
-       Following parameters are dynamically linked to other properties 
-       (E.g. lattice vectors):
-       ibrav -- lattice type, setting it into a different value will 
-               automatically update lattice vectors, QE parsing object and
-               structure (if exists)
-               if ibrav = 0, only 'a' parameter is relevant
+       Following properties are dynamically linked to other properties  
+       (E.g. lattice vectors) and QEInput(if QEInput.autoUpdate = True(default)):
+       ibrav                  -- lattice type, setting it into a different value 
+                                 will automatically update lattice vectors, 
+                                 QE parsing object and structure
+                                 if ibrav = 0, only 'a' parameter is relevant
        a, b, c, cBC, cAC ,cAB -- lattice parameters, setting any of them will 
-           dynamically update the QE parsing object  (e.g. pw.input) 
-           and structure(if relevant). They are also ibrav sensitive. 
-           E.g.: if ibrav = 1 (simple cubic). Setting a to a different value
-           will also modify  b and c. 
+                                 dynamically update the QE parsing object
+                                 (e.g. pw.input) and structure(if relevant). 
+                                 They are also ibrav sensitive.  E.g. if 
+                                 ibrav = 1 (simple cubic). Setting 'a' to a \
+                                 different value will also modify  b and c. 
                                   
-       type -- lattice type to save into PWSCF cfg file ('celldm');
-              'traditional' - using a,b,c,cosAC, cosAB, cosBC;
-              'generic cubic', 'generic hexagonal' - assume existing
-              section 'CELL_PARAMETERS', 'generic' types also 
-              assume/set ibrav = 0
-      setLattice() will set everything at once
-       """
+       type                   -- lattice type to save into PWSCF cfg file 
+                                 'celldm'  (default)
+                                 'traditional' - using a,b,c,cosAC, cosAB, cosBC;
+                                 'generic cubic', 'generic hexagonal' - assume 
+                                  that section 'CELL_PARAMETERS' exists
+                                 'generic' types also  assume/set ibrav = 0
+      setLattice()            -- will set everything at once
+    """
 
 
     def __init__(self, ibrav = 1,a = 1. ,b = 1.,c = 1.,
