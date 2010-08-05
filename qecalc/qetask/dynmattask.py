@@ -46,6 +46,8 @@ class DynmatTask(QETask):
         self.setting.section(name, configDic)
         
         self.input = QEInput(filename = self.setting.get('dynmatInput'), type = 'dynmat')
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type = 'dynmat')
         #self._cmdStr = "dynmat.x < " + self.setting.dynmatInput
         #+ " > " + \

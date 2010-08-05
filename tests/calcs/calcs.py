@@ -39,7 +39,7 @@ outdir: temp/
 
 [pw.x]
 # pwscf input/output files
-pwfInput:  scf.in
+pwInput:  scf.in
 pwOutput: scf.out
 
 
@@ -91,7 +91,7 @@ def testCalc(calc):
 
 if __name__ == "__main__":
 
-    pwcalc = PWCalc(configString = configString)   
+    pwcalc = PWCalc(configString = configString)
     sphon = SinglePhononCalc(configString = configString, sectionList = ['pw.x', 'ph.x', 'dynmat.x'] )
     mphon = MultiPhononCalc(configString = configString, sectionList = ['pw.x', 'ph.x multi', 'q2r.x', 'matdyn.x'])
     d3calc = D3Calc(configString = configString, sectionList = ['pw.x', 'ph.x d3', 'd3.x'])

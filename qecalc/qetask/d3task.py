@@ -49,6 +49,8 @@ class D3Task(QETask):
         self.setting.section(name, configDic)
 
         self.input = D3Input(filename = self.setting.get('d3Input'))
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='d3')
 
 

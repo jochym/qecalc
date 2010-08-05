@@ -1,4 +1,5 @@
 Anharm at Gamma
+
 &INPUTPH
     prefix = 'mgb2',
     fildrho = 'mgb2.drho_G',

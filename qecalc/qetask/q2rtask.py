@@ -46,6 +46,8 @@ class Q2RTask(QETask):
         self.setting.section(name, configDic)
 
         self.input = QEInput(filename = self.setting.get('q2rInput'), type = 'q2r')
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting
         self.output = QEOutput(self.setting, type = 'q2r')
         #self._cmdStr = "q2r.x < " + self.setting.q2rInput + " > " + \
         #                self.setting.q2rOutput

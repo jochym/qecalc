@@ -47,6 +47,8 @@ class DOSTask(QETask):
 
         self.setting.section(name, configDic)
         self.input = QEInput(self.setting.get('dosInput'), type = 'dos')
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='dos')
 #        self._cmdStr = self.setting.paraPrefix + " dos.x " +  \
 #                       " -inp " + \

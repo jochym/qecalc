@@ -1,4 +1,5 @@
 Phonons of MgB2
+
 &INPUTPH
     tr2_ph = 1.0d-10,
     reduce_io = .true.,

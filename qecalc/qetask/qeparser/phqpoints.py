@@ -43,19 +43,19 @@ class PHQpoints(object):
         self.coords = None
         self.grid = numpy.array(grid)
         self.qeInput.attach = ''
-        self.qeInput.namelist('inputph').add('nq1', str(grid[0]))
-        self.qeInput.namelist('inputph').add('nq2', str(grid[1]))
-        self.qeInput.namelist('inputph').add('nq3', str(grid[2]))
-        self.qeInput.namelist('inputph').add('ldisp', '.true.')
+        self.qeInput.namelist('inputph').set('nq1', str(grid[0]))
+        self.qeInput.namelist('inputph').set('nq2', str(grid[1]))
+        self.qeInput.namelist('inputph').set('nq3', str(grid[2]))
+        self.qeInput.namelist('inputph').set('ldisp', '.true.')
 
 
     def parse(self):
         self.coords = []
-        if 'nq1' in self.qeInput.namelist('inputph').params:
+        if 'nq1' in self.qeInput.namelist('inputph').paramlist():
             self.isAutomatic = True
-            self.grid = [int(self.qeInput.namelist('inputph').param('nq1')),
-                            int(self.qeInput.namelist('inputph').param('nq2')),
-                            int(self.qeInput.namelist('inputph').param('nq3'))]
+            self.grid = [int(self.qeInput.namelist('inputph').get('nq1')),
+                            int(self.qeInput.namelist('inputph').get('nq2')),
+                            int(self.qeInput.namelist('inputph').get('nq3'))]
             self.grid = numpy.array(self.grid)
         else:
             # create a list and get rid of empty lines

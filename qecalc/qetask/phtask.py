@@ -50,6 +50,8 @@ class PHTask(QETask):
         self.setting.section(name, configDic)
 
         self.input = PHInput(filename = self.setting.get('phInput'))
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='ph')
 
 

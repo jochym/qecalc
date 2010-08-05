@@ -45,6 +45,8 @@ class ProjwfcTask(QETask):
 
         self.setting.section(name, configDic)
         self.input = QEInput(self.setting.get('projwfcInput'), type = 'projwfc')
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='projwfc')
 
 

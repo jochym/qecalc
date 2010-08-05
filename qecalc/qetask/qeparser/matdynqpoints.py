@@ -62,11 +62,11 @@ class MatdynQpoints(object):
     def parse(self):
         self.coords = []
         self.axis = []
-        if 'nk1' in self.qeInput.namelist('input').params:
+        if 'nk1' in self.qeInput.namelist('input').paramlist():
             self.isAutomatic = True
-            self.grid = [int(self.qeInput.namelist('input').param('nk1')),
-                            int(self.qeInput.namelist('input').param('nk2')),
-                            int(self.qeInput.namelist('input').param('nk3'))]
+            self.grid = [int(self.qeInput.namelist('input').get('nk1')),
+                            int(self.qeInput.namelist('input').get('nk2')),
+                            int(self.qeInput.namelist('input').get('nk3'))]
             self.grid = numpy.array(self.grid)
         else:
             # create a list and get rid of empty lines

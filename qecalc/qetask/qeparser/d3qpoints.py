@@ -39,8 +39,7 @@ class D3Qpoints(object):
         self.coords = numpy.array(self.coords)
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Dec 8, 2009 5:57:48 PM$"

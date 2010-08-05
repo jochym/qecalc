@@ -46,6 +46,8 @@ class PWTask(QETask):
 
         self.setting.section(name, configDic)
         self.input = PWInput( self.setting.pwInput ) #self.setting.get('pwInput') )
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting
         self.output = QEOutput(self.setting, type='pw')
 
 

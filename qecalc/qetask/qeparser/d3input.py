@@ -30,8 +30,7 @@ class D3Input(QEInput):
         self.qpoints.parse()
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Dec 8, 2009 6:00:01 PM$"
