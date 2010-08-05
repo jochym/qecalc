@@ -76,10 +76,10 @@ class QEAtom(object):
         """
         # declare data members
         self.element = None
-        self.xyz = numpy.zeros(3, dtype=float)
+        self._xyz = numpy.zeros(3, dtype=float)
         self.name = ''
-        self.mass = None
-        self.potential = None
+        self._mass = 0
+        self._potential = ''
         self.lattice = None
         # assign them as needed
         if isinstance(atype, QEAtom):
@@ -88,10 +88,10 @@ class QEAtom(object):
         else:
             self.element = atype
         # take care of remaining arguments
-        if xyz is not None:         self.xyz[:] = xyz
+        if xyz is not None:         self._xyz[:] = xyz
         if name is not None:        self.name = name
-        if mass is not None:        self.mass = mass
-        if potential is not None:   self.potential = potential
+        if mass is not None:        self._mass = mass
+        if potential is not None:   self._potential = potential
         if lattice is not None:     self.lattice = lattice
         return
 
@@ -137,4 +137,37 @@ class QEAtom(object):
         """absolute Cartesian coordinates of an atom
         """ )
 
+    
+    def _get_xyz(self):
+        return self._xyz
+    
+    def _set_xyz(self, value):
+        self._xyz = value
+        self.lattice._qeInput.update()
+
+    xyz = property(_get_xyz, _set_xyz, doc =
+        """fractional coordinates of an atom
+        """ )
+    
+    
+    def _get_mass(self):
+        return self._mass
+    
+    def _set_mass(self, value):
+        self._mass = value
+        self.lattice._qeInput.update()
+        
+    mass = property(_get_mass, _set_mass, doc =
+        """mass of an atom """ ) 
+    
+
+    def _get_potential(self):
+        return self._potential
+    
+    def _set_potential(self, value):
+        self._potential = value
+        self.lattice._qeInput.update()
+        
+    potential = property(_get_potential, _set_potential, doc =
+        """potential of an atom """ )              
 # End of class QEAtom

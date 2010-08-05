@@ -42,7 +42,8 @@ class P_pwoutput(QEStructureParser):
             
             
     def __genStructure( self, file ):            
-        stru = QEStructure(qeInput = self._qeInput)     
+        stru = QEStructure(qeInput = self._qeInput)
+        self._qeInput.autoUpdate = False   
         pwscfOut = file.readlines()
         pseudoList = []
         atomList = []
@@ -106,6 +107,8 @@ class P_pwoutput(QEStructureParser):
             if len(posList) > 1:
                 lastSection = pwscfOut[posList[-2]:]
             else:
+                self._qeInput.autoUpdate = True
+                self._qeInput.update()                
                 return stru
         
         for i, line in enumerate(lastSection):
@@ -129,7 +132,9 @@ class P_pwoutput(QEStructureParser):
         for a in stru:
             if a.element in atomicSpecies:
                 a.mass = atomicSpecies[a.element][0]
-                a.potential  = atomicSpecies[a.element][1]      
+                a.potential  = atomicSpecies[a.element][1]  
+        self._qeInput.autoUpdate = True
+        self._qeInput.update()                     
         return stru
     
 def getParser(qeInput):
