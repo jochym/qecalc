@@ -38,6 +38,7 @@ class QEStructureParser():
         
         if qeInput != None:
             self._qeInput = qeInput
+        autoUpdate = self._qeInput.autoUpdate
         self._qeInput.autoUpdate = False
         stru = QEStructure(qeInput = self._qeInput)
         
@@ -46,8 +47,6 @@ class QEStructureParser():
                 
         stru.lattice = self.__getLattice(self._qeInput)               
         
-        #self.filename = self._qeInput.filename
-        stru.optConstraints = []
         if 'atomic_positions' in stru.lattice._qeInput.cards:        
             atomicLines = stru.lattice._qeInput.card('atomic_positions').lines()
             stru.atomicPositionsType = stru.lattice._qeInput.card('atomic_positions').arg()
@@ -60,7 +59,6 @@ class QEStructureParser():
                     constraint = []
                     if len(words) > 4:
                         constraint = [int(c) for c in words[4:7]]
-                    stru.optConstraints.append(numpy.array(constraint, dtype = int))
                     atomSymbol = words[0]
                     if stru.atomicPositionsType == 'alat':
                         coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*stru.lattice.a)
@@ -68,7 +66,8 @@ class QEStructureParser():
                         coords = numpy.array(coords[0:3])
                     if stru.atomicPositionsType == 'bohr' or stru.atomicPositionsType == 'angstrom':
                         coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3]))
-                    stru.addNewAtom(atype = atomSymbol, xyz = numpy.array(coords[0:3]))
+                    stru.addNewAtom(atype = atomSymbol, xyz = numpy.array(coords[0:3]), \
+                                    optConstraint = numpy.array(constraint, dtype = int))
         # parse mass ATOMIC_SPECIES section:
         atomicSpecies = {}
         # default values:
@@ -94,7 +93,7 @@ class QEStructureParser():
             ps  = atomicSpecies[a.element][1]
             a.mass = mass
             a.potential = ps
-        self._qeInput.autoUpdate = True                
+        self._qeInput.autoUpdate = autoUpdate                
         return stru
                         
 

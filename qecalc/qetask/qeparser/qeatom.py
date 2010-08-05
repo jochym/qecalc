@@ -63,16 +63,18 @@ class QEAtom(object):
 
 
     def __init__(self, atype=None, xyz=None, name=None, mass = None,  \
-                 potential = None, lattice=None):
+                 potential = None, lattice=None, optConstraint = None):
         """Create atom of a specified type at given lattice coordinates.
         Atom(a) creates a copy of Atom instance a.
 
-        atype       -- element symbol string or Atom instance
-        xyz         -- fractional(crystal) coordinates
-        name        -- atom label
-        mass        -- atom mass
-        potential   -- pseudopotential file name
-        lattice     -- QE coordinate system for fractional coordinates
+        atype         -- element symbol string or Atom instance
+        xyz           -- fractional(crystal) coordinates
+        name          -- atom label
+        mass          -- atom mass
+        potential     -- pseudopotential file name
+        lattice       -- QE coordinate system for fractional coordinates
+        optConstraint -- list of up to three constraints for each coordinate 
+                         for QE geometry optimization (0 or 1)
         """
         # declare data members
         self.element = None
@@ -81,6 +83,7 @@ class QEAtom(object):
         self._mass = 0
         self._potential = ''
         self.lattice = None
+        self._optConstraint = numpy.array([], dtype = int)
         # assign them as needed
         if isinstance(atype, QEAtom):
             atype_dup = atype.__copy__()
@@ -88,11 +91,13 @@ class QEAtom(object):
         else:
             self.element = atype
         # take care of remaining arguments
-        if xyz is not None:         self._xyz[:] = xyz
-        if name is not None:        self.name = name
-        if mass is not None:        self._mass = mass
-        if potential is not None:   self._potential = potential
-        if lattice is not None:     self.lattice = lattice
+        if xyz is not None:             self._xyz[:] = xyz
+        if name is not None:            self.name = name
+        if mass is not None:            self._mass = mass
+        if potential is not None:       self._potential = potential
+        if lattice is not None:         self.lattice = lattice
+        if optConstraint is not None:  self._optConstraint = \
+                                        numpy.array(optConstraint, dtype = int)
         return
 
 
@@ -169,5 +174,17 @@ class QEAtom(object):
         self.lattice._qeInput.update()
         
     potential = property(_get_potential, _set_potential, doc =
-        """potential of an atom """ )              
+        """potential of an atom """)
+    
+    
+    def _get_optConstraint(self):
+        return self._optConstraint
+    
+    def _set_optConstraint(self, value):
+        self._optConstraints = value
+        self.lattice._qeInput.update()
+        
+    optConstraint = property(_get_optConstraint, _set_optConstraint, doc =
+        """optimization constraint, e.g. [1, 0, 1] of an atom for QE geometry  
+optimization""")
 # End of class QEAtom

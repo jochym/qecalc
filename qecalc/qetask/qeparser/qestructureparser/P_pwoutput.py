@@ -43,6 +43,7 @@ class P_pwoutput(QEStructureParser):
             
     def __genStructure( self, file ):            
         stru = QEStructure(qeInput = self._qeInput)
+        autoUpdate = self._qeInput.autoUpdate
         self._qeInput.autoUpdate = False   
         pwscfOut = file.readlines()
         pseudoList = []
@@ -70,15 +71,15 @@ class P_pwoutput(QEStructureParser):
                                   [float(f)*a_0 for f in pwscfOut[i + 2].split()[3:6] ],
                                   [float(f)*a_0 for f in pwscfOut[i + 3].split()[3:6] ]]
                 stru.lattice.setLatticeFromQEVectors(ibrav, latticeVectors)
-            if 'site n.     atom                  positions (a_0 units)' in line:
+            if 'site n.     atom                  positions (a_0 units)' in line:             
                 for n in range(nat):
                     words = pwscfOut[i + n + 1].split()
                     atomSymbol = words[1]
                     coords = [float(w) for w in words[6:9]]
                     constraint = []
-                    stru.optConstraints.append(numpy.array(constraint, dtype = int))
                     coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
-                    stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))
+                    stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]), \
+                         optConstraint = numpy.array(constraint, dtype = int))
 
         nat = len(stru)
         atomicSpecies = {}     
@@ -107,7 +108,7 @@ class P_pwoutput(QEStructureParser):
             if len(posList) > 1:
                 lastSection = pwscfOut[posList[-2]:]
             else:
-                self._qeInput.autoUpdate = True
+                self._qeInput.autoUpdate = autoUpdate
                 self._qeInput.update()                
                 return stru
         
@@ -126,14 +127,14 @@ class P_pwoutput(QEStructureParser):
                     constraint = []
                     if len(words) > 4:
                         constraint = [int(c) for c in words[4:7]]
-                    stru.optConstraints.append(numpy.array(constraint, dtype = int))
                     coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
-                    stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]))  
+                    stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]),\
+                          optConstraint = numpy.array(constraint, dtype = int))  
         for a in stru:
             if a.element in atomicSpecies:
                 a.mass = atomicSpecies[a.element][0]
                 a.potential  = atomicSpecies[a.element][1]  
-        self._qeInput.autoUpdate = True
+        self._qeInput.autoUpdate = autoUpdate
         self._qeInput.update()                     
         return stru
     

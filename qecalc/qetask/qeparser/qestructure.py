@@ -38,8 +38,6 @@ class QEStructure( Structure ):
            
         Structure.__init__(self)
         self.formatString = '%# .8f %# .8f %# .8f'
-        # optConstraints three 1/0 for each coordinate of each atom
-        self._optConstraints = []
         self.lattice = QELattice()
         
         if filename != None:
@@ -210,18 +208,7 @@ class QEStructure( Structure ):
 
     atomicSpecies = property(_get_atomicSpecies, \
               doc ="returns an ordered dictionary with atomic species' objects")   
-
-
-    def _get_optConstraints(self):
-        return self._optConstraints
-
-    def _set_optConstraints(self, value):
-        self._optConstraints = value
-        self.lattice._qeInput.update()
-
-    optConstraints = property(_get_optConstraints, _set_optConstraints, \
-                               doc ="optimization constraints list")
-                
+               
 
     def __str__(self):
         """simple string representation"""        
@@ -230,7 +217,8 @@ class QEStructure( Structure ):
             s = s + 'Atomic positions in units of lattice parametr "a":\n'        
         if self.atomicPositionsType == 'crystal':
             s = s + 'Atomic positions in crystal coordinates:\n'
-        for atom, constraint in zip(self, self.optConstraints):
+        for atom in self:
+            constraint = atom.optConstraint
             if self.atomicPositionsType == 'alat':
                 coords = self.lattice.diffpy().cartesian(atom.xyz)/self.lattice.a
                 coords = self.formatString%(coords[0], coords[1], coords[2])
@@ -381,10 +369,7 @@ class QEStructure( Structure ):
                 ps = ''
             else:
                 ps = psList[i]               
-            atomicSpecies[elem] =  (mass, ps)
-        
-        for atom in structure:
-            self.optConstraints.append([])       
+            atomicSpecies[elem] =  (mass, ps)   
         
         self[:] = []
         for atom in structure:
@@ -392,7 +377,7 @@ class QEStructure( Structure ):
             self.addNewAtom(atype = elem, xyz = atom.xyz, \
                             mass = atomicSpecies[elem][0], \
                             potential = atomicSpecies[elem][1],\
-                            lattice = self.lattice)             
+                            lattice = self.lattice, optConstraint = [])             
              
                         
     def _setReducedStructureFromDiffpyStructure(self, structure, ibrav, massList = [], psList = []):
@@ -458,13 +443,11 @@ class QEStructure( Structure ):
                                  self.lattice.c*1.889725989)
 
         for atom in reducedStructure:
-            self.optConstraints.append([])
-        for atom in reducedStructure:
             elem = self._element(atom)
             self.addNewAtom(atype = elem, xyz = atom.xyz, \
                             mass = atomicSpecies[elem][0], \
                             potential = atomicSpecies[elem][1],\
-                            lattice = self.lattice)
+                            lattice = self.lattice, optConstraint = [])
 
 
     def toString(self, string = None):
