@@ -435,7 +435,8 @@ class QELattice(object):
 #            self.setLattice(self._ibrav)
 
     ibrav = property(_get_ibrav, _set_ibrav, doc ="""Lattice symmetry parameter
-                    ibrav""")
+ibrav. Changing it will update the lattice, but leave atomic fractional 
+coordinates unchanged""")
 
 
     def _get_type(self):

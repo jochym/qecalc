@@ -467,6 +467,19 @@ CELL_PARAMETERS (cubic)
 """
         self.assertEqual(stru.toString( stringConfig ), answer )
         
+    def test_writeStr(self):
+        answer = """CRYST1    5.789    5.789   12.875  90.00  90.00 120.00                          
+ATOM      1 Al           1       0.000   0.000   0.000  1.00  0.00          Al  
+ATOM      2 B            1       2.894   1.671   3.013  1.00  0.00           B  
+ATOM      3 B            1      -0.000   3.342   3.013  1.00  0.00           B  
+ATOM      4 Mg           1       0.000   0.000   6.438  1.00  0.00          Mg  
+ATOM      5 B            1       2.894   1.671   9.862  1.00  0.00           B  
+ATOM      6 B            1      -0.000   3.342   9.862  1.00  0.00           B  
+TER       7              1                                                      
+END                                                                             
+"""
+        self.assertEqual(self.input.structure.writeStr(format = 'pdb'), answer)
+        
 if __name__ == '__main__':
     unittest.main()
         

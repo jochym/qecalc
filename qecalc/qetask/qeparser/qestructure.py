@@ -19,6 +19,9 @@ try:
     from diffpy.Structure.structure import Structure
     from diffpy.Structure.lattice import cosd, Lattice
     from diffpy.Structure.SymmetryUtilities import equalPositions
+    from diffpy.Structure.Parsers import inputFormats
+    from diffpy.Structure.Parsers import outputFormats
+    
 except ImportError:
     from matter import Structure, Lattice
     from matter.Lattice import cosd
@@ -37,6 +40,8 @@ class QEStructure( Structure ):
            'lattice' and 'structure' are automatically updated"""
            
         Structure.__init__(self)
+        #self._inputFormats = list(['pwinput', 'pwoutput']).append(inputFormats()[1:])
+        #self._outputFormats = list(['pwinput']).append(outputFormats())
         self.formatString = '%# .8f %# .8f %# .8f'
         self.lattice = QELattice()
         
@@ -326,6 +331,66 @@ class QEStructure( Structure ):
         return parser
 
 
+    def write(self, filename = None, format = "pwinput"):
+        """Save structure to file in the specified format
+        
+        No return value.
+        """        
+        if format == "pwinput":
+            if filename == None:
+                filename = self._qeInput.filename
+            input = QEInput(config = self._qeInput.toString(), type='pw')
+            input.save( filename = filename)
+        else:
+            self.diffpy().write( filename = filename, format = format )                        
+        return
+
+
+    def writeStr(self, format = 'pwinput'):
+        """return string representation of the structure in specified format
+
+        Note: available structure formats can be obtained by:
+            from Parsers import formats
+        """
+        
+        if format == 'pwinput':
+            return self.toString()
+        else:
+            return self.diffpy().writeStr(format = format)        
+
+
+    def toString(self, string = None):
+        """Writes/updates structure into PW config string.
+           If the string is None, one, based on current structure 
+           will be generated
+           """        
+        if string != None:
+            stru = QEStructure()
+            stru.readStr(string, format = 'pwinput')
+            qeInput = stru._qeInput            
+        else:
+            qeInput = self._qeInput
+
+        self._qeInput.update( qeInput = qeInput )
+        return qeInput.toString()
+
+ 
+    def save(self, filename = None):
+        """Writes/updates structure into PW config file,
+           if the file does not exist, new one will be created"""
+        from os.path import exists
+        from qecalc.qetask.qeparser.pwinput import PWInput
+        if filename != None:
+            if not exists(filename):
+                f = open(filename, 'w')            
+            qeInput = PWInput()
+            qeInput.readFile(filename)
+        else:
+            qeInput = self._qeInput
+        self._qeInput.update( qeInput = qeInput )
+        qeInput.save()
+
+
     def load(self, source, **args):
         task = {
             'diffpy': self._setStructureFromDiffpyStructure,
@@ -449,38 +514,6 @@ class QEStructure( Structure ):
                             mass = atomicSpecies[elem][0], \
                             potential = atomicSpecies[elem][1],\
                             lattice = self.lattice, optConstraint = [])
-
-
-    def toString(self, string = None):
-        """Writes/updates structure into PW config string,
-           if the string is None, one, based on current structure 
-           will be generated
-           """        
-        if string != None:
-            stru = QEStructure()
-            stru.readStr(string, format = 'pwinput')
-            qeInput = stru._qeInput            
-        else:
-            qeInput = self._qeInput
-
-        self._qeInput.update( qeInput = qeInput )
-        return qeInput.toString()
-
- 
-    def save(self, filename = None):
-        """Writes/updates structure into PW config file,
-           if the file does not exist, new one will be created"""
-        from os.path import exists
-        from qecalc.qetask.qeparser.pwinput import PWInput
-        if filename != None:
-            if not exists(filename):
-                f = open(filename, 'w')            
-            qeInput = PWInput()
-            qeInput.readFile(filename)
-        else:
-            qeInput = self._qeInput
-        self._qeInput.update( qeInput = qeInput )
-        qeInput.save()
     
     
     def updatePWInput(self, qeInput = None):
