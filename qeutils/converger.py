@@ -120,7 +120,7 @@ class Converger(Setting):
             if what == 'kpoints':
                 calc.pw.input.kpoints.setAutomatic(value)
             else:
-                calc.pw.input.namelist(whatPossible[what]).addParam(what, value)
+                calc.pw.input.namelist(whatPossible[what]).set(what, value)
             print '\n\nStep: ', iStep
             print what, ': ', value
             calc.pw.input.save()

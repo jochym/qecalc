@@ -238,7 +238,7 @@ Te      0.50000000  0.50000000  0.00000000
 Pb2+ 0.0000 
 Te  0.0000 
 """
-        self.assertEqual(str(self.input.structure), answer)        
+        self.assertEqual(str(self.input.structure), answer)                      
    
         
     def test_load_diffpy(self): 
@@ -414,7 +414,12 @@ Al      0.00000000  0.00000000  0.00000000
 Al  26.9800 Al.pz-vbc.UPF
 """
         
-        self.assertEqual(str(stru), answer) 
+        self.assertEqual(str(stru), answer)
+        
+        stru = QEStructure()
+        filename = os.path.join(testdata_dir, 'PbTe.cif')
+        stru.read(filename = filename, format = 'cif')
+        #print stru.toString()
         
 if __name__ == '__main__':
     unittest.main()

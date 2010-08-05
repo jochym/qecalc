@@ -1,0 +1,34 @@
+
+History of changes
+==================
+
+August 2:
+
+- Marked methods as depricated:
+    namelist.Namelist: 
+        param()         - use get()
+        add()           - use set()
+        editParam()     - use set()
+        addParam()      - use set()
+        removeParam()   - use remove()
+
+    card.Card:
+        editLines()     - use setLines()
+
+    qeinput.QEInput:
+        createNamelist()    - use namelist()
+        createCard()        - use card()
+        addNamelist()       - use setNamelist()
+        addCard()           - use setCard()
+
+- Depricated public attribute - will set this attribute to protected:
+    Namelist.params
+
+- QEInput constructor executes parse() if filename or config are not empty.
+- Comment out QEInput.attach() as it coinside with QEInput.attach attribute
+- Extended interface: See namelist.Namelist, card.Card, qeinput.QEInput 
+
+
+Version 0.1:
+    Rev. 1197
+    

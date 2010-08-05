@@ -11,6 +11,15 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+"""
+QEParser - flexible parser for Quantum Espresso (QE) configuration files.
+
+It parses the file specified by filename or configuration string and stores
+parameters in namelists, cards and attachment data
+structures that later on can be used in parameters' manipulations
+"""
+
+
 # Regular expressions
 COMMENT         = '!.*'                 # Comment
 NAME            = '([a-zA-Z_]*)[^/]'    # Extracts namelist name ()
@@ -28,7 +37,7 @@ CLOSE_BRACKET   = '[)}]?'               # Close bracket
 CARD            = '(%s[\w]+)%s%s(%s[\w]*%s)%s' % (SPACES, SPACES, OPEN_BRACKET, SPACES, SPACES, CLOSE_BRACKET)  # Card name
 EMPTY_LINE      = r'^\s*'               # Empty line
 
-ATTACHSIM       = ['matdyn', 'ph', 'd3']      # Simulation types that have attachments
+ATTACHSIM       = ['matdyn', 'dynmat', 'ph', 'd3']      # Simulation types that have attachments
 
 import re
 from orderedDict import OrderedDict
@@ -36,21 +45,12 @@ from namelist import Namelist
 from card import Card
 
 class QEParser:
-    """
-    Flexible Parser for Quantum Espresso (QE) configuration files.
-    
-    It parses the file specified by filename or configuration string and stores
-    parameters in namelists, cards and attachment data
-    structures that later on can be used in parameters' manipulations
-    """
     
     def __init__(self, filename = None, configText = None, type = 'pw'):
         """
-        Parameters:
-            filename    -- absolute or relative filename to be parsed
-            configText  -- configuration text to be parsed
-            type        -- type of the simulation
-            os          -- operating system defined for carriage return
+            filename: (str) -- Absolute or relative filename of file to be parsed
+            configText: (str) -- Configuration text to be parsed
+            type: (str) -- Type of the simulation
         """
         
         self.header     = None
@@ -103,7 +103,11 @@ class QEParser:
 
 
     def setReferences(self):
-        """Sets reference names for namelists and cards for specified simulation type"""
+        """
+        Sets reference names for namelists and cards for specified simulation type.
+        This is needed to recognize (filter out) namelists and cards for specific
+        simulation type
+        """
         
         input   = "input%s" % self.type
         module  = _import("inputs.%s" % input)
@@ -287,8 +291,8 @@ class QEParser:
         """
         Returns the end character position of the last namelist in the text
         Notes:
-            - text should be clear from comments (filtered by _removeComments(text)).
-              Otherwise the end of the last namelist will be incorrect
+            - text should be clear from comments (filtered by _removeComments(text)),
+              otherwise the end character of the last namelist will be incorrect
         """
         s           = self._removeComments(text)
 
@@ -324,172 +328,6 @@ class QEParser:
 def _import(package):
     return __import__(package, globals(), locals(), [''], -1)
 
-
-
-textPW = """
- &control
-    calculation='scf'
-    restart_mode='from_scratch',
-    tprnfor = .true.
-    prefix='ni',
-    pseudo_dir = '',
-    outdir=''
- /
- &system
-    ibrav=2,
-    celldm(1) =6.65,
-    nat=  1,
-    ntyp= 1,
-    nspin=2,
-    starting_magnetization(1)=0.5,
-    degauss=0.02,
-    smearing='gauss',
-    occupations='smearing',
-    ecutwfc =27.0
-    ecutrho =300.0
- /
- &electrons
-    conv_thr =  1.0d-8
-    mixing_beta = 0.7
- /
-
-
-ATOMIC_SPECIES
- Ni  26.98  Ni.pbe-nd-rrkjus.UPF
-
-ATOMIC_POSITIONS
- Ni 0.00 0.00 0.00
-K_POINTS AUTOMATIC
-4 4 4 1 1 1
-blah
-
-"""
-
-textCards = """
-ATOMIC_POSITIONS
- Ni 0.00 0.00 0.00
-K_POINTS AUTOMATIC
-4 4 4 1 1 1
-blah
-
-"""
-
-textProblem = """
-CELL_PARAMETERS
-   0.993162743  -0.000000000   0.000000000
-  -0.496581371   0.860104165  -0.000000000
-  -0.000000000  -0.000000000   4.345938530
-ATOMIC_POSITIONS
- Ni 0.00 0.00 0.00
-K_POINTS AUTOMATIC
-4 4 4 1 1 1
-blah
-
-"""
-
-textMatdyn = """
- &input
-    asr='crystal',
-    amass(1)=24.305, amass(2)=11.000,
-    flfrc='mgb2666.fc'
- /
-176
-0.000000    0.000000    0.456392    0.000000
-0.000000    0.000000    0.447264    0.009128
-0.000000    0.000000    0.438137    0.018256
-0.000000    0.000000    0.429009    0.027384
-0.000000    0.000000    0.419881    0.036511
-"""
-
-textDynmat = """
-&input  fildyn='mgb2.dynG', asr='simple',
-        q(1)=0.0, q(2)=0.0, q(3)=0.0 /
-"""
-
-textPh  = """
- &inputph
-  tr2_ph=1.0d-10,
-  amass(1)=24.305,
-  amass(2)=11.000,
-  prefix='mgb2',
-  outdir='/scratch/markovsk/mgb2'
-  fildyn='mgb2.dynG',
- /
-
-"""
-
-textHeader  = """
-&INPUTPH
-   tr2_ph = 1.0d-12,
-   prefix = 'si',
-   epsil = .false.,
-   trans = .true.,
-   zue = .false.,
-   outdir = '/scratch/si',
-   amass(1) = 28.0855,
-   fildyn = 'si.dyn_G',
-   fildrho = 'si.drho_G',
-/
-0.0 0.0 0.0
-"""
-
-# This is not a problem text (just add spaces between commas)
-textComma   = """&input
-   asr='crystal',  dos=.true.
-   amass(1)=26.982538, amass(2)=11.000,
-   flfrc='mgalb4666.fc', fldos='mgalb4.666.phdos', nk1=28,nk2=28,nk3=28
-/
-"""
-
-def testMatdyn():
-    parser    = QEParser(configText = textMatdyn, type="matdyn")
-    parser.parse()
-    print parser.toString()
-
-
-def testDynmat():
-    parser    = QEParser(configText = textDynmat, type="dynmat")
-    parser.parse()
-    print parser.toString()
-
-
-def testFile():
-    parser    = QEParser(filename = "../tests/ni.scf.in")
-    parser.parse()
-    print parser.toString()
-
-def testCards():
-    parser    = QEParser(configText = textCards)
-    parser.parse()
-    print parser.toString()
-
-
-def testComma():
-    parser          = QEParser(configText = textComma, type="matdyn")
-    parser.parse()
-    print parser.toString()
-
-
-def testHeader():
-    parser          = QEParser(configText = textHeader, type="ph")
-    parser.parse()
-    print parser.toString()
-
-def testMgB2():
-    parser          = QEParser(filename = "../tests/ph.mgb2.in", type="ph")
-    parser.parse()
-    print parser.toString()
-
-
-if __name__ == "__main__":
-    pass
-    #testMatdyn()
-    #testDynmat()
-    #testFile()
-    #testCards()
-    #testComma()
-    #testHeader()
-    #testMgB2()
 
 __date__ = "$Oct 9, 2009 4:34:28 PM$"
 

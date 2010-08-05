@@ -261,25 +261,25 @@ class QELattice(object):
         self._qeInput.update()
 
 
-    def save(self, fname = None):
-        """Will save the lattice either into its own file or into supplied with fname.
-           It will also create all relevant sections/cards"""
-        from os.path import exists
-        from qecalc.qetask.qeparser.pwinput import PWInput 
-        filename = fname
-        if fname != None:
-            if not exists(filename):
-                f = open(filename, 'w')
-            qeInput = PWInput(fname)
-            qeInput.parse()               
-        else:
-            qeInput = self._qeInput
-            filename = qeInput.filename
-        
-        
-        qeInput.update()   
-                
-        qeInput.save(filename)        
+#    def save(self, fname = None):
+#        """Will save the lattice either into its own file or into supplied with fname.
+#           It will also create all relevant sections/cards"""
+#        from os.path import exists
+#        from qecalc.qetask.qeparser.pwinput import PWInput 
+#        filename = fname
+#        if fname != None:
+#            if not exists(filename):
+#                f = open(filename, 'w')
+#            qeInput = PWInput(fname)
+#            qeInput.parse()               
+#        else:
+#            qeInput = self._qeInput
+#            filename = qeInput.filename
+#        
+#        
+#        qeInput.update()   
+#                
+#        qeInput.save(filename)        
 
 
     def setLatticeFromQEVectors(self, ibrav, vectors):

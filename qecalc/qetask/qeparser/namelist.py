@@ -11,101 +11,159 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 
+"""
+Namelist class that corresponds to Namelist in QE configuration file
+"""
+
 from orderedDict import OrderedDict
+from block import Block
 
-class Namelist():
-    """Namelist class that corresponds to Namelist in QE config file"""
-
+class Namelist(Block):
+    
     def __init__(self, name):
-        self.__name = name.lower() # keeps lower name
-        self.params = OrderedDict() # Replace dictionary by ordered dictionry
+        """
+            name: (str) -- Name of the namelist in lower case. Example: "control"
+        """
+        self._name      = name.lower()  # keeps lower name
+        self._params    = OrderedDict() # Replace dictionary by ordered dictionry
 
-    def name(self):
-        return self.__name
 
-    def setName(self, name):
-        self.__name = name.lower()
+    def get(self, param, quotes = True):
+        """
+        Returns paramater value. If no parameter exists, return None.
+        When quotes=True quotes are not added to parameter's value.
 
-    def param(self, param, quotes = True):
-        """Returns value of parameter 'param'"""
-        if self.__paramExists(param):
-            if quotes:
-                return self.params[param]
-            else:
-                return self._unquote(self.params[param])
-            return self.params[param]
+            param: (str) -- Parameter of the namelist
+            quotes: (bool) -- True - if add quotes '' to parameters value,
+                              False - otherwise
 
-        return None
+        Note: replaces param()
+        """
+        if not self._paramExists(param):
+            return None
 
-    def add(self, param, val, quotes = False):
-        # Replaces addParam() Add verification?
-        param = param.lower()
+        param   = param.lower()
         if quotes:
-            val     = self._quote(val)
-
-        self.params[param]  = val
+            return self._params[param]
+        
+        return self._unquote(self._params[param])
 
 
     def set(self, param, val, quotes = False):
-        #  Replaces editParam() and addParam(). Merge with add()?
-        """Edits parameter. If it doesn't exist, it just ignores it """
-        if self.__paramExists(param):
-            if quotes:
-                val     = self._quote(val)
+        """
+        Sets existing parameter to the specified value.
+        If no parameter exists, create one
+        
+            param: (str) -- Parameter name
+            val: (str) -- Parameter value
+            quotes: (bool) -- Add quotes to the value or not
+        """
+        param   = param.lower()
+        if quotes:
+            val     = self._quote(val)
 
-            self.params[param] = val
+        self._params[param] = val
+
+
+    # TODO: Rename to params() in the future
+    def paramlist(self):
+        """
+        Returns list of parameter names
+        """
+        return self._params.keys()
+
 
     def remove(self, param):
-        """Deletes parameter"""
-        if self.__paramExists(param):
-            del(self.params[param])
+        """
+        Deletes parameter
+
+            param: (str) -- Name of the parameter
+        """
+        if self._paramExists(param):
+            del(self._params[param])
 
 
     def exists(self,param):
-        return self.__paramExists(param)
+        """
+        Checks if parameter exists in the namelist
+
+            param: (str) -- Name of the parameter
+        """
+        return self._paramExists(param)
 
 
     def _quote(self, val):
+        """
+        Quotes value with "'" quote mark
+
+            val: (str) -- Value to be quoted
+        """
         return "'" + val.strip('"').strip("'") + "'"
-
-
+    
+    
     def _unquote(self, val):
+        """
+        Removes quotes "'" (unquotes) on both sides of the string
+
+            val: (str) -- Value to be unquoted
+        """
         return val.strip('"').strip("'")
 
 
-    def toString(self, indent="    ", br="\n"):
-        # Dump namelist
-        # Should I use space?
+    def toString(self, indent = 4, br = "\n"):
+        """
+        Dumps namelist as a sting
+        
+            indent: (int) -- Number of spaces in indent for parameters
+            br: (str) -- Separator between parameters
+        """
+        ind  = ""
+        for i in range(indent):    # Populate indent
+            ind += " "
+
         s = '&%s%s' % (self.name().upper(), br)
 
-        for p in self.params.keys():
-            s += '%s%s = %s,%s' % (indent, p, self.params[p], br)
+        for p in self._params.keys():
+            s += '%s%s = %s,%s' % (ind, p, self._params[p], br)
 
-        s += "/%s" % br
+        s += "/%s" % br 
         return s
 
 
-    def __paramExists(self, param):
+    def _paramExists(self, param):
+        """
+        Checks if parameter exists in self._params
+
+            param: (str) -- Name of the parameter
+        """
         try:
             param = param.lower()
-            self.params[param]
+            self._params[param]
             return True
         except KeyError:    # parameter is not present
             return False
 
 
-    # Depricated methods:
-    # Depricated
-    def addParam(self, param, val):
-        self.add(param, val)
+    # DEPRICATED METHODS:
+    # DEPRICATED: Use get() instead
+    def param(self, param, quotes = True):
+        return self.get(param, quotes)
+    
+    # DEPRICATED: Use set() instead!
+    def add(self, param, val, quotes = False):
+        self.set(param, val, quotes)
 
-    # Depricated
+    # DEPRICATED: Use set() instead!
     def editParam(self, param, val):
         self.set(param, val)
 
-    # Depricated
-    def removeParam(self, param):
-        self.remove()
+    # DEPRICATED: Use set() instead!
+    def addParam(self, param, val):
+        self.add(param, val)
+
+    # DEPRICATED: Use remove() instead!
+    def removeParam(self, param): 
+        self.remove(param)
 
 __date__ = "$Aug 27, 2009 7:30:39 AM$"
 

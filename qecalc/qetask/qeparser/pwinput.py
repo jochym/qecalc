@@ -19,12 +19,13 @@ from pwkpoints import PWKpoints
 
 class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
-        QEInput.__init__(self,filename, config, type='pw')
+        QEInput.__init__(self,filename, config, type='pw')        
         self.structure = QEStructure(self)
         self.kpoints = PWKpoints(self)
         # Boolean flag, if True, QEInput is updated on change of any property in
         # structure, lattice, or atom
-        self.autoUpdate = True         
+        self.autoUpdate = True           
+              
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
@@ -51,77 +52,80 @@ class PWInput(QEInput):
         structure = self.structure   
 
         #************************* updateLattice:*******************************
-        if 'system' not in qeInput.namelists:
-            qeInput.createNamelist('system')
+        #if 'system' not in qeInput.namelists:
+        #    qeInput.createNamelist('system')        
+        nlSystem = qeInput.namelist('system')
         # clear geometry from qeInput:
-        qeInput.namelist('system').remove('a')
-        qeInput.namelist('system').remove('b')
-        qeInput.namelist('system').remove('c')
-        qeInput.namelist('system').remove('cosab')
-        qeInput.namelist('system').remove('cosbc')
-        qeInput.namelist('system').remove('cosac')
-        qeInput.namelist('system').remove('celldm(1)')
-        qeInput.namelist('system').remove('celldm(2)')
-        qeInput.namelist('system').remove('celldm(3)')
-        qeInput.namelist('system').remove('celldm(4)')
-        qeInput.namelist('system').remove('celldm(5)')
-        qeInput.namelist('system').remove('celldm(6)')
-        if 'cell_parameters' in qeInput.cards:
-            qeInput.removeCard('cell_parameters')
+        nlSystem.remove('a')
+        nlSystem.remove('b')
+        nlSystem.remove('c')
+        nlSystem.remove('cosab')
+        nlSystem.remove('cosbc')
+        nlSystem.remove('cosac')
+        nlSystem.remove('celldm(1)')
+        nlSystem.remove('celldm(2)')
+        nlSystem.remove('celldm(3)')
+        nlSystem.remove('celldm(4)')
+        nlSystem.remove('celldm(5)')
+        nlSystem.remove('celldm(6)')
+        #if 'cell_parameters' in qeInput.cards:
+        #    qeInput.removeCard('cell_parameters')
+        qeInput.removeCard('cell_parameters')
         if lattice._type == 'celldm':
-            qeInput.namelist('system').add('ibrav', lattice._ibrav)
-            qeInput.namelist('system').add('celldm(1)', lattice._a)
-            qeInput.namelist('system').add('celldm(2)', float(lattice._b)/lattice._a)
-            qeInput.namelist('system').add('celldm(3)', float(lattice._c)/lattice._a)
+            nlSystem.set('ibrav', lattice._ibrav)
+            nlSystem.set('celldm(1)', lattice._a)
+            nlSystem.set('celldm(2)', float(lattice._b)/lattice._a)
+            nlSystem.set('celldm(3)', float(lattice._c)/lattice._a)
             if lattice._ibrav < 14:
-                qeInput.namelist('system').add('celldm(4)', lattice._cAB)
+                nlSystem.set('celldm(4)', lattice._cAB)
             else:
-                qeInput.namelist('system').add('celldm(4)', lattice._cBC)
-                qeInput.namelist('system').add('celldm(5)', lattice._cAC)
-                qeInput.namelist('system').add('celldm(6)', lattice._cAB)
+                nlSystem.set('celldm(4)', lattice._cBC)
+                nlSystem.set('celldm(5)', lattice._cAC)
+                nlSystem.set('celldm(6)', lattice._cAB)
         else:
             if lattice._type == 'traditional':
-                qeInput.namelist('system').add('ibrav', lattice._ibrav)
-                qeInput.namelist('system').add('A', lattice._a)
-                qeInput.namelist('system').add('B', lattice._b)
-                qeInput.namelist('system').add('C', lattice._c)
-                qeInput.namelist('system').add('cosAB', lattice._cAB)
-                qeInput.namelist('system').add('cosAC', lattice._cAC)
-                qeInput.namelist('system').add('cosBC', lattice._cBC)
+                nlSystem.set('ibrav', lattice._ibrav)
+                nlSystem.set('A', lattice._a)
+                nlSystem.set('B', lattice._b)
+                nlSystem.set('C', lattice._c)
+                nlSystem.set('cosAB', lattice._cAB)
+                nlSystem.set('cosAC', lattice._cAC)
+                nlSystem.set('cosBC', lattice._cBC)
             else:
                 if 'generic' in lattice._type:
-                    qeInput.namelist('system').add('celldm(1)', lattice._a)
+                    nlSystem.set('celldm(1)', lattice._a)
                     lattice._ibrav = 0
-                    qeInput.namelist('system').add('ibrav', lattice._ibrav)
+                    nlSystem.set('ibrav', lattice._ibrav)
                     if lattice._type == 'generic hexagonal':
                         cardArg = 'hexagonal'
                     if lattice._type == 'generic cubic' or lattice._type == None:
                         cardArg = 'cubic'
-                    qeInput.createCard('cell_parameters')
-                    qeInput.card('cell_parameters').setArg(cardArg)
-                    qeInput.card('cell_parameters').removeLines()
+                    card = qeInput.card('cell_parameters')
+                    card.setArg(cardArg)
+                    card.removeLines()
                     for i in range(3):
                         v = lattice.diffpy().base[i,:]/float(lattice._a)
-                        qeInput.card('cell_parameters').addLine(\
+                        card.addLine(\
                                        lattice.formatString%(v[0], v[1], v[2]))
         
         #************************* updateStructure:*****************************
         
-        if 'system' not in qeInput.namelists:
-            qeInput.addNamelist('system')            
-        qeInput.namelist('system').remove('ntyp')
-        qeInput.namelist('system').remove('nat')
+        #if 'system' not in qeInput.namelists:
+        #    qeInput.addNamelist('system')            
+        nlSystem.remove('ntyp')
+        nlSystem.remove('nat')
         if structure.ntyp != None:
-            qeInput.namelist('system').add('ntyp', structure.ntyp)
+            nlSystem.set('ntyp', structure.ntyp)
         if structure.nat != None:
-            qeInput.namelist('system').add('nat', structure.nat)
+            nlSystem.set('nat', structure.nat)
         
-        if len(qeInput.namelist('system').params) == 0:
+        if len(nlSystem.paramlist()) == 0:
             qeInput.removeNamelist('system')  
 
-        if 'atomic_positions' in qeInput.cards:
-            qeInput.removeCard('atomic_positions')
-        qeInput.createCard('atomic_positions')
+        #if 'atomic_positions' in qeInput.cards:
+            #qeInput.removeCard('atomic_positions')
+        qeInput.removeCard('atomic_positions')
+        #qeInput.card('atomic_positions')
         qeInput.card('atomic_positions').setArg(structure.atomicPositionsType)
         for atom in structure:
             constraint = atom.optConstraint
@@ -144,9 +148,10 @@ class PWInput(QEInput):
             qeInput.removeCard('atomic_positions')
 
         # update ATOMIC_SPECIES card
-        if 'atomic_species' in qeInput.cards:
-            qeInput.removeCard('atomic_species')
-        qeInput.createCard('atomic_species')
+        #if 'atomic_species' in qeInput.cards:
+            #qeInput.removeCard('atomic_species')
+        qeInput.removeCard('atomic_species')    
+        qeInput.card('atomic_species')
         for element, specie in structure.atomicSpecies.items():
             qeInput.card('atomic_species').addLine(specie.toString())
         
@@ -156,7 +161,7 @@ class PWInput(QEInput):
 
     def outDir(self):
         self.parse()
-        return self.namelist('control').param('outdir', quotes = False)
+        return self.namelist('control').get('outdir', quotes = False)
 
 textA = """
 &control

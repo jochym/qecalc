@@ -42,6 +42,7 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
+    block.py \
     card.py \
     d3input.py \
     d3qpoints.py \

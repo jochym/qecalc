@@ -109,8 +109,8 @@ class QEStructureParser():
         lat._qeInput.structure.lattice = lat
            
              
-        if 'ibrav' in lat._qeInput.namelists['system'].params:
-            ibrav  = int(lat._qeInput.namelist('system').param('ibrav'))            
+        if 'ibrav' in lat._qeInput.namelists['system'].paramlist():
+            ibrav  = int(lat._qeInput.namelist('system').get('ibrav'))            
         else:
             raise QELatticeError("config file should have ibrav defined")
         if ibrav < 0:            
@@ -120,9 +120,9 @@ class QEStructureParser():
         cBC = 0.0
         cAC = 0.0
         cAB = 0.0
-        if 'celldm(1)' in qeInput.namelists['system'].params:
+        if 'celldm(1)' in qeInput.namelists['system'].paramlist():
             lat._type = 'celldm'
-            a = float(qeInput.namelist('system').param('celldm(1)'))
+            a = float(qeInput.namelist('system').get('celldm(1)'))
 
             if ibrav == 0:
                 # lattice is set in the units of celldm(1)
@@ -149,57 +149,57 @@ class QEStructureParser():
             if ibrav == 4:
                 cAB = cosd(120.0)
             if ibrav == 4 or ibrav == 6 or ibrav == 7:
-                c_a = float(qeInput.namelist('system').param('celldm(3)'))
+                c_a = float(qeInput.namelist('system').get('celldm(3)'))
                 latPar = [a, a, c_a*a, cBC, cAC, cAB, None]
             if ibrav == 5:
-                cAB = float(qeInput.namelist('system').param('celldm(4)'))
+                cAB = float(qeInput.namelist('system').get('celldm(4)'))
                 latPar = [a, a, a, cAB, cAB, cAB, None]
             if ibrav > 7 and ibrav < 12:
-                b_a = float(qeInput.namelist('system').param('celldm(2)'))
-                c_a = float(qeInput.namelist('system').param('celldm(3)'))
+                b_a = float(qeInput.namelist('system').get('celldm(2)'))
+                c_a = float(qeInput.namelist('system').get('celldm(3)'))
                 latPar = [a, b_a*a, c_a*a, cBC, cAC, cAB, None]
             if ibrav == 12 or ibrav == 13:
-                b_a = float(qeInput.namelist('system').param('celldm(2)'))
-                c_a = float(qeInput.namelist('system').param('celldm(3)'))
-                cAB = float(qeInput.namelist('system').param('celldm(4)'))
+                b_a = float(qeInput.namelist('system').get('celldm(2)'))
+                c_a = float(qeInput.namelist('system').get('celldm(3)'))
+                cAB = float(qeInput.namelist('system').get('celldm(4)'))
                 latPar = [a, b_a*a, c_a*a, cBC, cAC, cAB, None]
             if ibrav == 14:
-                b_a = float(qeInput.namelist('system').param('celldm(2)'))
-                c_a = float(qeInput.namelist('system').param('celldm(3)'))
-                cBC = float(qeInput.namelist('system').param('celldm(4)'))
-                cAC = float(qeInput.namelist('system').param('celldm(5)'))
-                cAB = float(qeInput.namelist('system').param('celldm(6)'))
+                b_a = float(qeInput.namelist('system').get('celldm(2)'))
+                c_a = float(qeInput.namelist('system').get('celldm(3)'))
+                cBC = float(qeInput.namelist('system').get('celldm(4)'))
+                cAC = float(qeInput.namelist('system').get('celldm(5)'))
+                cAB = float(qeInput.namelist('system').get('celldm(6)'))
                 latPar = [a, b_a*a, c_a*a, cBC, cAC, cAB, None]
         else:
             if ibrav == 0:
                 raise QELatticeError("Should specify celldm(1) if use 'generic' lattice")
-            a = float(qeInput.namelist('system').param('A'))
+            a = float(qeInput.namelist('system').get('A'))
             lat._type = 'traditional'   # A, B, C, cosAB, cosAC, cosBC
             if ibrav > 0 and ibrav < 4:
                 latPar = [a, a, a, cBC, cAC, cAB, None]
             if ibrav == 4:
                 cAB = cosd(120.0)
             if ibrav == 4 or ibrav == 6 or ibrav == 7:
-                c = float(qeInput.namelist('system').param('C'))
+                c = float(qeInput.namelist('system').get('C'))
                 latPar = [a, a, c, cBC, cAC, cAB, None]
             if ibrav == 5:
-                cAB = float(qeInput.namelist('system').param('cosAB'))
+                cAB = float(qeInput.namelist('system').get('cosAB'))
                 latPar = [a, a, a, cAB, cAB, cAB, None]
             if ibrav > 7 and ibrav < 12:
-                b = float(qeInput.namelist('system').param('B'))
-                c = float(qeInput.namelist('system').param('C'))
+                b = float(qeInput.namelist('system').get('B'))
+                c = float(qeInput.namelist('system').get('C'))
                 latPar = [a, b, c, cBC, cAC, cAB, None]
             if ibrav == 12 or ibrav == 13:
-                b = float(qeInput.namelist('system').param('B'))
-                c = float(qeInput.namelist('system').param('C'))
-                cAB = float(qeInput.namelist('system').param('cosAB'))
+                b = float(qeInput.namelist('system').get('B'))
+                c = float(qeInput.namelist('system').get('C'))
+                cAB = float(qeInput.namelist('system').get('cosAB'))
                 latPar = [a, b, c, cBC, cAC, cAB, None]
             if ibrav == 14:
-                b = float(qeInput.namelist('system').param('B'))
-                c = float(qeInput.namelist('system').param('C'))
-                cBC = float(qeInput.namelist('system').param('cosBC'))
-                cAC = float(qeInput.namelist('system').param('cosAC'))
-                cAB = float(qeInput.namelist('system').param('cosAB'))
+                b = float(qeInput.namelist('system').get('B'))
+                c = float(qeInput.namelist('system').get('C'))
+                cBC = float(qeInput.namelist('system').get('cosBC'))
+                cAC = float(qeInput.namelist('system').get('cosAC'))
+                cAB = float(qeInput.namelist('system').get('cosAB'))
                 latPar = [a, b, c, cBC, cAC, cAB, None]               
         
         a, b, c, cBC, cAC, cAB, base = latPar

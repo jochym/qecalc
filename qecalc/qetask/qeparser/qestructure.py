@@ -268,11 +268,11 @@ class QEStructure( Structure ):
         Return instance of data Parser used to process file.  This
         can be inspected for information related to particular format.
         """        
-        from  qecalc.qetask.qeparser.qestructureparser import parser_index
-        
-        if self._qeInput == None:                
+        from  qecalc.qetask.qeparser.qestructureparser import parser_index      
+        if self._qeInput == None:
+            from qecalc.qetask.qeparser.pwinput import PWInput         
             self._qeInput = PWInput()
-            self._qeInput.parse()
+            #self._qeInput.parse()
         
         if format in parser_index:             
             module = __import__("qestructureparser.P_" + format, globals(), \
@@ -464,21 +464,29 @@ class QEStructure( Structure ):
         return qeInput.toString()
 
  
-    def save(self, fname = None):
-        """Writes/updates structure into PW config file,
-           if the file does not exist, new one will be created"""
-        filename = fname
-        if fname != None:
-            self.lattice.save(filename)
-            qeInput = QEInput(fname)
-            qeInput.parse()
-        else:
-            filename = self.filename
-            self.lattice.save(filename)
-            qeInput = self.lattice._qeInput
-            
-        qeInput.save(filename)
-     
+#    def save(self, filename = None):
+#        """Writes/updates structure into PW config file,
+#           if the file does not exist, new one will be created"""
+#        from os.path import exists
+#        from qecalc.qetask.qeparser.pwinput import PWInput            
+#        fname = filename
+#        if filename != None:
+#            if not exists(filename):
+#                f = open(filename, 'w')            
+#            qeInput = PWInput()
+#            
+#            #qeInput.parse()               
+#            self
+#            self.lattice.save(filename)
+#            qeInput = QEInput(filename)
+#            qeInput.parse()
+#        else:
+#            filename_ = self.fname
+#            self.lattice.save(filename_)
+#            qeInput = self.lattice._qeInput
+#            
+#        qeInput.save(fname)
+#     
     
     def updatePWInput(self, qeInput = None):
         """
