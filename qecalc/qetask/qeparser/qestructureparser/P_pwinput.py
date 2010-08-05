@@ -29,7 +29,8 @@ class P_pwinput(QEStructureParser):
     
     def parseStr(self, s):
         """Create Structure instance from a string."""
-        input = PWInput(config = s)
+        input = PWInput()
+        input.readString(s)
         return self.__genStructure(input)
          
 

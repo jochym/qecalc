@@ -240,13 +240,6 @@ class QELattice(object):
             self._qeInput.update()       
 
 
-
-
-    def toString(self, string = None):
-        """Deprecated"""        
-        return str(self)        
-
-
     def diffpy(self):
         '''Returns diffpy.Lattice object. Do not use it for reading  QE
         (standard cell) lattice parameters. Use latticeParams, or a, b, c , ...

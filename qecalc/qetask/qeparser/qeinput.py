@@ -320,6 +320,7 @@ class QEInput(object):
         Reads and parses configuration input from file
             filename: (str) -- File name
         """
+        self.filename   = filename
         self._read(filename=filename)
 
 
@@ -328,6 +329,7 @@ class QEInput(object):
         Reads and parses configuration input from string
             config: (str) -- Configuration string
         """
+        self.config     = config
         self._read(config=config)
 
 
@@ -336,8 +338,7 @@ class QEInput(object):
         self.parser     = QEParser(filename, config, self._type)    #filename, config, type)
         (self.namelistRef, self.cardRef)    = self.parser.setReferences()
         if filename or config:
-            QEInput.parse(self)
-            #(self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
+            QEInput.parse(self)     # Avoid calling method parse() from subclass
 
         self.qe = [self.header, self.namelists, self.cards, self.attach]
 

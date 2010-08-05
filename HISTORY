@@ -1,3 +1,6 @@
+2010, August 5
+Removed QELattice.save(filename) -> QEStructure.save(filename) should be 
+used instead
 
 2010, August 4
 Major refactoring of QEStructure.
@@ -14,7 +17,8 @@ similar to diffpyStructure.
 Added methods to QELattice, similar to diffpy.Structure.Lattice
 
 QEAtom is redefined version of diffpy.Structure.Atom - added mass and potential
-fields. Also contains QELattice and QEInput pointers. Removed anisotropy information
+fields. Also contains QELattice and QEInput pointers. Removed anisotropy 
+information
 
 
 2010, July 30

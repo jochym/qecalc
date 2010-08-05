@@ -292,7 +292,7 @@ class QEStructure( Structure ):
 
         
     def readStr(self, s, format = 'pwinput'):
-        """Load structure from a file, any original data become lost.
+        """Load structure from a string, any original data become lost.
 
         filename -- file to be loaded
         format   -- structure formats
@@ -303,10 +303,11 @@ class QEStructure( Structure ):
         can be inspected for information related to particular format.
         """        
         from  qecalc.qetask.qeparser.qestructureparser import parser_index
+        from qecalc.qetask.qeparser.pwinput import PWInput
         
-        if self._qeInput == None:                
-            self._qeInput = PWInput()
-            self._qeInput.parse()
+        if self._qeInput == None:            
+            self._qeInput = PWInput()            
+            #self._qeInput.parse()
         
         if format in parser_index:             
             module = __import__("qestructureparser.P_" + format, globals(), \
@@ -451,16 +452,18 @@ class QEStructure( Structure ):
 
 
     def toString(self, string = None):
+        """Writes/updates structure into PW config string,
+           if the string is None, one, based on current structure 
+           will be generated
+           """        
         if string != None:
-            string = self.lattice.toString(string = string)
-            qeInput = QEInput(config = string)
-            qeInput.parse()
+            stru = QEStructure()
+            stru.readStr(string, format = 'pwinput')
+            qeInput = stru._qeInput            
         else:
-            if self.lattice._qeInput != None:
-                qeInput = self.lattice._qeInput
-            else:
-                qeInput = QEInput(config = '')
+            qeInput = self._qeInput
 
+        self._qeInput.update( qeInput = qeInput )
         return qeInput.toString()
 
  
@@ -474,7 +477,6 @@ class QEStructure( Structure ):
                 f = open(filename, 'w')            
             qeInput = PWInput()
             qeInput.readFile(filename)
-            qeInput.filename = filename
         else:
             qeInput = self._qeInput
         self._qeInput.update( qeInput = qeInput )
