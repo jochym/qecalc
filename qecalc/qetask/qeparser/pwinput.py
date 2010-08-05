@@ -172,7 +172,7 @@ tstress = .true. ,
 tprnfor = .true. ,
 verbosity = 'high',
 prefix='mgb2',
-pseudo_dir = '/home/markovsk/projects/pslib/espresso/mgb2/',
+pseudo_dir = 'pslib/',
 lkpoint_dir = .false. ,
 outdir='temp/'
 /

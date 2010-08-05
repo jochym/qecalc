@@ -464,29 +464,22 @@ class QEStructure( Structure ):
         return qeInput.toString()
 
  
-#    def save(self, filename = None):
-#        """Writes/updates structure into PW config file,
-#           if the file does not exist, new one will be created"""
-#        from os.path import exists
-#        from qecalc.qetask.qeparser.pwinput import PWInput            
-#        fname = filename
-#        if filename != None:
-#            if not exists(filename):
-#                f = open(filename, 'w')            
-#            qeInput = PWInput()
-#            
-#            #qeInput.parse()               
-#            self
-#            self.lattice.save(filename)
-#            qeInput = QEInput(filename)
-#            qeInput.parse()
-#        else:
-#            filename_ = self.fname
-#            self.lattice.save(filename_)
-#            qeInput = self.lattice._qeInput
-#            
-#        qeInput.save(fname)
-#     
+    def save(self, filename = None):
+        """Writes/updates structure into PW config file,
+           if the file does not exist, new one will be created"""
+        from os.path import exists
+        from qecalc.qetask.qeparser.pwinput import PWInput
+        if filename != None:
+            if not exists(filename):
+                f = open(filename, 'w')            
+            qeInput = PWInput()
+            qeInput.readFile(filename)
+            qeInput.filename = filename
+        else:
+            qeInput = self._qeInput
+        self._qeInput.update( qeInput = qeInput )
+        qeInput.save()
+    
     
     def updatePWInput(self, qeInput = None):
         """
