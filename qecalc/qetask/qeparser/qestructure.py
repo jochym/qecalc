@@ -34,10 +34,47 @@ from orderedDict import OrderedDict
 
 
 class QEStructure( Structure ):
+    """
+    Parses and handles Quantum Espresso structure information. 
+    QEStructure is inherited from a diffpy.Structure, which is in turn 
+    inherited from a Python list. 
+    QEStructure is a list of QEAtom object instances.
+    All list functionality is preserved.  setitem and 
+    setslice methods are overloaded so that the lattice attribute 
+    of atoms get set to lattice.
+    
+    QEStructure, QELattice and QEAtom objects  contain a hidden QEInput 
+    pointer to current Quantum Espresso parsing object. 
+    if QEInput.autoUpdate = True (default),any change in a property from
+    QEStructure, QELattice, or QEAtom will automatically invoke 
+    QEInput.update(). In that case, QEInput.save() or QEInput.toString() will
+    immediately yield updated QE input file or a string
+    
+    All properties are mutually synchronized. E.g. change in a lattice parameter
+    will also affect other lattice parameters as well as atomic positions  
+    according to the lattice type (ibrav)
+    
+    All relevant methods from diffpy.Structure are redefined.
+    
+    QEStructure read only properties, automatically synchronized with current 
+    list of Atoms:
+      
+    nat                 -- "number of atoms" (integer)
+    ntyp                -- "number of atomics types" (integer)
+    atomicSpecies       -- OrderedDic of AtomicSpecies class instances 
+                           (see AtomicSpecies class definition)
+                           
+    Other properties:
+    
+    atomicPositionsType  -- 'crystal' (default), 'alat', 'bohr', and 'angstrom'
+         
+                           
+    Note: This version of QEStructure does not support multiple images from 
+    QE input files
+    """
     
     def __init__(self, qeInput = None, filename = None):
-        """the structure is initialized from PWSCF config file
-           'lattice' and 'structure' are automatically updated"""
+        """"""
            
         Structure.__init__(self)
         #self._inputFormats = list(['pwinput', 'pwoutput']).append(inputFormats()[1:])
@@ -149,14 +186,14 @@ class QEStructure( Structure ):
         """Set idx-th atom to a.
 
         idx  -- index of atom in this Structure
-        a    -- instance of Atom
+        a    -- instance of QEAtom
         copy -- flag for setting to a copy of a.
                 When False, set to a and update a.lattice.
 
         No return value.
         """
         self._uncache('labels')
-        adup = copy and Atom(a) or a
+        adup = copy and QEAtom(a) or a
         adup.lattice = self.lattice
         list.__setitem__(self, idx, adup)
         return
