@@ -135,7 +135,7 @@ class P_pwoutput(QEStructureParser):
                 a.mass = atomicSpecies[a.element][0]
                 a.potential  = atomicSpecies[a.element][1]  
         self._qeInput.autoUpdate = autoUpdate
-        self._qeInput.update()                     
+        self._qeInput.update( forceUpdate = True )                     
         return stru
     
 def getParser(qeInput):

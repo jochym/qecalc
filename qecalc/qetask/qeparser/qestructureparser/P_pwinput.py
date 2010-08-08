@@ -42,17 +42,28 @@ class P_pwinput(QEStructureParser):
             
             
     def __genStructure( self, input ):
-        
+        #****** new version *******
         input.parse()
-        
-        stru = QEStructure(qeInput = self._qeInput)
+        #input.update( qeInput = self._qeInput, forceUpdate = True  )
+        stru = QEStructure( input.structure, qeInput = self._qeInput )        
+        #print "input:", stru._qeInput.toString()
+                
+        return stru        
+#     ******** Old version        
+        input.parse()
+        stru = QEStructure(qeInput = self._qeInput)        
         
         input.structure.lattice._qeInput = self._qeInput
-     
+        input.structure._qeInput = self._qeInput
+        #input.structure._qeInput.update( forceUpdate = True )
+        #print 'Input parser', stru._qeInput.toString()         
         # create a shallow copy of all source attributes
-        stru.__dict__.update(input.structure.__dict__)
+        stru.__dict__.update(input.structure.__dict__)   
         stru[:] = input.structure
+        #stru._qeInput.update( forceUpdate = True )
         return stru
+    #*********************        
+                    
     
 def getParser(qeInput):
     return P_pwinput(qeInput)

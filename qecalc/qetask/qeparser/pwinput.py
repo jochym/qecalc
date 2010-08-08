@@ -34,7 +34,7 @@ class PWInput(QEInput):
         self.kpoints.parse()
 
 
-    def update(self, qeInput = None):
+    def update(self, qeInput = None, forceUpdate = False):
         """
         Loads current mathematical representation of Structure and Lattice 
         into  QEInput parsing object. 
@@ -45,8 +45,8 @@ class PWInput(QEInput):
         input       
         """
         if qeInput == None:
-            qeInput = self        
-        if self.autoUpdate is False:
+            qeInput = self
+        if self.autoUpdate is False and forceUpdate is False:
             return
         lattice = self.structure.lattice
         structure = self.structure   

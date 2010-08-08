@@ -59,9 +59,9 @@ class QEStructure( Structure ):
     QEStructure read only properties, automatically synchronized with current 
     list of Atoms:
       
-    nat                 -- "number of atoms" (integer)
-    ntyp                -- "number of atomics types" (integer)
-    atomicSpecies       -- OrderedDic of AtomicSpecies class instances 
+    nat                  -- "number of atoms" (integer)
+    ntyp                 -- "number of atomic types" (integer)
+    atomicSpecies        -- OrderedDic of AtomicSpecies class instances 
                            (see AtomicSpecies class definition)
                            
     Other properties:
@@ -73,29 +73,57 @@ class QEStructure( Structure ):
     QE input files
     """
     
-    def __init__(self, qeInput = None, filename = None):
-        """"""
-           
-        Structure.__init__(self)
-        #self._inputFormats = list(['pwinput', 'pwoutput']).append(inputFormats()[1:])
-        #self._outputFormats = list(['pwinput']).append(outputFormats())
+    def __init__(self, atoms = [], lattice = None, filename = None, qeInput = None):
+        """
+        atoms        -- list of QEAtom atom instances or a QEStructure object
+        lattice      -- QELattice object
+        filename     -- filename QE input file 
+        qeInput      -- pointer to a PWInput parsing object. If not None, 
+                        its PWInput.structure and PWInput.structure.lattice 
+                        will be  reset to the current instance of the structure       
+        """
+          
+        Structure.__init__(self) 
         self.formatString = '%# .8f %# .8f %# .8f'
+        self._atomicPositionsType = 'crystal'
+        self._qeInput = qeInput
         self.lattice = QELattice()
+        self.lattice._qeInput = self._qeInput
+           
+        if lattice != None:           
+            self.lattice = QELattice( lattice = lattice )
+            self._qeInput = self.lattice._qeInput           
+           
+        from pwinput import PWInput
+        if isinstance( atoms, PWInput):
+            qeInput = atoms        
+        elif isinstance( atoms, QEStructure):
+            stru = atoms                
+            self.__dict__.update( stru.__dict__ )            
+            # deep copy of the lattice will deep copy PWInput as well
+            self.lattice = QELattice(lattice = stru.lattice)            
+            self._qeInput = self.lattice._qeInput                
+            self[:] = stru
+        else:
+            if self.lattice == None:
+                raise "Lattice must be provided"                            
+            self[:] = atoms
         
-        if filename != None:
-            from qecalc.qetask.qeparser.pwinput import PWInput
+        if filename != None:        
             qeInput = PWInput(filename = filename)
             qeInput.parse()
-            self.parseInput(qeInput)
-            return
+            self.parseInput(qeInput)            
         
-        self.lattice._qeInput = qeInput
-        self._qeInput = qeInput
-        if qeInput != None:
+        if qeInput != None:            
+            self.lattice._qeInput = qeInput
+            self._qeInput = qeInput
+        
+        if self.lattice._qeInput != None:
             self.lattice._qeInput.structure = self
-            self.lattice._qeInput.structure.lattice = self.lattice            
-        self._atomicPositionsType = 'crystal'                           
-         
+            self.lattice._qeInput.structure.lattice = self.lattice
+            
+        return
+                                                        
          
     def addNewAtom(self, *args, **kwargs):
         """Add new Atom instance to the end of this Structure.
@@ -301,11 +329,12 @@ class QEStructure( Structure ):
 
     def read(self, filename, format = 'pwinput'):
         """Load structure from a file, any original data become lost.
-
+l
         filename -- file to be loaded
         format   -- structure formats
-                    'pwinput'  - pw.x input
-                    'pwoutput' - pw.x output
+                    'pwinput' ( pw.x input, default), 'pwoutput' (pw.x output),
+                    'bratoms', 'cif', 'discus', 'pdb', 'pdffit', 'rawxyz', 
+                    'xcfg', 'xyz'
 
         Return instance of data Parser used to process file.  This
         can be inspected for information related to particular format.
@@ -328,7 +357,7 @@ class QEStructure( Structure ):
             new_structure._setStructureFromDiffpyStructure(diffpyStruct, \
                                         massList = [], psList = [], ibrav = 0)
 
-        new_structure.lattice._qeInput.update()
+        new_structure.lattice._qeInput.update( forceUpdate = True )
         self.__Init(new_structure)
         return parser
 
@@ -338,8 +367,9 @@ class QEStructure( Structure ):
 
         filename -- file to be loaded
         format   -- structure formats
-                    'pwinput'  - pw.x input
-                    'pwoutput' - pw.x output
+                    'pwinput' ( pw.x input, default), 'pwoutput' (pw.x output),
+                    'bratoms', 'cif', 'discus', 'pdb', 'pdffit', 'rawxyz', 
+                    'xcfg', 'xyz'
 
         Return instance of data Parser used to process file.  This
         can be inspected for information related to particular format.
@@ -347,15 +377,15 @@ class QEStructure( Structure ):
         from  qecalc.qetask.qeparser.qestructureparser import parser_index
         from qecalc.qetask.qeparser.pwinput import PWInput
         
-        if self._qeInput == None:            
-            self._qeInput = PWInput()            
+        #if self._qeInput == None:            
+        #    self._qeInput = PWInput()            
             #self._qeInput.parse()
         
         if format in parser_index:             
             module = __import__("qestructureparser.P_" + format, globals(), \
                                 locals(), ['P_' + format], -1)
             parser = module.getParser(self._qeInput)
-            new_structure = parser.parseStr(s)
+            new_structure = parser.parseStr(s)            
         else:            
             diffpyStruct = Structure()
             parser = diffpyStruct.readStr(s, format = format)
@@ -363,7 +393,10 @@ class QEStructure( Structure ):
             new_structure._setStructureFromDiffpyStructure(diffpyStruct, \
                                         massList = [], psList = [], ibrav = 0)
 
-        new_structure.lattice._qeInput.update()
+        new_structure.lattice._qeInput.update( forceUpdate = True )
+        #new_structure._qeInput = new_structure.lattice._qeInput
+        #print 'toString: ', new_structure._qeInput.toString()
+        #self = QEStructure(new_structure)
         self.__Init(new_structure)
         return parser
 
@@ -371,9 +404,15 @@ class QEStructure( Structure ):
     def write(self, filename = None, format = "pwinput"):
         """Save structure to file in the specified format
         
+        format   -- structure formats
+                    'pwinput' ( pw.x input, default), 'pwoutput' (pw.x output),
+                    'bratoms', 'cif', 'discus', 'pdb', 'pdffit', 'rawxyz', 
+                    'xcfg', 'xyz'        
+                    
         No return value.
         """        
         if format == "pwinput":
+            self._qeInput.update( qeInput = qeInput, forceUpdate = True )
             if filename == None:
                 filename = self._qeInput.filename
             input = QEInput(config = self._qeInput.toString(), type='pw')
@@ -385,9 +424,11 @@ class QEStructure( Structure ):
 
     def writeStr(self, format = 'pwinput'):
         """return string representation of the structure in specified format
-
-        Note: available structure formats can be obtained by:
-            from Parsers import formats
+        
+        format   -- structure formats
+                    'pwinput' ( pw.x input, default), 'pwoutput' (pw.x output),
+                    'bratoms', 'cif', 'discus', 'pdb', 'pdffit', 'rawxyz', 
+                    'xcfg', 'xyz'
         """
         
         if format == 'pwinput':
@@ -404,11 +445,11 @@ class QEStructure( Structure ):
         if string != None:
             stru = QEStructure()
             stru.readStr(string, format = 'pwinput')
-            qeInput = stru._qeInput            
+            qeInput = stru._qeInput
         else:
             qeInput = self._qeInput
 
-        self._qeInput.update( qeInput = qeInput )
+        self._qeInput.update( qeInput = qeInput, forceUpdate = True )
         return qeInput.toString()
 
  
@@ -427,6 +468,50 @@ class QEStructure( Structure ):
         self._qeInput.update( qeInput = qeInput )
         qeInput.save()
 
+
+    def reduce(self, ibrav = None, lattice = None): 
+        """
+        Reduce the structure instance according to provided QELattice instance or 
+        lattice type (ibrav)        
+        """        
+        lat = self.lattice
+        if ibrav == None and lattice == None:
+            ibrav = self.lattice.ibrav
+        else:
+            if lattice != None:
+                lat = lattice
+                ibrav = lat.ibrav
+                
+#                self.lattice.setLattice( ibrav = lattice.ibrav, a = lattice.a, \
+#                                         b = lattice.b, c = lattice.c,
+#                                         cBC = lattice.cBC, cAC = lattice.cAC,\
+#                                         cAB = lattice.cAB )
+             
+        qeLattice = QELattice(ibrav = ibrav, a = lat.a, b = lat.b, \
+                              c = lat.c,  cBC =  lat.cBC, cAC = lat.cAC, \
+                              cAB = lat.cAB)        
+        qeLattice._qeInput = self._qeInput
+        self.lattice = qeLattice
+        
+        self.placeInLattice( qeLattice )
+
+        # collect atoms that are at equivalent position to some previous atom
+        duplicates = set([a1
+            for i0, a0 in enumerate(self) for a1 in self[i0+1:]
+                if   self._element(a0) == self._element(a1) and equalPositions(a0.xyz, a1.xyz, eps=1e-4)])
+
+        
+        # Filter out duplicate atoms.  Use slice assignment so that
+        # reducedStructure is not replaced with a list.
+        reducedStructure[:] = [a for a in reducedStructure if not a in duplicates]
+        
+        
+            
+        if ibrav != None:
+            self.lattice.ibrav = ibrav
+        else: pass
+        
+        return
 
     def load(self, source, **args):
         task = {

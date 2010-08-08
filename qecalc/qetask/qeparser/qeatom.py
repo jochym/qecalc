@@ -15,6 +15,8 @@
 """class QEAtom for storing properties of a single atom"""
 import numpy
 
+from qelattice import QELattice
+
 class CartesianCoordinatesArray(numpy.ndarray):
     """Helper array for accessing Cartesian coordinates.
     Converts and updates related array of corresponding fractional
@@ -62,8 +64,8 @@ class QEAtom(object):
     """
 
 
-    def __init__(self, atype=None, xyz=None, name=None, mass = None,  \
-                 potential = None, lattice=None, optConstraint = None):
+    def __init__(self, atype=None, xyz=None, mass = None,  \
+                 potential = None, lattice=None, optConstraint = None, name=None):
         """Create atom of a specified type at given lattice coordinates.
         Atom(a) creates a copy of Atom instance a.
 
@@ -82,7 +84,9 @@ class QEAtom(object):
         self.name = ''
         self._mass = 0
         self._potential = ''
-        self.lattice = None
+        self.lattice = QELattice()
+        from pwinput import PWInput
+        self.lattice._qeInput = PWInput()
         self._optConstraint = numpy.array([], dtype = int)
         # assign them as needed
         if isinstance(atype, QEAtom):

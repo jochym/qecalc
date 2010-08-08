@@ -85,6 +85,8 @@ class TestStructureMethods(unittest.TestCase):
         else:
             self.input = PWInput( filename = 'pw.in' )
             
+        #self.input.autoUpdate = False
+            
         self.input.parse()        
 
 
@@ -93,10 +95,28 @@ class TestStructureMethods(unittest.TestCase):
         filename = os.path.join(testdata_dir, 'mgalb4_pw.out')        
         self.input.structure.read(filename, 'pwoutput')
         
-        answer = """"Simple Hexagonal or Trigonal(P)" cell:\n 5.70000000  0.00000000  0.00000000\n-2.85000000  4.93634480  0.00000000\n 0.00000000  0.00000000  12.54000000\n\nAtomic positions in units of lattice parametr "a":\nAl      0.00000000  0.00000000  0.00000000  \nB       0.50000000  0.28867510  0.52052140  \nB       0.00000000  0.57735030  0.52052140  \nMg      0.00000000  0.00000000  1.11205140  \nB       0.50000000  0.28867510  1.70358160  \nB       0.00000000  0.57735030  1.70358160  \n\nAl  26.9825 al.ncpp\nB   11.0000 b.ncpp\nMg  24.3050 mg.ncpp\n"""
+        #answer = """"Simple Hexagonal or Trigonal(P)" cell    :\n 5.70000000  0.00000000  0.00000000\n-2.85000000  4.93634480  0.00000000\n 0.00000000  0.00000000  12.54000000\n\nAtomic positions in units of lattice parametr "a":\nAl      0.00000000  0.00000000  0.00000000  \nB       0.50000000  0.28867510  0.52052140  \nB       0.00000000  0.57735030  0.52052140  \nMg      0.00000000  0.00000000  1.11205140  \nB       0.50000000  0.28867510  1.70358160  \nB       0.00000000  0.57735030  1.70358160  \n\nAl  26.9825 al.ncpp\nB   11.0000 b.ncpp\nMg  24.3050 mg.ncpp\n"""
+        answer = """"Simple Hexagonal or Trigonal(P)" cell:
+ 5.70000000  0.00000000  0.00000000
+-2.85000000  4.93634480  0.00000000
+ 0.00000000  0.00000000  12.54000000
+
+Atomic positions in units of lattice parametr "a":
+Al      0.00000000  0.00000000  0.00000000  
+B       0.50000000  0.28867510  0.52052140  
+B       0.00000000  0.57735030  0.52052140  
+Mg      0.00000000  0.00000000  1.11205140  
+B       0.50000000  0.28867510  1.70358160  
+B       0.00000000  0.57735030  1.70358160  
+
+Al  26.9825 al.ncpp
+B   11.0000 b.ncpp
+Mg  24.3050 mg.ncpp
+"""
     
+        #print '*', str(self.input.structure), '*'
+        #print '*', str(self.input.structure), '*'
         self.assertEqual(str(self.input.structure), answer)
-        
         filename = os.path.join(testdata_dir, 'fev3_pwgeom.out')  
         self.input.structure.read(filename, 'pwoutput')
 
@@ -213,7 +233,8 @@ K_POINTS (automatic)
 """
         
         self.assertEqual(str(self.input.structure), answer)
-        self.assertEqual(self.input.toString(), answer_toString)
+        #print self.input.structure.toString()
+        self.assertEqual(self.input.structure.toString(), answer_toString)
         
         
     def test_read_cif(self):
@@ -465,7 +486,9 @@ CELL_PARAMETERS (cubic)
  0.00000000  6.46100000  0.00000000
  0.00000000  0.00000000  6.46100000
 """
+        #print stru.toString( stringConfig )
         self.assertEqual(stru.toString( stringConfig ), answer )
+
         
     def test_writeStr(self):
         answer = """CRYST1    5.789    5.789   12.875  90.00  90.00 120.00                          
@@ -480,6 +503,91 @@ END
 """
         self.assertEqual(self.input.structure.writeStr(format = 'pdb'), answer)
         
+    def test_constructor(self):
+        from qecalc.qetask.qeparser.qelattice import QELattice
+        from qecalc.qetask.qeparser.qestructure import QEStructure
+        from qecalc.qetask.qeparser.qeatom import QEAtom
+        
+        filename = os.path.join(testdata_dir, 'fev3_pwgeom.out')  
+        self.input.structure.read(filename, 'pwoutput')        
+        
+        vmass = 50.94150
+        vpot = 'V_potential'
+        femass = 55.84700
+        fepot = 'Fe_potential'
+        at1 = QEAtom('V', [0., 0., 0.], vmass, vpot)
+        at2 = QEAtom('V', [0.5, 0., 0.], vmass, vpot)
+        at3 = QEAtom('V', [0., 0.5, 0.], vmass, vpot)
+        at4 = QEAtom('V', [0., 0., 0.5], vmass, vpot)
+        at5 = QEAtom('V', [0.5, 0.5, 0.], vmass, vpot)
+        at6 = QEAtom('V', [0., 0.5, 0.5], vmass, vpot)
+        at7 = QEAtom('V', [0.5, 0., 0.5], vmass, vpot)
+        at8 = QEAtom('V', [0.5, 0.5, 0.5], vmass, vpot)
+    
+        at9 = QEAtom('V', [0.25, 0.25, 0.25], vmass, vpot)
+        at10 = QEAtom('Fe', [0.75, 0.25, 0.25], femass, fepot)
+        at11 = QEAtom('V', [0.75, 0.75, 0.25], vmass, vpot)
+        at12 = QEAtom('Fe', [0.25, 0.75, 0.25], femass, fepot)
+    
+        at13 = QEAtom('Fe', [0.25, 0.25, 0.75], femass, fepot)
+        at14 = QEAtom('V', [0.75, 0.25, 0.75], vmass, vpot)
+        at15 = QEAtom('Fe', [0.75, 0.75, 0.75], femass, fepot)
+        at16 = QEAtom('V', [0.25, 0.75, 0.75], vmass, vpot)
+        
+        lattice = QELattice(lattice = self.input.structure.lattice)
+        #print lattice
+        new_struct = QEStructure( [ at1, at2, at3, at4, at5, at6, at7, at8, at9, \
+                             at10, at11, at12, at13, at14, at15, at16], \
+                             lattice = lattice )
+        answer = """"Face Centered Cubic" cell:
+-5.50788176  0.00000000  5.50788176
+ 0.00000000  5.50788176  5.50788176
+-5.50788176  5.50788176  0.00000000
+
+Atomic positions in crystal coordinates:
+V       0.00000000  0.00000000  0.00000000  
+V       0.50000000  0.00000000  0.00000000  
+V       0.00000000  0.50000000  0.00000000  
+V       0.00000000  0.00000000  0.50000000  
+V       0.50000000  0.50000000  0.00000000  
+V       0.00000000  0.50000000  0.50000000  
+V       0.50000000  0.00000000  0.50000000  
+V       0.50000000  0.50000000  0.50000000  
+V       0.25000000  0.25000000  0.25000000  
+Fe      0.75000000  0.25000000  0.25000000  
+V       0.75000000  0.75000000  0.25000000  
+Fe      0.25000000  0.75000000  0.25000000  
+Fe      0.25000000  0.25000000  0.75000000  
+V       0.75000000  0.25000000  0.75000000  
+Fe      0.75000000  0.75000000  0.75000000  
+V       0.25000000  0.75000000  0.75000000  
+
+V   50.9415 V_potential
+Fe  55.8470 Fe_potential
+"""
+        self.assertEqual(str(new_struct), answer)
+        
+        new_struct = QEStructure(self.input.structure)
+        
+        # Check if the constructor messes _qeInput        
+        self.input.structure.lattice.a = 10              
+        new_struct.lattice.a = 12
+        s1 = self.input.structure.toString()
+        s2 =  new_struct.toString()
+        self.assertNotEqual(s1, s2)
+        
+        
 if __name__ == '__main__':
+    #unittest.main()
+    
+    pwin_suite = unittest.TestSuite()
+    pwin_suite.addTest(TestStructureMethods( "test_fileInit" ))
+    
+    pwinput_suite = unittest.TestSuite()
+    pwinput_suite.addTest(TestStructureMethods( "test_read_pwinput" ))
+    
+    pwoutput_suite = unittest.TestSuite()
+    pwoutput_suite.addTest(TestStructureMethods( "test_read_pwoutput" ))    
+        
     unittest.main()
         

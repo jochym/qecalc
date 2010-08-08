@@ -53,9 +53,10 @@ class QELattice(object):
 
 
     def __init__(self, ibrav = 1,a = 1. ,b = 1.,c = 1.,
-                 cBC = 0.,cAC = 0. ,cAB = 0., base = None ):
+            cBC = 0.,cAC = 0. ,cAB = 0., base = None, lattice = None ):
         self.formatString = '%# .8f %# .8f %# .8f'
         self._qeInput = None
+        #self._qeInput = None
         self._type = 'celldm'
         
         # diffpyStructure container class, used for lattice operations
@@ -69,6 +70,17 @@ class QELattice(object):
             self.setLatticeFromQEVectors(ibrav, base)
         else:
             self.setLattice(ibrav ,a ,b , c, cBC ,cAC ,cAB, base)
+        
+        # copy constructor:
+        if isinstance(ibrav, QELattice) or lattice != None:
+            self.setLattice( ibrav = lattice.ibrav, a = lattice.a, \
+                                         b = lattice.b, c = lattice.c,
+                                         cBC = lattice.cBC, cAC = lattice.cAC,\
+                                         cAB = lattice.cAB )
+            # copy input:
+            from pwinput import PWInput        
+            self._qeInput = PWInput()
+            self._qeInput.readString( lattice._qeInput.toString() )
 
 
     def __str__(self):
@@ -239,7 +251,7 @@ class QELattice(object):
         
         if self._qeInput != None and updateInput == True:
             #self.updatePWInput()
-            self._qeInput.update()       
+            self._qeInput.update( forceUpdate = True )       
 
 
     def diffpy(self):
@@ -253,7 +265,7 @@ class QELattice(object):
         """
         Deprecated
         """
-        self._qeInput.update()
+        self._qeInput.update( forceUpdate = True )
     
 
     def setLatticeFromQEVectors(self, ibrav, vectors):
