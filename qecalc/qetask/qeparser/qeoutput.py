@@ -54,12 +54,18 @@ class QEOutput(object):
         #else:
         #    properties = self._properties[name]
         #print self._properties[name]
-        if name not in self._properties:
+        import string
+        propName = string.join(name.split(),"").lower()
+        for propLongName in self.output._propertyNamesDic:
+            if propName in self.output._propertyNamesDic[propLongName]:
+                propName = propLongName
+                
+        if propName not in self._properties:
             if withUnits:
                 return (None, None)
             else:
                 return None
-        for tpl in self._properties[name]:
+        for tpl in self._properties[propName]:
             #print tpl
             if withUnits:
                 prop.append(tpl)

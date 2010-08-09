@@ -22,6 +22,10 @@ class Output(BaseOutput):
 
     def __init__(self):
         BaseOutput.__init__(self)
+        # dictionary with list of alternative property names,
+        # not case and white space sensitive:
+        self._propertyNamesDic = { 'single phonon'      : ['singlephonon', 'frequencies', 'freqs', 'freq', 'frequency'],
+                              }
         self.parsers = {
                     'single phonon' : self.getSinglePhonon
                 }

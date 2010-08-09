@@ -91,8 +91,11 @@ class QEInput(object):
         self.qe             = None          # DEPRICATED
         self.namelistRef    = None
         self.cardRef        = None
-
-        self._read(filename, config)
+        
+        # Nikolay:
+        self.parser     = QEParser(filename, config, self._type)    #filename, config, type)
+        (self.namelistRef, self.cardRef)    = self.parser.setReferences()
+        #self._read(filename, config)
 
 
     def parse(self):

@@ -16,5 +16,8 @@
 class BaseOutput(object):
     def __init__(self):
         self.parsers = {}
+        # dictionary with list of alternative property names,
+        # not case and white space sensitive:
+        self._propertyNamesDic = {}
     def parse(self, parserName, setting):
         return self.parsers[parserName](setting)

@@ -474,7 +474,7 @@ l
         Reduce the structure instance according to provided QELattice instance or 
         lattice type (ibrav)        
         """
-        # is not functionl yet
+        # is not functional yet
         return
         lat = self.lattice
         if ibrav == None and lattice == None:

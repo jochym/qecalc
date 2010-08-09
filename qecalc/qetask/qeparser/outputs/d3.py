@@ -20,6 +20,10 @@ class Output(BaseOutput):
 
     def __init__(self):
         BaseOutput.__init__(self)
+        # dictionary with list of alternative property names,
+        # not case and white space sensitive:
+        self._propertyNamesDic = { 'd3 tensor'      : ['d3tensor', 'tensor'],
+                              }
         self.parsers = {
                 'd3 tensor' : self.getD3Tensor,
                 }

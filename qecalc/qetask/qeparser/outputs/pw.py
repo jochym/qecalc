@@ -22,10 +22,19 @@ class Output(BaseOutput):
 
     def __init__(self):
         BaseOutput.__init__(self)
+        # dictionary with list of alternative property names,
+        # not case and white space sensitive:
+        self._propertyNamesDic = { 'total energy'      : ['totalenergy', 'energy', 'totalelectronicenergy'],
+                                   'fermi energy'      : [ 'fermienergy', 'fermi'],
+                                   'lattice parameters': ['latticeparameters', 'lattice'],
+                                   'stress'            : ['stress', 'stresses'],
+                                   'force'             : [ 'force', 'forces'],
+                                   'bands'             : ['bands', 'energy bands'],
+                              } 
         self.parsers = {
-                    'total energy'       : self.getTotalEnergy,
-                    'lattice parameters' : self.getLatticeParameters,
-                    'fermi energy'       : self.getFermiEnergy,
+                    'total energy'        : self.getTotalEnergy,
+                    'lattice parameters'  : self.getLatticeParameters,
+                    'fermi energy'        : self.getFermiEnergy,
                     'stress'             : self.getStress,
                     'forces'             : self.getForces,
                     'bands'              : self.getBands,
