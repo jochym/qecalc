@@ -20,7 +20,7 @@ from pwkpoints import PWKpoints
 class PWInput(QEInput):
     def __init__(self, filename=None, config=None):
         QEInput.__init__(self,filename, config, type='pw')        
-        self.structure = QEStructure(self)
+        self._structure = QEStructure(self)
         self.kpoints = PWKpoints(self)
         # Boolean flag, if True, QEInput is updated on change of any property in
         # structure, lattice, or atom
@@ -32,6 +32,15 @@ class PWInput(QEInput):
         (self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
         self.structure.parseInput(self)
         self.kpoints.parse()
+
+    def _get_structure(self):
+        return self._structure
+            
+    def _set_structure(self, structure):
+        self._structure = structure
+        self._structure._qeInput = self._structure.lattice._qeInput = self
+            
+    structure = property(_get_structure, _set_structure)
 
 
     def update(self, qeInput = None, forceUpdate = False):
@@ -48,8 +57,8 @@ class PWInput(QEInput):
             qeInput = self
         if self.autoUpdate is False and forceUpdate is False:
             return
-        lattice = self.structure.lattice
-        structure = self.structure   
+        lattice = self._structure.lattice
+        structure = self._structure   
 
         #************************* updateLattice:*******************************
         #if 'system' not in qeInput.namelists:

@@ -99,8 +99,7 @@ class Output(BaseOutput):
     #    output Omega in cm-1
         return (npPol, None), (npOmega, 'cm-1'), (qPoints, None)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 18, 2009 7:28:06 PM$"

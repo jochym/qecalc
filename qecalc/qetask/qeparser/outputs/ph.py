@@ -74,8 +74,7 @@ class Output(BaseOutput):
         #print len(qpoints_full)
         return ([nq1,nq2,nq3], None), (qpoints_indep, None), (qpoints_full, None)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Nov 3, 2009 6:53:12 PM$"

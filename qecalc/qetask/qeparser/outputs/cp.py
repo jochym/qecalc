@@ -86,5 +86,4 @@ class Output(BaseOutput):
             j = j + 1
         trajectory[propName].append(atoms)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass

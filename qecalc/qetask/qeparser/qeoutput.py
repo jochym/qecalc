@@ -47,13 +47,6 @@ class QEOutput(object):
         """Will output the property of interest as a set of tuples if withUnits is True.
            Will output property itself otherwise"""
         prop = []
-        #print self._properties[name]
-        #if len(self._properties[name]) > 1:
-        #    print 'preved'
-        #    properties = self._properties[name]
-        #else:
-        #    properties = self._properties[name]
-        #print self._properties[name]
         import string
         propName = string.join(name.split(),"").lower()
         for propLongName in self.output._propertyNamesDic:
@@ -66,14 +59,11 @@ class QEOutput(object):
             else:
                 return None
         for tpl in self._properties[propName]:
-            #print tpl
             if withUnits:
                 prop.append(tpl)
             else:
                 prop.append(tpl[0])
-               # print "hello",  tpl[0]
-        #print prop[0]
-        if len(self._properties[name]) > 1:
+        if len(self._properties[propName]) > 1:
             return prop
         else:
             return prop[0]
@@ -99,9 +89,7 @@ def test():
     qeOut.parse()
     print qeOut.properties()
 
-if __name__ == "__main__":
-    #test()
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 18, 2009 7:51:00 PM$"

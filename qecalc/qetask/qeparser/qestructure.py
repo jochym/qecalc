@@ -465,7 +465,7 @@ l
             qeInput.readFile(filename)
         else:
             qeInput = self._qeInput
-        self._qeInput.update( qeInput = qeInput )
+        self._qeInput.update( qeInput = qeInput, forceUpdate = True )
         qeInput.save()
 
 

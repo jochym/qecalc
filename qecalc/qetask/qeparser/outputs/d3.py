@@ -135,8 +135,7 @@ class Output(BaseOutput):
         (np.rollaxis(np.array(d3tensor).reshape(\
         numberq,natom,3,natom,natom,3,3),2,5), None), (np.array(qpoints), None),
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Xiaoli Tang"
 __date__ ="$Nov 28, 2009 4:57:29 PM$"

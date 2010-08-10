@@ -24,8 +24,7 @@ class Output(BaseOutput):
         self.parsers = {}
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Jan 20, 2010 5:31:02 PM$"

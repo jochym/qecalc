@@ -183,7 +183,8 @@ class QETask(object):
         signal = x & 0xFF
         exitcode = (x >> 8) & 0xFF
         if exitcode != 0:
-            raise Exception("Task " + self.name() + " crashed: check your settings" + "Command string:" + self.cmdLine())
+            raise Exception("Task " + self.name() + " crashed: check your \
+settings!\n" + "Command string: " + self.cmdLine())
 
     def _run(self):
         if os.path.exists('CRASH'):

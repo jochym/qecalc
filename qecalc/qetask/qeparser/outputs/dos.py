@@ -38,8 +38,7 @@ class Output(BaseOutput):
 
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Nov 10, 2009 12:16:38 PM$"

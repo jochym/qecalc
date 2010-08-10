@@ -22,8 +22,7 @@ class Output(BaseOutput):
         self.parsers = {}
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 
 __author__="Nikolay Markovskiy"
