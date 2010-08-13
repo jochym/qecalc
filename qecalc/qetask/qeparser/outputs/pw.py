@@ -29,7 +29,7 @@ class Output(BaseOutput):
                                    'lattice parameters': ['latticeparameters', 'lattice'],
                                    'stress'            : ['stress', 'stresses'],
                                    'force'             : [ 'force', 'forces'],
-                                   'bands'             : ['bands', 'energy bands'],
+                                   'bands'             : ['bands', 'energybands'],
                               } 
         self.parsers = {
                     'total energy'        : self.getTotalEnergy,

@@ -26,12 +26,6 @@ class CPTask(QETask):
         self.setParallel()
 
 
-        # pw main input and output
-        configDic = {
-        'cpInput': 'cp.in',
-        'cpOutput': 'cp.out',
-        }
-
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
@@ -39,7 +33,30 @@ class CPTask(QETask):
         'pseudo_dir': './',
         'prefix': 'cp'
         }
+        
+        self.readSetting(filename, configString, sectionName)
 
+
+    def cmdLine(self):
+        return self._getCmdLine('cp.x', 'cpInput', 'cpOutput')
+
+
+    def name(self):
+        return 'cp.x'
+
+
+    def readSetting(self, filename = None, configString = None, sectionName = None):
+        """
+        Initializes Setting, QEInput and QEOutout classes 
+        and synchronizes with QEInput object
+        """
+        configDic = {
+        'cpInput': 'cp.in',
+        'cpOutput': 'cp.out',
+        }
+        
+        QETask.readSetting(self, filename, configString)
+        
         if sectionName == None:
             name = self.name()
         else:
@@ -50,14 +67,10 @@ class CPTask(QETask):
         # add pointer to setting for input filenames synchronization 
         self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='cp')
+        
+        if filename != None or configString != None:
+            self.syncSetting() 
 
-
-    def cmdLine(self):
-        return self._getCmdLine('cp.x', 'cpInput', 'cpOutput')
-
-
-    def name(self):
-        return 'cp.x'
 
     def syncSetting(self):
         """

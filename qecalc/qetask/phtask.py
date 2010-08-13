@@ -23,14 +23,6 @@ class PHTask(QETask):
         QETask.__init__(self, filename, configString, cleanOutDir)
 
         self.setParallel()
-        
-        configDic = {
-        'phInput': 'ph.in',
-        'phOutput': 'ph.out',
-        'fildyn'  : None,
-#        'fildrho' : None,
-#        'fildvscf' : None
-        }
 
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
@@ -41,6 +33,33 @@ class PHTask(QETask):
         'outdir': './',
         'prefix': 'pwscf'
         }
+        
+        self.readSetting(filename, configString, sectionName)
+
+
+    def cmdLine(self):
+        return self._getCmdLine('ph.x', 'phInput', 'phOutput')
+    
+
+    def name(self):
+        return 'ph.x'
+
+
+    def readSetting(self, filename = None, configString = None, sectionName = None):
+        """
+        Initializes Setting, QEInput and QEOutout classes 
+        and synchronizes with QEInput object
+        """
+        
+        configDic = {
+        'phInput': 'ph.in',
+        'phOutput': 'ph.out',
+        'fildyn'  : None,
+#        'fildrho' : None,
+#        'fildvscf' : None
+        }
+        
+        QETask.readSetting(self, filename, configString)
         
         if sectionName == None:
             name = self.name()
@@ -53,14 +72,10 @@ class PHTask(QETask):
         # add pointer to setting for input filenames synchronization 
         self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='ph')
+        
+        if filename != None or configString != None:
+            self.syncSetting()
 
-
-    def cmdLine(self):
-        return self._getCmdLine('ph.x', 'phInput', 'phOutput')
-    
-
-    def name(self):
-        return 'ph.x'
 
     def syncSetting(self):
         """

@@ -34,7 +34,17 @@ class QETask(object):
         self._isSerial = True
 
         self._mergedTask = False
+        
+        self.cleanOutDir = cleanOutDir
 
+        QETask.readSetting(self, filename, configString)
+
+
+    def readSetting(self, filename = None, configString = None):
+        """
+        Initializes setting class
+        """
+        
         configDic = {
         'useTorque' : 'False',
         'paraTorqueParams':  '-l nodes=1:ppn=1',
@@ -45,16 +55,15 @@ class QETask(object):
         'serialPostfix': '',
         'paraRemoteShell': '',
         'outdir': None
-        }
-
-
+        }        
+        
         if filename == None and configString == None:
-            filename = 'config.ini'
+            configString = ''
+       #     filename = 'config.ini'
 
         self.setting = Setting(filename, configString)
         self.setting.section(QETask.name(self), configDic)
-
-        self.cleanOutDir = cleanOutDir
+        
 
         if self.setting.get('useTorque') == 'True':
             self.setting.set('useTorque', True)
@@ -66,10 +75,17 @@ class QETask(object):
                 self._torque = QETorque(self.setting.get('serialTorqueParams'))
             else:
                 self._torque = QETorque(self.setting.get('paraTorqueParams'))
+        
+        #self.syncSetting()      
 
 
     def name(self):
         return 'Launcher'
+
+
+    def parse(self):
+        
+        self.syncSetting()
 
 
     def syncSetting(self):
@@ -220,9 +236,27 @@ settings!\n" + "Command string: " + self.cmdLine())
         return  self.getPrefix() + ' ' + executable + " " + self.getPostfix() + \
                 ' ' + self._inp + ' ' +  self.setting.get(input) + ' > ' + \
                 self.setting.get(output) + self._devnul
+                
+                
+    def _setSetiingInputOutput(self, configDic, filename = None, configString = None, sectionName = None):
+        """
+        Helper method for readSetting()
+        """
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
+
+        self.setting.section(name, configDic)
+        self.input = PWInput( self.setting.pwInput ) #self.setting.get('pwInput') )
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting
+        self.output = QEOutput(self.setting, type='pw')
+        
+        if filename != None or configString != None:
+            self.syncSetting()        
 
 __author__="kolya"
 __date__ ="$Oct 18, 2009 5:03:21 PM$"
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass

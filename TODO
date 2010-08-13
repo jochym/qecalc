@@ -4,3 +4,5 @@
 [] finish merger mapping in calcs
 [] parser matdyn withUnits stoped working (works without)
 [] job manager support
+
+[] Tasks should parse inputs if they are provided

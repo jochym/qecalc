@@ -24,15 +24,6 @@ class MatdynTask(QETask):
 
         self.setSerial()
 
-        configDic = {
-        'matdynInput': 'matdyn.in',
-#        'flfrc': None,
-        'matdynOutput': 'matdyn.out',
-#        'flvec': None,
-#        'flfrq': None,
-#        'fldos': None
-        }
-
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
@@ -42,6 +33,37 @@ class MatdynTask(QETask):
         'fldos': 'matdyn.dos'
         }
 
+        self.readSetting(filename, configString, sectionName)
+        
+#        self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
+#                        self.setting.matdynOutput
+
+                        
+    def cmdLine(self):
+        return self._getCmdLine('matdyn.x', 'matdynInput', 'matdynOutput')
+
+
+    def name(self):
+        return 'matdyn.x'
+
+
+    def readSetting(self, filename = None, configString = None, sectionName = None):
+        """
+        Initializes Setting, QEInput and QEOutout classes 
+        and synchronizes with QEInput object
+        """
+        
+        configDic = {
+        'matdynInput': 'matdyn.in',
+#        'flfrc': None,
+        'matdynOutput': 'matdyn.out',
+#        'flvec': None,
+#        'flfrq': None,
+#        'fldos': None
+        }
+        
+        QETask.readSetting(self, filename, configString)
+        
         if sectionName == None:
             name = self.name()
         else:
@@ -54,16 +76,8 @@ class MatdynTask(QETask):
         self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type = 'matdyn')
         
-#        self._cmdStr = "matdyn.x -inp " + self.setting.matdynInput + " > " + \
-#                        self.setting.matdynOutput
-
-                        
-    def cmdLine(self):
-        return self._getCmdLine('matdyn.x', 'matdynInput', 'matdynOutput')
-
-
-    def name(self):
-        return 'matdyn.x'
+        if filename != None or configString != None:
+            self.syncSetting()        
 
 
     def syncSetting(self):

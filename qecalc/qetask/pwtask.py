@@ -24,21 +24,42 @@ class PWTask(QETask):
 
         self.setParallel()
 
-
-        # pw main input and output
-        configDic = {
-        'pwInput': 'scf.in',
-        'pwOutput': 'scf.out',
-        }
-
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
         'outdir': './',
         'pseudo_dir': './',
         'prefix': 'pwscf'
-        }
+        }        
+        
+        
+        self.readSetting(filename, configString, sectionName)
 
+
+    def cmdLine(self):
+        return self._getCmdLine('pw.x', 'pwInput', 'pwOutput')
+
+
+    def name(self):
+        return 'pw.x'
+
+
+    def readSetting(self, filename = None, configString = None, sectionName = None):
+        """
+        Initializes Setting, QEInput and QEOutout classes 
+        and synchronizes with QEInput object
+        """
+        
+        # pw main input and output
+        configDic = {
+        'pwInput': 'scf.in',
+        'pwOutput': 'scf.out',
+        }        
+        
+        QETask.readSetting(self, filename, configString)
+        
+        #self._setSetiingInputOutput(configDic, input, output,  filename, configString, sectionName)
+        
         if sectionName == None:
             name = self.name()
         else:
@@ -49,14 +70,10 @@ class PWTask(QETask):
         # add pointer to setting for input filenames synchronization 
         self.input._setting = self.setting
         self.output = QEOutput(self.setting, type='pw')
-
-
-    def cmdLine(self):
-        return self._getCmdLine('pw.x', 'pwInput', 'pwOutput')
-
-
-    def name(self):
-        return 'pw.x'
+        
+        if filename != None or configString != None:
+            self.syncSetting()
+            
 
     def syncSetting(self):
         """

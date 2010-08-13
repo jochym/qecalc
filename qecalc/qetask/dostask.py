@@ -26,12 +26,6 @@ class DOSTask(QETask):
 
         self.setSerial()
 
-        configDic = {
-        'dosInput' : 'dos.in',
-        'dosOutput': 'dos.out',
-        #'dosfldos' : None
-        }
-
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
@@ -40,20 +34,7 @@ class DOSTask(QETask):
         'prefix': 'pwscf',
         }
         
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-        self.input = QEInput(self.setting.get('dosInput'), type = 'dos')
-        # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting        
-        self.output = QEOutput(self.setting, type='dos')
-#        self._cmdStr = self.setting.paraPrefix + " dos.x " +  \
-#                       " -inp " + \
-#                       self.setting.dosInput + " > " + \
-#                       self.setting.dosOutput + "< /dev/null"
+        self.readSetting(filename, configString, sectionName)
 
 
     def cmdLine(self):
@@ -62,6 +43,36 @@ class DOSTask(QETask):
 
     def name(self):
         return 'dos.x'
+
+
+    def readSetting(self, filename = None, configString = None, sectionName = None):
+        """
+        Initializes Setting, QEInput and QEOutout classes 
+        and synchronizes with QEInput object
+        """
+        
+        configDic = {
+        'dosInput' : 'dos.in',
+        'dosOutput': 'dos.out',
+        #'dosfldos' : None
+        }
+        
+        QETask.readSetting(self, filename, configString)
+        
+        if sectionName == None:
+            name = self.name()
+        else:
+            name = sectionName
+
+        self.setting.section(name, configDic)
+
+        self.input = QEInput(self.setting.get('dosInput'), type = 'dos')
+        # add pointer to setting for input filenames synchronization 
+        self.input._setting = self.setting        
+        self.output = QEOutput(self.setting, type='dos')
+        
+        if filename != None or configString != None:
+            self.syncSetting() 
 
 
     def syncSetting(self):
