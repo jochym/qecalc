@@ -15,3 +15,6 @@
 __date__ = "$Sep 26, 2009 7:44:58 AM$"
 
 
+from qecalc.qetask.qeparser.pwinput import PWInput
+from qecalc.qetask.qeparser.cpinput import CPInput
+ 

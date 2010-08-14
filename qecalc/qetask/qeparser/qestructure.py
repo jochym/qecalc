@@ -94,8 +94,10 @@ class QEStructure( Structure ):
             self.lattice = QELattice( lattice = lattice )
             self._qeInput = self.lattice._qeInput           
            
+        # CP and PW inputs are compatible
         from pwinput import PWInput
-        if isinstance( atoms, PWInput):
+        from cpinput import CPInput        
+        if isinstance( atoms, PWInput) or isinstance( atoms, CPInput):
             qeInput = atoms        
         elif isinstance( atoms, QEStructure):
             stru = atoms                

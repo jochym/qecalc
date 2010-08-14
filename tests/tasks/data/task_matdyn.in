@@ -1,0 +1,6 @@
+ &input
+    asr='crystal',  dos=.true. 
+    amass(1)=24.305, amass(2)=11.000, 
+    flfrc='mgb2666.fc', fldos='mgb2.666.phdos', nk1=28, nk2=28, nk3=28
+ /
+

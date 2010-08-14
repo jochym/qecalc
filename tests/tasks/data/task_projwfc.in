@@ -1,0 +1,9 @@
+&INPUTPP
+    outdir = 'temp/',
+    prefix = 'fev3',
+    emin = 5.0,
+    emax = 24.0,
+    deltae = 0.05,
+    ngauss = -1,
+    degauss = 0.005,
+/
