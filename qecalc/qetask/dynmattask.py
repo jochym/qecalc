@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.qesinput import QESInput
 from qeparser.qeoutput import QEOutput
 
 class DynmatTask(QETask):
@@ -66,9 +66,10 @@ class DynmatTask(QETask):
 
         self.setting.section(name, configDic)
 
-        self.input = QEInput(filename = self.setting.get('dynmatInput'), type = 'dynmat')
+        self.input = QESInput( setting = self.setting, type = 'dynmat')
         # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting        
+        
+        #self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type = 'dynmat')
         
         if filename != None or configString != None:

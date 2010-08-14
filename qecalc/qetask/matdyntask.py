@@ -71,7 +71,7 @@ class MatdynTask(QETask):
 
         self.setting.section(name, configDic)
 
-        self.input = MatdynInput(filename = self.setting.get('matdynInput'))
+        self.input = MatdynInput( setting = self.setting)
         # add pointer to setting for input filenames synchronization 
         self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type = 'matdyn')

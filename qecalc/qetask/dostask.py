@@ -16,7 +16,7 @@
 # and open the template in the editor.
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.qesinput import QESInput
 from qeparser.qeoutput import QEOutput
 
 class DOSTask(QETask):
@@ -66,9 +66,9 @@ class DOSTask(QETask):
 
         self.setting.section(name, configDic)
 
-        self.input = QEInput(self.setting.get('dosInput'), type = 'dos')
+        self.input = QESInput( setting = self.setting, type = 'dos')
         # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting        
+        #self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='dos')
         
         if filename != None or configString != None:

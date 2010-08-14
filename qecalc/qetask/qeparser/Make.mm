@@ -57,6 +57,7 @@ EXPORT_PYTHON_MODULES = \
     cpinput.py \
     pwkpoints.py \
     qeinput.py \
+    qesinput.py \
     qelattice.py \
     qeoutput.py \
     qeparser.py \

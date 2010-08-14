@@ -13,19 +13,20 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qeinput import QEInput
+from qesinput import QESInput
 from phqpoints import PHQpoints
 
-class PHInput(QEInput):
-    def __init__(self, filename=None, config=None):
-        QEInput.__init__(self,filename, config, type='ph')
+class PHInput(QESInput):
+    def __init__(self, filename=None, config=None, setting = None):
+        QESInput.__init__(self,filename, config, type='ph', setting = setting)
         self.qpoints = PHQpoints(self)
 
 
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
-        (self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
+        #(self.header, self.namelists, self.cards, self.attach) = self.parser.parse()
+        QESInput.parse(self)
         self.qpoints.parse()
 
 

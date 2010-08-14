@@ -59,6 +59,16 @@ class TestStructureMethods(unittest.TestCase):
         cp = self.task['cp']
         #print cp.input.toString()
         self.assertEqual(cmdLine, cp.cmdLine())
+        
+    
+    def test_change_setting(self):
+        answer = 'Al   0.000000 0.000000 0.000000 26.980000 Al.pz-vbc.UPF'
+        pw = self.task['pw']
+        pw.setting.set('pwInput', 'data/al_pw.in')        
+        pw.input.parse()    
+        self.assertEqual( answer, str(pw.input.structure[0]))
+        answer = 'mpiexec -n 2 pw.x -npool 2 -inp data/al_pw.in > scf.out< /dev/null'
+        self.assertEqual( pw.cmdLine(), answer )
                 
 if __name__ == '__main__':
     unittest.main()               

@@ -63,9 +63,9 @@ class CPTask(QETask):
             name = sectionName
 
         self.setting.section(name, configDic)
-        self.input = CPInput( self.setting.get('cpInput') )
+        self.input = CPInput( setting = self.setting )
         # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting        
+        #self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='cp')
         
         if filename != None or configString != None:

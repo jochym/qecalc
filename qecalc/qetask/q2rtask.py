@@ -14,7 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.qesinput import QESInput
 from qeparser.qeoutput import QEOutput
 
 class Q2RTask(QETask):
@@ -62,9 +62,9 @@ class Q2RTask(QETask):
 
         self.setting.section(name, configDic)
 
-        self.input = QEInput(filename = self.setting.get('q2rInput'), type = 'q2r')
+        self.input = QESInput(setting = self.setting, type = 'q2r')
         # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting
+        #self.input._setting = self.setting
         self.output = QEOutput(self.setting, type = 'q2r')
         
         if filename != None or configString != None:
@@ -87,8 +87,7 @@ class Q2RTask(QETask):
 
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 19, 2009 3:12:40 PM$"

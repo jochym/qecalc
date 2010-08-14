@@ -134,7 +134,7 @@ class QETask(object):
 #            cleanOutDir = self.cleanOutDir
 #        if cleanOutDir != None:
 #            self.cleanOutputDir(cleanOutDir)
-        self.input.parse()
+        #self.input.parse()
         self.syncSetting() # sync setting with QE input file
         self.input.save()
         self.cleanOutputDir(cleanOutDir)

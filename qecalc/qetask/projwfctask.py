@@ -16,7 +16,7 @@
 # and open the template in the editor.
 
 from qetask import QETask
-from qeparser.qeinput import QEInput
+from qeparser.qesinput import QESInput
 from qeparser.qeoutput import QEOutput
 
 class ProjwfcTask(QETask):
@@ -65,9 +65,9 @@ class ProjwfcTask(QETask):
             name = sectionName
 
         self.setting.section(name, configDic)
-        self.input = QEInput(self.setting.get('projwfcInput'), type = 'projwfc')
+        self.input = QESInput( setting = self.setting, type = 'projwfc')
         # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting        
+        #self.input._setting = self.setting        
         self.output = QEOutput(self.setting, type='projwfc')
         
         if filename != None or configString != None:
