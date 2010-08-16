@@ -23,10 +23,10 @@ from qecalc.multiphononcalc import MultiPhononCalc
 # to obtain total DOSes
 # a,b,c,energy - fitting objects. fitted value is accessible through fittedValue
 class VoluPhon():
-    def __init__(self, fname, prcntVolume):
+    def __init__(self, prcntVolume, filename = None ):
         #will  need this unless QE has improved
         #self.mphonQHA = QEPhonQHA(fname)
-        self.mphon = MultiPhononCalc(fname)
+        self.mphon = MultiPhononCalc(filename)
         self.__prcntVolume = prcntVolume
 
 
