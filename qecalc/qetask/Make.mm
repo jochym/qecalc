@@ -44,6 +44,7 @@ EXPORT_PYTHON_MODULES = \
     cptask.py \
     d3task.py \
     dostask.py \
+    ProjwfcTask \
     dynmattask.py \
     __init__.py \
     matdyntask.py \

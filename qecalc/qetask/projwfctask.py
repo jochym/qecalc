@@ -84,8 +84,7 @@ class ProjwfcTask(QETask):
             self.setting.syncPathInNamelist(varName, 'inputpp', varName, \
                                                 self.input, self._path_defaults)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Jan 20, 2010 5:24:23 PM$"

@@ -7,7 +7,7 @@ from qecalc.qetask.q2rtask import Q2RTask
 from qecalc.qetask.matdyntask import MatdynTask
 from qecalc.qetask.dynmattask import DynmatTask
 from qecalc.qetask.dostask import DOSTask
-#from qecalc.qetask.projwfctask import ProjwfcTask  # For some reasons it throws import exception
+from qecalc.qetask.projwfctask import ProjwfcTask
 from qecalc.qetask.d3task import D3Task
 from qecalc.qetask.cptask import CPTask
 
