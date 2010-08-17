@@ -391,7 +391,6 @@ V   50.9415 V.pbe-n-van.UPF
 Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
 """
         
-        print self.input.toString()
         self.assertEqual(str(self.input.structure), answer1)
 
         self.input.structure.load(source = 'matter', structure = struct, \
