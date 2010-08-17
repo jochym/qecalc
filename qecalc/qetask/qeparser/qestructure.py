@@ -15,17 +15,11 @@
 
 from qeatom import QEAtom
 
-try:
-    from diffpy.Structure.structure import Structure
-    from diffpy.Structure.lattice import cosd, Lattice
-    from diffpy.Structure.SymmetryUtilities import equalPositions
-    from diffpy.Structure.Parsers import inputFormats
-    from diffpy.Structure.Parsers import outputFormats
-    
-except ImportError:
-    from matter import Structure, Lattice
-    from matter.Lattice import cosd
-    from matter.SymmetryUtilities import equalPositions
+from diffpy.Structure.structure import Structure
+from diffpy.Structure.lattice import cosd, Lattice
+from diffpy.Structure.SymmetryUtilities import equalPositions
+from diffpy.Structure.Parsers import inputFormats
+from diffpy.Structure.Parsers import outputFormats
 
 from qelattice import QELattice
 import numpy
@@ -520,7 +514,13 @@ l
     def load(self, source, **args):
         task = {
             'diffpy': self._setStructureFromDiffpyStructure,
+            'matter': self._setStructureFromMatter,
         }
+
+        if source == 'matter':
+            if 'ibrav' in args and args['ibrav'] != 0:
+                task['matter'] = self._setReducedStructureFromMatter
+        
         if source == 'diffpy':
             if 'ibrav' in args and args['ibrav'] != 0:
                 task['diffpy'] = self._setReducedStructureFromDiffpyStructure
@@ -529,6 +529,36 @@ l
         
         self.lattice._qeInput.update()
 
+
+
+    def _matter_diffpy(self, structure):
+        """
+        converts matter Structure object to diffpy.Structure
+        returns diffpy.Structure object
+        """
+        l = structure.lattice
+        lat = Lattice( a=l.a, b=l.b, c=l.c, alpha=l.alpha, \
+                        beta=l.beta, gamma=l.gamma)
+        stru = Structure( lattice  = lat)
+        for a in structure:
+            stru.addNewAtom(atype = a.symbol, xyz = a.xyz, name = a.symbol, \
+                       anisotropy=a.anisotropy, U=a.U, Uisoequiv=a.Uisoequiv, \
+                       lattice=lat)        
+        return stru
+                    
+
+    def _setStructureFromMatter(self, structure, massList = [], psList = [], ibrav = 0):
+        
+        stru = self._matter_diffpy( structure )
+        self._setStructureFromDiffpyStructure(structure=stru,\
+                                  massList=massList, psList=psList,ibrav=ibrav)
+    
+    
+    def _setReducedStructureFromMatter(self, structure, ibrav, massList = [], psList = []):
+        stru = self._matter_diffpy( structure )
+        self._setReducedStructureFromDiffpyStructure(structure = stru, \
+                                 ibrav=ibrav, massList=massList,psList=psList) 
+        
 
     def _setStructureFromDiffpyStructure(self, structure, massList = [], psList = [], ibrav = 0):
         """

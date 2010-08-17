@@ -12,13 +12,9 @@
 # See LICENSE.txt for license information.
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-try:
-    from diffpy.Structure import Structure
-    from diffpy.Structure.lattice import Lattice, cosd
-except ImportError:
-    from matter import Structure, Lattice
-    from matter.Lattice import cosd
 
+from diffpy.Structure import Structure
+from diffpy.Structure.lattice import Lattice, cosd    
 
 from math import sqrt, degrees
 import numpy

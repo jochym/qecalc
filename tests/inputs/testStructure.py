@@ -18,14 +18,6 @@ import unittest
 import os
 from qecalc.qetask.qeparser.pwinput import PWInput
 
-try:
-    from diffpy.Structure.structure import Structure
-    from diffpy.Structure.atom import Atom
-    from diffpy.Structure.lattice import Lattice
-except ImportError:
-    from matter import Structure, Atom, Lattice
-
-
 # variables
 tests_dir = os.path.dirname(os.path.abspath('testStructure.py'))
 testdata_dir = os.path.join(tests_dir, 'data')
@@ -263,6 +255,9 @@ Te  0.0000
    
         
     def test_load_diffpy(self): 
+        from diffpy.Structure.structure import Structure
+        from diffpy.Structure.atom import Atom
+        from diffpy.Structure.lattice import Lattice        
         
         at1 = Atom('V', [0., 0., 0.])
         at2 = Atom('V', [0.5, 0., 0.])
@@ -287,13 +282,14 @@ Te  0.0000
         struct = Structure( [ at1, at2, at3, at4, at5, at6, at7, at8, at9, \
                              at10, at11, at12, at13, at14, at15, at16], \
                              lattice = Lattice(a, a, a, 90, 90, 90) )
+        #print struct
         massList = [50.9415, 55.847]
         psList  = ['V.pbe-n-van.UPF', 'Fe.pbe-nd-rrkjus.UPF']
 
         self.input.structure.load(source = 'diffpy', structure = struct, \
                                 ibrav = 2, massList = massList, psList = psList)                
         
-        answer = """"Face Centered Cubic" cell:
+        answer1 = """"Face Centered Cubic" cell:
 -5.66300000  0.00000000  5.66300000
  0.00000000  5.66300000  5.66300000
 -5.66300000  5.66300000  0.00000000
@@ -307,12 +303,14 @@ Fe      0.75000000  0.25000000  0.25000000
 V   50.9415 V.pbe-n-van.UPF
 Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
 """
-        self.assertEqual(str(self.input.structure), answer)
+        
+        #print self.input.toString()
+        self.assertEqual(str(self.input.structure), answer1)
 
         self.input.structure.load(source = 'diffpy', structure = struct, \
                                 massList = massList, psList = psList)
         
-        answer = """"generic" cell:
+        answer2 = """"generic" cell:
  11.32600000  0.00000000  0.00000000
  0.00000000  11.32600000  0.00000000
  0.00000000  0.00000000  11.32600000
@@ -338,7 +336,94 @@ V       1.49836538  4.49509614  4.49509614
 V   50.9415 V.pbe-n-van.UPF
 Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
 """
-        self.assertEqual(str(self.input.structure), answer)
+        self.assertEqual(str(self.input.structure), answer2)
+
+
+    def test_load_matter(self): 
+        from matter import Structure, Atom, Lattice
+        #try:
+        #    from matter import Structure, Atom, Lattice
+        #except ImportError:
+        #    return       
+        
+        at1 = Atom('V', [0., 0., 0.])
+        at2 = Atom('V', [0.5, 0., 0.])
+        at3 = Atom('V', [0., 0.5, 0.])
+        at4 = Atom('V', [0., 0., 0.5])
+        at5 = Atom('V', [0.5, 0.5, 0.])
+        at6 = Atom('V', [0., 0.5, 0.5])
+        at7 = Atom('V', [0.5, 0., 0.5])
+        at8 = Atom('V', [0.5, 0.5, 0.5])
+    
+        at9 = Atom('V', [0.25, 0.25, 0.25])
+        at10 = Atom('Fe', [0.75, 0.25, 0.25])
+        at11 = Atom('V', [0.75, 0.75, 0.25])
+        at12 = Atom('Fe', [0.25, 0.75, 0.25])
+    
+        at13 = Atom('Fe', [0.25, 0.25, 0.75])
+        at14 = Atom('V', [0.75, 0.25, 0.75])
+        at15 = Atom('Fe', [0.75, 0.75, 0.75])
+        at16 = Atom('V', [0.25, 0.75, 0.75])          
+# set a in angstrom
+        a =  2.*5.663/1.889725989
+        struct = Structure( [ at1, at2, at3, at4, at5, at6, at7, at8, at9, \
+                             at10, at11, at12, at13, at14, at15, at16], \
+                             lattice = Lattice(a, a, a, 90, 90, 90) )
+        #print struct
+        massList = [50.9415, 55.847]
+        psList  = ['V.pbe-n-van.UPF', 'Fe.pbe-nd-rrkjus.UPF']
+
+        self.input.structure.load(source = 'matter', structure = struct, \
+                                ibrav = 2, massList = massList, psList = psList)                
+        
+        answer1 = """"Face Centered Cubic" cell:
+-5.66300000  0.00000000  5.66300000
+ 0.00000000  5.66300000  5.66300000
+-5.66300000  5.66300000  0.00000000
+
+Atomic positions in units of lattice parametr "a":
+V       0.00000000  0.00000000  0.00000000  
+V       0.50000000  0.00000000  0.00000000  
+V       0.25000000  0.25000000  0.25000000  
+Fe      0.75000000  0.25000000  0.25000000  
+
+V   50.9415 V.pbe-n-van.UPF
+Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
+"""
+        
+        print self.input.toString()
+        self.assertEqual(str(self.input.structure), answer1)
+
+        self.input.structure.load(source = 'matter', structure = struct, \
+                                massList = massList, psList = psList)
+        
+        answer2 = """"generic" cell:
+ 11.32600000  0.00000000  0.00000000
+ 0.00000000  11.32600000  0.00000000
+ 0.00000000  0.00000000  11.32600000
+
+Atomic positions in units of lattice parametr "a":
+V       0.00000000  0.00000000  0.00000000  
+V       2.99673076  0.00000000  0.00000000  
+V       0.00000000  2.99673076  0.00000000  
+V       0.00000000  0.00000000  2.99673076  
+V       2.99673076  2.99673076  0.00000000  
+V       0.00000000  2.99673076  2.99673076  
+V       2.99673076  0.00000000  2.99673076  
+V       2.99673076  2.99673076  2.99673076  
+V       1.49836538  1.49836538  1.49836538  
+Fe      4.49509614  1.49836538  1.49836538  
+V       4.49509614  4.49509614  1.49836538  
+Fe      1.49836538  4.49509614  1.49836538  
+Fe      1.49836538  1.49836538  4.49509614  
+V       4.49509614  1.49836538  4.49509614  
+Fe      4.49509614  4.49509614  4.49509614  
+V       1.49836538  4.49509614  4.49509614  
+
+V   50.9415 V.pbe-n-van.UPF
+Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
+"""
+        self.assertEqual(str(self.input.structure), answer2)
 
 
     def test_list(self):
