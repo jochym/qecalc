@@ -17,6 +17,7 @@ PACKAGE = qetask/qeparser
 BUILD_DIRS = \
 	inputs \
         outputs \
+	qestructureparser \
 
 
 OTHER_DIRS = \

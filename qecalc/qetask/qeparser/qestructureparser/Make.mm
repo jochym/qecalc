@@ -13,7 +13,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 PROJECT = qecalc
-PACKAGE = qetask/qeparser/outputs
+PACKAGE = qetask/qeparser/qestructureparser
 
 BUILD_DIRS = \
 
