@@ -20,7 +20,7 @@ from qetorque import QETorque
 class QETask(object):
     """
     Base abstract class for 'TaskNameTask' family of classes. It also provides
-    the interface to loumch tasks
+    the interface to launch tasks
 
     All user defined tasks should be derived from this class
 

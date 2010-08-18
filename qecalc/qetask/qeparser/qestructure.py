@@ -28,7 +28,7 @@ from orderedDict import OrderedDict
 
 
 class QEStructure( Structure ):
-    """
+    """ 
     Parses and handles Quantum Espresso structure information. 
     QEStructure is inherited from a diffpy.Structure, which is in turn 
     inherited from a Python list. 
@@ -37,6 +37,7 @@ class QEStructure( Structure ):
     setslice methods are overloaded so that the lattice attribute 
     of atoms get set to lattice.
     
+    
     QEStructure, QELattice and QEAtom objects  contain a hidden QEInput 
     pointer to current Quantum Espresso parsing object. 
     if QEInput.autoUpdate = True (default),any change in a property from
@@ -44,19 +45,24 @@ class QEStructure( Structure ):
     QEInput.update(). In that case, QEInput.save() or QEInput.toString() will
     immediately yield updated QE input file or a string
     
+    
     All properties are mutually synchronized. E.g. change in a lattice parameter
     will also affect other lattice parameters as well as atomic positions  
     according to the lattice type (ibrav)
     
+    
     All relevant methods from diffpy.Structure are redefined.
+    
     
     QEStructure read only properties, automatically synchronized with current 
     list of Atoms:
       
     nat                  -- "number of atoms" (integer)
+    
     ntyp                 -- "number of atomic types" (integer)
+    
     atomicSpecies        -- OrderedDic of AtomicSpecies class instances 
-                           (see AtomicSpecies class definition)
+                            (see AtomicSpecies class definition)
                            
     Other properties:
     
@@ -65,8 +71,8 @@ class QEStructure( Structure ):
                            
     Note: This version of QEStructure does not support multiple images from 
     QE input files
-    """
     
+    """  
     def __init__(self, atoms = [], lattice = None, filename = None, qeInput = None):
         """
         atoms        -- list of QEAtom atom instances or a QEStructure object

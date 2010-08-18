@@ -54,13 +54,17 @@ class QEAtom(object):
 
     Data members:
         element     -- type of the atom
+        
         xyz         -- fractional coordinates
+        
         name        -- atom label
+        
         xyz_cartn   -- absolute Cartesian coordinates, property synced with xyz
+        
         lattice     -- coordinate system for fractional coordinates,
                        an instance of Lattice or None for Cartesian system
+                       
 
-    Private data:
     """
 
 
@@ -178,7 +182,7 @@ class QEAtom(object):
         self.lattice._qeInput.update()
         
     potential = property(_get_potential, _set_potential, doc =
-        """potential of an atom """)
+        """property. Name of paseudopotential of an atom """)
     
     
     def _get_optConstraint(self):
