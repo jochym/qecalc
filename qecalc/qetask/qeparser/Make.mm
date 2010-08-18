@@ -43,6 +43,7 @@ distclean::
 # export
 
 EXPORT_PYTHON_MODULES = \
+    ParserErrors.py \
     block.py \
     card.py \
     d3input.py \
