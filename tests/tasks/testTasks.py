@@ -69,6 +69,17 @@ class TestStructureMethods(unittest.TestCase):
         self.assertEqual( answer, str(pw.input.structure[0]))
         answer = 'mpiexec -n 2 pw.x -npool 2 -inp data/al_pw.in > scf.out< /dev/null'
         self.assertEqual( pw.cmdLine(), answer )
+
+
+    def test_configString(self):
+        input = os.path.join(testdata_dir, 'al_pw.in') 
+        output = os.path.join(testdata_dir, 'mgalb4_pw.out') 
+        config = "[pw.x]\npwInput: %s\npwOutput: %s" %(input, output)
+
+        pw = PWTask(configString = config)
+        
+        pw.output.parse()
+        #print pw.output.property('total energy')
                 
 if __name__ == '__main__':
     unittest.main()               
