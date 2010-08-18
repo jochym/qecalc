@@ -316,7 +316,7 @@ class QEStructure( Structure ):
         return labels
         
     def parseInput(self, qeInput):
-        from qestructureparser.qestructureparser import QEStructureParser
+        from qecalc.qetask.qeparser.qestructureparser.qestructureparser import QEStructureParser
         new_structure = QEStructureParser(qeInput).parseqeInput()
         self.__Init(new_structure)
     
