@@ -13,11 +13,14 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from qesinput import QESInput
-from qestructure import QEStructure
-from pwkpoints import PWKpoints
+from qecalc.qetask.qeparser.qesinput import QESInput
+from qecalc.qetask.qeparser.qestructure import QEStructure
+from qecalc.qetask.qeparser.pwkpoints import PWKpoints
 
 class PWInput(QESInput):
+    """
+    pw.x input 
+    """
     def __init__(self, filename=None, config=None, type = 'pw', setting = None):
         QESInput.__init__(self,filename, config, type = type, setting = setting)        
         self._structure = QEStructure(self)

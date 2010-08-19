@@ -340,11 +340,10 @@ Fe  55.8470 Fe.pbe-nd-rrkjus.UPF
 
 
     def test_load_matter(self): 
-        from matter import Structure, Atom, Lattice
-        #try:
-        #    from matter import Structure, Atom, Lattice
-        #except ImportError:
-        #    return       
+        try:
+            from matter import Structure, Atom, Lattice
+        except ImportError:
+            return       
         
         at1 = Atom('V', [0., 0., 0.])
         at2 = Atom('V', [0.5, 0., 0.])

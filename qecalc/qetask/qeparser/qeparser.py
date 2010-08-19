@@ -61,7 +61,7 @@ class QEParser:
         self.configText = configText
         self.namelistRef    = None
         self.cardRef        = None
-        self.type           = type
+        self.type           = type.lower()
 
 
     def parse(self):

@@ -36,16 +36,14 @@ class QEStructure( Structure ):
     All list functionality is preserved.  setitem and 
     setslice methods are overloaded so that the lattice attribute 
     of atoms get set to lattice.
-    
-    
+       
     QEStructure, QELattice and QEAtom objects  contain a hidden QEInput 
     pointer to current Quantum Espresso parsing object. 
     if QEInput.autoUpdate = True (default),any change in a property from
     QEStructure, QELattice, or QEAtom will automatically invoke 
     QEInput.update(). In that case, QEInput.save() or QEInput.toString() will
     immediately yield updated QE input file or a string
-    
-    
+       
     All properties are mutually synchronized. E.g. change in a lattice parameter
     will also affect other lattice parameters as well as atomic positions  
     according to the lattice type (ibrav)

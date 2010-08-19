@@ -164,17 +164,56 @@ _________________________________________
 QEAtom
 -------------------------------------------------
 
+:mod:`qecalc.qetask.qeparser.qeatom`
+___________________________________________
+
 .. automodule:: qecalc.qetask.qeparser.qeatom
    :members:
    :show-inheritance:
    
-   
+  
 QEInput
 -------------------------------------------------
+
+
+:mod:`qecalc.qetask.qeparser.pwinput`
+_________________________________________
 
 .. automodule:: qecalc.qetask.qeparser.pwinput
    :members:
    :show-inheritance:
+   
+   
+:mod:`qecalc.qetask.qeparser.phinput`
+_________________________________________
+
+.. automodule:: qecalc.qetask.qeparser.phinput
+   :members:
+   :show-inheritance:
+   
+   
+:mod:`qecalc.qetask.qeparser.matdyninput`
+_________________________________________
+
+.. automodule:: qecalc.qetask.qeparser.matdyninput
+   :members:
+   :show-inheritance:       
+      
+
+:mod:`qecalc.qetask.qeparser.d3input`
+_________________________________________
+
+.. automodule:: qecalc.qetask.qeparser.d3input
+   :members:
+   :show-inheritance: 
+
+      
+:mod:`qecalc.qetask.qeparser.cpinput`
+_________________________________________
+
+.. automodule:: qecalc.qetask.qeparser.cpinput
+   :members:
+   :show-inheritance:    
    
 
 .. todo: Class overview of QECalc

@@ -4,6 +4,7 @@
 QEInput - parses, modifies and creates Quantum Espresso (QE) configuration files
 
 Features:
+
     - Parses existing configuration file
     - Adds, edits and removes parameters from/to a namelist or a card
     - Creates new configuration file
@@ -11,8 +12,7 @@ Features:
 Parameters of QE configuration files are defined in the Doc directory of the
 source code. You can download it from:
 
-    http://www.quantum-espresso.org/download.php
-
+http://www.quantum-espresso.org/download.php
 
 Main Use Cases:
     - Parse existing configuration file, modify parameters in namelists or cards
@@ -71,7 +71,7 @@ type =
 
 class QEInput(object):
 
-    def __init__(self, filename=None, config=None, type='pw'):
+    def __init__(self, filename=None, config=None, type='pw', parse=True):
         """
         Initializes QEInput by passing either filename or config (not both)
         parameters
@@ -82,7 +82,7 @@ class QEInput(object):
         """
         self.filename       = filename
         self.config         = config
-        self._type          = type
+        self._type          = type.lower()
         self.filters        = []
         self.header         = None
         self.namelists      = OrderedDict()
@@ -91,11 +91,8 @@ class QEInput(object):
         self.qe             = None          # DEPRICATED
         self.namelistRef    = None
         self.cardRef        = None
-        
-        # Nikolay:
-        self.parser     = QEParser(filename, config, self._type)    #filename, config, type)
-        (self.namelistRef, self.cardRef)    = self.parser.setReferences()
-        #self._read(filename, config)
+
+        self._read(filename, config, parse)
 
 
     def parse(self):
@@ -336,11 +333,12 @@ class QEInput(object):
         self._read(config=config)
 
 
-    def _read(self, filename=None, config=None):
+    def _read(self, filename=None, config=None, parse=True):
         "Reads and parses configuration input specified by kwds parameters"
         self.parser     = QEParser(filename, config, self._type)    #filename, config, type)
         (self.namelistRef, self.cardRef)    = self.parser.setReferences()
-        if filename or config:
+
+        if parse and (filename or config):
             QEInput.parse(self)     # Avoid calling method parse() from subclass
 
         self.qe = [self.header, self.namelists, self.cards, self.attach]
