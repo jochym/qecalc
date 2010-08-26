@@ -658,7 +658,27 @@ Fe  55.8470 Fe_potential
         s1 = self.input.structure.toString()
         s2 =  new_struct.toString()
         self.assertNotEqual(s1, s2)
+
+
+    def test_reduce(self):
+        filename = os.path.join(testdata_dir, 'PbTe.cif')
+        self.input.structure.read(filename, 'cif')
         
+        self.input.structure.reduce(ibrav = 2)
+        
+        answer = """"Face Centered Cubic" cell:
+-6.10475981  0.00000000  6.10475981
+ 0.00000000  6.10475981  6.10475981
+-6.10475981  6.10475981  0.00000000
+
+Atomic positions in crystal coordinates:
+Pb2+    -0.50000000  1.50000000 -0.50000000  
+Te      0.00000000  0.00000000  0.00000000  
+
+Pb2+ 0.0000 
+Te  0.0000 
+"""
+        self.assertEqual(str(self.input.structure), answer)        
         
 if __name__ == '__main__':
     #unittest.main()

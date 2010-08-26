@@ -69,10 +69,14 @@ class QELattice(object):
         
         # copy constructor:
         if isinstance(ibrav, QELattice) or lattice != None:
-            self.setLattice( ibrav = lattice.ibrav, a = lattice.a, \
+            if lattice.ibrav > 0:
+                self.setLattice( ibrav = lattice.ibrav, a = lattice.a, \
                                          b = lattice.b, c = lattice.c,
                                          cBC = lattice.cBC, cAC = lattice.cAC,\
-                                         cAB = lattice.cAB )
+                                         cAB = lattice.cAB)
+            else:
+                self.setLattice( ibrav = lattice.ibrav, a = lattice.a, \
+                                                          base = lattice.base )            
             # copy input:
             from pwinput import PWInput        
             self._qeInput = PWInput()
@@ -466,6 +470,12 @@ coordinates unchanged""")
 
     type = property(_get_type, _set_type, doc ="""QE lattice type: 'celldm',
     'traditional' or 'generic cubic', 'generic hexagonal'(implies ibrav = 0""")
+    
+    
+    def _get_base(self):
+        return self._base
+    
+    base = property(_get_base, doc ="""QE base array""")
 
     def _getQEBaseFromParCos( self, ibrav = 1, a = 1., b = 1., c = 1.,
                                     cBC = 0.,cAC = 0. ,cAB = 0.):

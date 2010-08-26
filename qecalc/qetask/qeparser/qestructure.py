@@ -151,7 +151,7 @@ class QEStructure( Structure ):
         Tu = numpy.dot(self.lattice.diffpy().normbase, new_lattice.diffpy().recnormbase)
         for a in self:
             a.xyz = numpy.dot(a.xyz, Tx)
-        tmpInput = self.latice._qeInput
+        tmpInput = self.lattice._qeInput
         self.lattice = new_lattice
         self.lattice._qeInput = tmpInput
         self.lattice._qeInput.structure = self        
@@ -175,6 +175,8 @@ class QEStructure( Structure ):
         adup = copy and QEAtom(a) or a
         adup.lattice = self.lattice
         list.append(self, adup)
+        if hasattr(self, '_qeInput') and  self._qeInput != None:
+            self._qeInput.update()
         return
 
     def insert(self, idx, a, copy=True):
@@ -191,6 +193,8 @@ class QEStructure( Structure ):
         adup = copy and QEAtom(a) or a
         adup.lattice = self.lattice
         list.insert(self, idx, adup)
+        if hasattr(self, '_qeInput') and  self._qeInput != None:
+            self._qeInput.update()
         return
 
     def extend(self, atoms, copy=True):
@@ -208,6 +212,8 @@ class QEStructure( Structure ):
         else:       adups = atoms
         for a in adups: a.lattice = self.lattice
         list.extend(self, adups)
+        if hasattr(self, '_qeInput') and  self._qeInput != None:
+            self._qeInput.update()
         return
 
     def __setitem__(self, idx, a, copy=True):
@@ -224,6 +230,8 @@ class QEStructure( Structure ):
         adup = copy and QEAtom(a) or a
         adup.lattice = self.lattice
         list.__setitem__(self, idx, adup)
+        if hasattr(self, '_qeInput') and  self._qeInput != None:
+            self._qeInput.update()
         return
 
     def __setslice__(self, lo, hi, atoms, copy=True):
@@ -242,6 +250,8 @@ class QEStructure( Structure ):
         else:       adups = atoms
         for a in adups: a.lattice = self.lattice
         list.__setslice__(self, lo, hi, adups)
+        if hasattr(self, '_qeInput') and  self._qeInput != None:
+            self._qeInput.update()
         return
     
             
@@ -469,49 +479,44 @@ l
         qeInput.save()
 
 
-    def reduce(self, ibrav = None, lattice = None): 
+    def reduce(self, ibrav = None): 
         """
-        Reduce the structure instance according to provided QELattice instance or 
-        lattice type (ibrav)        
+        Reduces a structure instance with nonprimitive lattice ( i.e. solves
+        for equivalent atomic positions) according to specified  lattice type (ibrav). 
+        Each ibrav number corresponds to a specific primitive lattice 
+        (see QE documentation).         
         """
-        # is not functional yet
-        return
-        lat = self.lattice
-        if ibrav == None and lattice == None:
-            ibrav = self.lattice.ibrav
-        else:
-            if lattice != None:
-                lat = lattice
-                ibrav = lat.ibrav
-                
-#                self.lattice.setLattice( ibrav = lattice.ibrav, a = lattice.a, \
-#                                         b = lattice.b, c = lattice.c,
-#                                         cBC = lattice.cBC, cAC = lattice.cAC,\
-#                                         cAB = lattice.cAB )
-             
-        qeLattice = QELattice(ibrav = ibrav, a = lat.a, b = lat.b, \
-                              c = lat.c,  cBC =  lat.cBC, cAC = lat.cAC, \
-                              cAB = lat.cAB)        
-        qeLattice._qeInput = self._qeInput
-        self.lattice = qeLattice
         
-        self.placeInLattice( qeLattice )
+        ib = self.lattice.ibrav
+        if ibrav != None:
+            ib = ibrav            
+        
+        a = self.lattice.diffpy().a
+        a = self.lattice.diffpy().a
+        b = self.lattice.diffpy().b
+        c = self.lattice.diffpy().c
+        cAB = cosd(self.lattice.diffpy().gamma)
+        cBC = cosd(self.lattice.diffpy().alpha)
+        cAC = cosd(self.lattice.diffpy().beta)
+        qeLattice = QELattice(ibrav = ib, a = a, b = b, c = c,  cBC =  cBC, \
+                              cAC = cAC, cAB = cAB)        
+     
+        qeLattice._qeInput = self._qeInput
+        
+        reducedStructure = QEStructure(self)
+        
+        reducedStructure.placeInLattice( qeLattice )
 
         # collect atoms that are at equivalent position to some previous atom
         duplicates = set([a1
-            for i0, a0 in enumerate(self) for a1 in self[i0+1:]
-                if   self._element(a0) == self._element(a1) and equalPositions(a0.xyz, a1.xyz, eps=1e-4)])
+            for i0, a0 in enumerate(reducedStructure) for a1 in reducedStructure[i0+1:]
+                if  a0.element == a1.element and equalPositions(a0.xyz, a1.xyz, eps=1e-4)])
 
         
         # Filter out duplicate atoms.  Use slice assignment so that
         # reducedStructure is not replaced with a list.
-        reducedStructure[:] = [a for a in reducedStructure if not a in duplicates]
-        
-        
-            
-        if ibrav != None:
-            self.lattice.ibrav = ibrav
-        else: pass
+        self.lattice = qeLattice
+        self[:] = [a for a in reducedStructure if not a in duplicates]
         
         return
 
