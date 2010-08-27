@@ -24,12 +24,21 @@ class Q2RTask(QETask):
 
         self.setSerial()
 
+        # ****************** Task Specifics ************************************
+        self._inputConstructor = 'QESInput'
+        # input/output defaults
+        self._configDic = {
+        'q2rInput': 'q2r.in',
+        'q2rOutput': 'q2r.out',
+        }        
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
         'fildyn': None,
         'flfrc': None,
-        }
+        }        
+        self._type = 'q2r'
+        # **********************************************************************
 
         self.readSetting(filename, configString, sectionName)
 
@@ -39,36 +48,6 @@ class Q2RTask(QETask):
 
     def name(self):
         return 'q2r.x'
-
-
-    def readSetting(self, filename = None, configString = None, sectionName = None):
-        """
-        Initializes Setting, QEInput and QEOutout classes 
-        and synchronizes with QEInput object
-        """
-        configDic = {
-        'q2rInput': 'q2r.in',
-        'q2rOutput': 'q2r.out',
-#        'fildyn': None,
-#        'flfrc': None
-        }
-        
-        QETask.readSetting(self, filename, configString)
-        
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-
-        self.input = QESInput(setting = self.setting, type = 'q2r')
-        # add pointer to setting for input filenames synchronization 
-        #self.input._setting = self.setting
-        self.output = QEOutput(self.setting, type = 'q2r')
-        
-        if filename != None or configString != None:
-            self.syncSetting() 
 
 
     def syncSetting(self):

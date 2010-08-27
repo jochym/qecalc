@@ -26,12 +26,21 @@ class ProjwfcTask(QETask):
 
         self.setSerial()
 
+        # ****************** Task Specifics ************************************
+        self._inputConstructor = 'QESInput'
+        # input/output defaults        
+        self._configDic = {
+        'projwfcInput' : 'pdos.in',
+        'projwfcOutput': 'pdos.out',
+        }                           
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
         'outdir': './',
         'prefix': 'pwscf',
         }
+        self._type = 'projwfc'
+        # **********************************************************************        
         
         self.readSetting(filename, configString, sectionName)
 
@@ -44,34 +53,6 @@ class ProjwfcTask(QETask):
 
     def name(self):
         return 'projwfc.x'
-
-
-    def readSetting(self, filename = None, configString = None, sectionName = None, parse = True):
-        """
-        Initializes Setting, QEInput and QEOutout classes 
-        and synchronizes with QEInput object
-        """
-        
-        configDic = {
-        'projwfcInput' : 'pdos.in',
-        'projwfcOutput': 'pdos.out',
-        }     
-        
-        QETask.readSetting(self, filename, configString)
-        
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-        self.input = QESInput( setting = self.setting, type = 'projwfc')
-        # add pointer to setting for input filenames synchronization 
-        #self.input._setting = self.setting        
-        self.output = QEOutput(self.setting, type='projwfc')
-        
-        if filename != None or configString != None:
-            self.syncSetting()
 
 
     def syncSetting(self):

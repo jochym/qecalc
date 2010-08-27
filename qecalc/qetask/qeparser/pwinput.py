@@ -21,13 +21,17 @@ class PWInput(QESInput):
     """
     pw.x input 
     """
-    def __init__(self, filename=None, config=None, type = 'pw', setting = None):
-        QESInput.__init__(self,filename, config, type = type, setting = setting)        
+    def __init__(self, filename=None, config=None, type = 'pw', setting = None,\
+                                                                 parse = True):              
         self._structure = QEStructure(self)
         self.kpoints = PWKpoints(self)
         # Boolean flag, if True, QEInput is updated on change of any property in
         # structure, lattice, or atom
-        self.autoUpdate = True           
+        self.autoUpdate = True
+
+        QESInput.__init__(self,filename, config, type = type, setting = setting,\
+                                                                  parse = parse) 
+            
               
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary

@@ -43,8 +43,7 @@ class PWCalc(QECalc):
         self._populateTasks(filename, configString, sectionList, taskList)
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 19, 2009 3:05:10 PM$"

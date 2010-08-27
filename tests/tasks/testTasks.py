@@ -80,6 +80,11 @@ class TestStructureMethods(unittest.TestCase):
         
         pw.output.parse()
         #print pw.output.property('total energy')
+
+    def test_output(self):
+        matdyn = self.task['matdyn']
+        matdyn.output.parse()
+        self.assertEqual( 206.542172, matdyn.output.property('multi phonon')[1][34][2])
                 
 if __name__ == '__main__':
     unittest.main()               

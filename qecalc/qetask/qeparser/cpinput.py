@@ -19,8 +19,8 @@ class CPInput(PWInput):
     """
     cp.x input is compatible with pw.x input
     """
-    def __init__(self, filename=None, config=None, setting = None):
-        PWInput.__init__(self,filename, config, type='cp', setting = setting)
+    def __init__(self, filename=None, config=None, setting = None, parse = True):
+        PWInput.__init__(self,filename, config, type='cp', setting = setting, parse = parse)
 
 textA = """
   &control

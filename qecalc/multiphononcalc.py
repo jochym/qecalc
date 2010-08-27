@@ -63,22 +63,15 @@ class MultiPhononCalc(QECalc):
                           ['q2r', Q2RTask],
                           ['matdyn', MatdynTask]
                          ]
-        # Merging map sets tasks to be mergered. Last two columns identify name
+        # Merging map sets tasks to be merged. Last two columns identify name
         # of default task (its input and output objects will be directly
-        #accesible) and last column is the name of merged task object (e.g.'pwph')
+        #accessible) and last column is the name of merged task object (e.g.'pwph')
 
         #is not implemented yet !!!!
         self._mergingMap = [ ['pw', 'ph', 'pw','pwph'],
                            ]
 
         self._populateTasks(filename, configString, sectionList, taskList)
-        #self._freqs = None
-        #self._modes = None
-        #self._qpts = None
-        #self.pw = PWTask(filename)
-        #self.ph = PHTask(filename)
-        #self.q2r = Q2RTask(filename)
-        #self.matdyn = MatdynTask(filename)
 
 
         self.pwph = PWPHMerger(self.pw,self.ph, cleanOutDir = True)
@@ -107,7 +100,7 @@ class MultiPhononCalc(QECalc):
         for i, atom in enumerate(self.pw.input.structure.atomicSpecies):
             amass = 'amass(' + str(i+1) + ')'
             self.ph.input.namelist('input').add(amass,atom.mass)
-        #syncronise outdir based on PW input
+        #sync outdir based on PW input
         self.ph.input.namelist('input').add('outdir', \
                              self.pw.input.namelist('control').param('outdir'))
 

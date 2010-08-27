@@ -24,6 +24,13 @@ class DynmatTask(QETask):
 
         self.setSerial()
 
+        # ****************** Task Specifics ************************************
+        self._inputConstructor = 'QESInput'
+        # input/output defaults        
+        self._configDic = {
+        'dynmatInput': 'dyn.in',
+        'dynmatOutput': 'dyn.out',
+        }                           
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
@@ -32,6 +39,8 @@ class DynmatTask(QETask):
         'filmol': 'dynmat.mold',
         'filxsf': 'dynmat.axsf',
         }
+        self._type = 'dynmat'
+        # **********************************************************************        
         
         self.readSetting(filename, configString, sectionName)
 
@@ -44,36 +53,6 @@ class DynmatTask(QETask):
 
     def name(self):
         return 'dynmat.x'
-
-
-    def readSetting(self, filename = None, configString = None, sectionName = None):
-        """
-        Initializes Setting, QEInput and QEOutout classes 
-        and synchronizes with QEInput object
-        """
-        
-        configDic = {
-        'dynmatInput': 'dyn.in',
-        'dynmatOutput': 'dyn.out',
-        }
-        
-        QETask.readSetting(self, filename, configString)
-        
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-
-        self.input = QESInput( setting = self.setting, type = 'dynmat')
-        # add pointer to setting for input filenames synchronization 
-        
-        #self.input._setting = self.setting        
-        self.output = QEOutput(self.setting, type = 'dynmat')
-        
-        if filename != None or configString != None:
-            self.syncSetting() 
 
 
     def syncSetting(self):

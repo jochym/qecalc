@@ -17,9 +17,11 @@ from qesinput import QESInput
 from phqpoints import PHQpoints
 
 class PHInput(QESInput):
-    def __init__(self, filename=None, config=None, setting = None):
-        QESInput.__init__(self,filename, config, type='ph', setting = setting)
+    def __init__(self, filename=None, config=None, setting = None, parse = True):
         self.qpoints = PHQpoints(self)
+        
+        QESInput.__init__(self,filename, config, type = 'ph', setting = setting,\
+                                                                  parse = parse)         
 
 
     def parse(self):

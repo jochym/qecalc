@@ -24,6 +24,13 @@ class MatdynTask(QETask):
 
         self.setSerial()
 
+        # ****************** Task Specifics ************************************
+        self._inputConstructor = 'MatdynInput'
+        # input/output defaults        
+        self._configDic = {
+        'matdynInput': 'matdyn.in',
+        'matdynOutput': 'matdyn.out',
+        }                           
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
@@ -32,6 +39,8 @@ class MatdynTask(QETask):
         'flfrq': 'matdyn.freq',
         'fldos': 'matdyn.dos'
         }
+        self._type = 'matdyn'
+        # **********************************************************************        
 
         self.readSetting(filename, configString, sectionName)
         
@@ -44,40 +53,7 @@ class MatdynTask(QETask):
 
 
     def name(self):
-        return 'matdyn.x'
-
-
-    def readSetting(self, filename = None, configString = None, sectionName = None):
-        """
-        Initializes Setting, QEInput and QEOutout classes 
-        and synchronizes with QEInput object
-        """
-        
-        configDic = {
-        'matdynInput': 'matdyn.in',
-#        'flfrc': None,
-        'matdynOutput': 'matdyn.out',
-#        'flvec': None,
-#        'flfrq': None,
-#        'fldos': None
-        }
-        
-        QETask.readSetting(self, filename, configString)
-        
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-
-        self.input = MatdynInput( setting = self.setting)
-        # add pointer to setting for input filenames synchronization 
-        self.input._setting = self.setting        
-        self.output = QEOutput(self.setting, type = 'matdyn')
-        
-        if filename != None or configString != None:
-            self.syncSetting()        
+        return 'matdyn.x'       
 
 
     def syncSetting(self):

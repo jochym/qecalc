@@ -37,10 +37,11 @@ class QETask(object):
         
         self.cleanOutDir = cleanOutDir
 
-        QETask.readSetting(self, filename, configString)
+        #QETask.readSetting(self, filename, configString)
 
 
-    def readSetting(self, filename = None, configString = None):
+    def readSetting(self, filename = None, configString = None, \
+                                                            sectionName = None):
         """
         Initializes setting class
         """
@@ -57,11 +58,14 @@ class QETask(object):
         'outdir': None
         }        
         
-        if filename == None and configString == None:
-            configString = ''
+       # if filename == None and configString == None:
+       #     configString = ''
        #     filename = 'config.ini'
-
-        self.setting = Setting(filename, configString)
+        if filename == None and configString == None:
+            self.setting = Setting(configString = "")
+        else:
+            self.setting = Setting(filename, configString)
+            
         self.setting.section(QETask.name(self), configDic)
         
 
@@ -76,7 +80,46 @@ class QETask(object):
             else:
                 self._torque = QETorque(self.setting.get('paraTorqueParams'))
         
-        #self.syncSetting()      
+        # **********************************************************************        
+        # Task subclass  specific part:        
+
+        if hasattr(self, '_type'):
+            
+            defaultModName = 'QESInput'
+            
+            modname = self._inputConstructor
+            
+            #Input = __import__("qeparser." + modname.lower(), globals(), \
+            #                    locals(), [modname], -1)  
+            
+            mod_cmd = "from qeparser.%s import %s as Input"%(modname.lower(), modname)
+            exec(mod_cmd)
+            from qeparser.qeoutput import QEOutput
+                                          
+            if sectionName == None:
+                name = self.name()
+            else:
+                name = sectionName
+    
+            self.setting.section(name, self._configDic)
+        
+            
+            # add pointer to setting for input filenames synchronization 
+            #self.input._setting = self.setting
+            self.output = QEOutput(self.setting, type = self._type)
+                    
+            args = {
+                   'setting': self.setting,                                                
+                   }
+            if modname == defaultModName:
+                args['type'] = self._type
+            if filename != None or configString != None:
+                self.input = Input(**args)     
+                self.syncSetting()
+            else:
+                # add parse:
+                args['parse'] = False
+                self.input = Input( **args)     
 
 
     def name(self):

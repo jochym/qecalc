@@ -24,6 +24,14 @@ class PHTask(QETask):
 
         self.setParallel()
 
+        # ****************** Task Specifics ************************************
+        self._inputConstructor = 'PHInput'
+        # input/output defaults        
+        self._configDic = {
+       'phInput': 'ph.in',
+        'phOutput': 'ph.out',
+        'fildyn'  : None,
+        } 
         # QE input file's path containing variables' defaults (will be moved to
         # QE input parser)
         self._path_defaults = {
@@ -33,6 +41,9 @@ class PHTask(QETask):
         'outdir': './',
         'prefix': 'pwscf'
         }
+        self._type = 'ph'
+        # **********************************************************************
+        
         
         self.readSetting(filename, configString, sectionName)
 
@@ -43,39 +54,7 @@ class PHTask(QETask):
 
     def name(self):
         return 'ph.x'
-
-
-    def readSetting(self, filename = None, configString = None, sectionName = None):
-        """
-        Initializes Setting, QEInput and QEOutout classes 
-        and synchronizes with QEInput object
-        """
-        
-        configDic = {
-        'phInput': 'ph.in',
-        'phOutput': 'ph.out',
-        'fildyn'  : None,
-#        'fildrho' : None,
-#        'fildvscf' : None
-        }
-        
-        QETask.readSetting(self, filename, configString)
-        
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-
-        self.input = PHInput(setting = self.setting)
-        # add pointer to setting for input filenames synchronization 
-        #self.input._setting = self.setting        
-        self.output = QEOutput(self.setting, type='ph')
-        
-        if filename != None or configString != None:
-            self.syncSetting()
-
+    
 
     def syncSetting(self):
         """

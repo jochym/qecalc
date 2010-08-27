@@ -18,9 +18,10 @@ from qesinput import QESInput
 from d3qpoints import D3Qpoints
 
 class D3Input(QESInput):
-    def __init__(self, filename=None, config=None, setting = None):
-        QESInput.__init__(self,filename, config, type='d3', setting = setting)
+    def __init__(self, filename=None, config=None, setting = None, parse = True):
         self.qpoints = D3Qpoints(self)
+        
+        QESInput.__init__(self,filename, config, type='d3', setting = setting, parse = parse)        
 
 
     def parse(self):

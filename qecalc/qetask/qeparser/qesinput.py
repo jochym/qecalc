@@ -24,7 +24,8 @@ class QESInput(QEInput):
     functionality to QEInput
     QESInput also makes sure QEInput is synchronized with Setting class 
     """
-    def __init__(self, filename=None, config=None, type = 'pw', setting = None):       
+    def __init__(self, filename=None, config=None, type = 'pw', setting = None,\
+                                                                  parse = True):       
                         
         self._setting = setting
         if isinstance(filename, Setting):
@@ -33,8 +34,11 @@ class QESInput(QEInput):
             fname = self._setting.get( type + 'Input')
         else:
             fname = filename
+            
+        QEInput.__init__(self,fname, config, type = type, parse = parse)
         
-        QEInput.__init__(self,fname, config, type = type)
+        if parse and (filename or config  or setting ):
+            self.parse()        
     
     def parse(self):
         """

@@ -17,9 +17,10 @@ from qesinput import QESInput
 from matdynqpoints import MatdynQpoints
 
 class MatdynInput(QESInput):
-    def __init__(self, filename=None, config=None, setting = None):
-        QESInput.__init__(self,filename, config, type='matdyn', setting = setting)
+    def __init__(self, filename=None, config=None, setting = None, parse = True):
         self.qpoints = MatdynQpoints(self)
+
+        QESInput.__init__(self,filename, config, type='matdyn', setting = setting, parse = parse)        
 
 
     def parse(self):

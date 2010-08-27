@@ -24,6 +24,13 @@ class D3Task(QETask):
 
         self.setSerial()
 
+        # ****************** Task Specifics ************************************
+        self._inputConstructor = 'QESInput'
+        # input/output defaults        
+        self._configDic = {
+        'd3Input': 'd3.in',                           
+        'd3Output': 'd3.out',
+        }                           
         self._path_defaults = {
         'fildyn': 'd3dyn',
         'fildrho': ' ',
@@ -31,6 +38,8 @@ class D3Task(QETask):
         'outdir': './',
         'prefix': 'pwscf'
         }
+        self._type = 'd3'
+        # **********************************************************************        
         
         self.readSetting(filename, configString, sectionName)
 
@@ -41,38 +50,6 @@ class D3Task(QETask):
 
     def name(self):
         return 'd3.x'
-
-
-    def readSetting(self, filename = None, configString = None, sectionName = None):
-        """
-        Initializes Setting, QEInput and QEOutout classes 
-        and synchronizes with QEInput object
-        """
-        configDic = {
-        'd3Input': 'd3.in',
-        'd3Output': 'd3.out',
-        #'fildyn': None,
-        #'fildrho': None,
-        #'fild0rho': None,
-        #'outdir': None
-        }
-        
-        QETask.readSetting(self, filename, configString)
-        
-        if sectionName == None:
-            name = self.name()
-        else:
-            name = sectionName
-
-        self.setting.section(name, configDic)
-
-        self.input = D3Input( setting = self.setting )
-        # add pointer to setting for input filenames synchronization 
-        #self.input._setting = self.setting
-        self.output = QEOutput(self.setting, type='d3')
-        
-        if filename != None or configString != None:
-            self.syncSetting() 
 
     
     def syncSetting(self):
