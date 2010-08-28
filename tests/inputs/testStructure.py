@@ -255,7 +255,7 @@ Te  0.0000
 
         filename = os.path.join(testdata_dir, 'LiNbO3.cif')
         self.input.structure.read(filename, 'cif')
-        #self.input.structure.reduce(ibrav = 3)
+        #self.input.structure.reduce()
         print self.input.toString()                   
    
         

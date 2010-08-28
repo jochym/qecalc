@@ -492,14 +492,16 @@ l
             ib = ibrav            
         
         a = self.lattice.diffpy().a
-        a = self.lattice.diffpy().a
         b = self.lattice.diffpy().b
         c = self.lattice.diffpy().c
         cAB = cosd(self.lattice.diffpy().gamma)
         cBC = cosd(self.lattice.diffpy().alpha)
         cAC = cosd(self.lattice.diffpy().beta)
-        qeLattice = QELattice(ibrav = ib, a = a, b = b, c = c,  cBC =  cBC, \
-                              cAC = cAC, cAB = cAB)        
+        if ib > 0:
+            qeLattice = QELattice(ibrav = ib, a = a, b = b, c = c,  cBC =  cBC, \
+                              cAC = cAC, cAB = cAB)
+        else:
+            qeLattice = QELattice(ibrav = ib, base = self.lattice.base)            
      
         qeLattice._qeInput = self._qeInput
         
