@@ -4,7 +4,6 @@
 QEInput - parses, modifies and creates Quantum Espresso (QE) configuration files
 
 Features:
-
     - Parses existing configuration file
     - Adds, edits and removes parameters from/to a namelist or a card
     - Creates new configuration file
@@ -12,7 +11,8 @@ Features:
 Parameters of QE configuration files are defined in the Doc directory of the
 source code. You can download it from:
 
-http://www.quantum-espresso.org/download.php
+    http://www.quantum-espresso.org/download.php
+
 
 Main Use Cases:
     - Parse existing configuration file, modify parameters in namelists or cards

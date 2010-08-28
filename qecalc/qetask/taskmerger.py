@@ -16,6 +16,12 @@
 from qetask import QETask
 
 class TaskMerger(QETask):
+    """
+    Takes list of tasks as an argument
+    Merges their names and command lines. Can be manipulated as a single task
+    when launching.
+    When torque is used, merged task is submitted as a single batch job
+    """
     def __init__(self, tasks, cleanOutDir = False, ioTask = None):
         QETask.__init__(self, filename = tasks[0].setting.get('filename'),  \
                         configString = tasks[0].setting.get('configString'),\

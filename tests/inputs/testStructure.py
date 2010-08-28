@@ -251,7 +251,12 @@ Te      0.50000000  0.50000000  0.00000000
 Pb2+ 0.0000 
 Te  0.0000 
 """
-        self.assertEqual(str(self.input.structure), answer)                      
+        self.assertEqual(str(self.input.structure), answer)
+
+        filename = os.path.join(testdata_dir, 'LiNbO3.cif')
+        self.input.structure.read(filename, 'cif')
+        #self.input.structure.reduce(ibrav = 3)
+        print self.input.toString()                   
    
         
     def test_load_diffpy(self): 

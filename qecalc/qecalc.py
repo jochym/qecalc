@@ -57,6 +57,12 @@ class QECalc(object):
         return taskList
 
     def syncInputs(self): pass
+    
+    
+    def readSetting(self, filename = None, configString = None, \
+                                                            sectionList = None):
+        self._populateTasks(filename, configString, sectionList, self.taskList)
+        
 
     def lookupProperty(self, propertyName, taskList = None, \
                                                            withUnits = False):

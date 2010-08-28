@@ -40,6 +40,7 @@ EMPTY_LINE      = r'^\s*'               # Empty line
 ATTACHSIM       = ['matdyn', 'dynmat', 'ph', 'd3']      # Simulation types that have attachments
 
 import re
+import os
 from orderedDict import OrderedDict
 from namelist import Namelist
 from card import Card
@@ -48,9 +49,9 @@ class QEParser:
     
     def __init__(self, filename = None, configText = None, type = 'pw'):
         """
-            filename: (str) -- Absolute or relative filename of file to be parsed
+            filename:   (str) -- Absolute or relative filename of file to be parsed
             configText: (str) -- Configuration text to be parsed
-            type: (str) -- Type of the simulation
+            type:       (str) -- Type of the simulation
         """
         
         self.header     = None
@@ -68,12 +69,12 @@ class QEParser:
         """Parses string and returns namelists, cards, attachment and header"""
         self.setReferences()
 
-        if self.configText is not None: # First try use configText
+        if self.configText: # First try use configText
             text = self.configText
-        elif self.filename is not None: # ... then from file
+        elif self.filename: # ... then from file
             text = self._getText(self.filename)
         else:
-            raise NameError('Dude, set config text or filename')  # Compalain
+            raise NameError('Dude, set config text or filename of existing file')  # Compalain
 
         self._parseHeader(text)
         self._parseNamelists(text)
@@ -314,7 +315,10 @@ class QEParser:
         try:
             f = open(filename)
         except IOError:
-            print "I/O error"
+            if not (os.path.exists(self.filename) or os.path.isfile(self.filename)):   # If file doesn't exist
+                raise IOError('File "%s" does not exist' % self.filename)
+
+            raise IOError("Please set filename of existing file")
         except:
             import sys
             print "Unexpected error:", sys.exc_info()[0]
