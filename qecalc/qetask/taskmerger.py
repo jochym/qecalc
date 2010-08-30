@@ -28,7 +28,8 @@ class TaskMerger(QETask):
                         cleanOutDir = cleanOutDir)
 
         self.setParallel()
-
+        #self.readSetting(self, filename = tasks[0].setting.get('filename'), \
+        #                 configString = tasks[0].setting.get('configString') )
         self._mergedTask = True
 
         if ioTask == None:

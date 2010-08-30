@@ -37,7 +37,7 @@ class QETask(object):
         
         self.cleanOutDir = cleanOutDir
 
-        #QETask.readSetting(self, filename, configString)
+        QETask.readSetting(self, filename, configString)
 
 
     def readSetting(self, filename = None, configString = None, \
