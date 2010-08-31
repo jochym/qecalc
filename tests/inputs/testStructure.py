@@ -253,10 +253,10 @@ Te  0.0000
 """
         self.assertEqual(str(self.input.structure), answer)
 
-        filename = os.path.join(testdata_dir, 'LiNbO3.cif')
-        self.input.structure.read(filename, 'cif')
+        #filename = os.path.join(testdata_dir, 'LiNbO3.cif')
+        #self.input.structure.read(filename, 'cif')
         #self.input.structure.reduce()
-        print self.input.toString()                   
+        #print self.input.toString()                   
    
         
     def test_load_diffpy(self): 
