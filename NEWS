@@ -1,12 +1,16 @@
+News in version 0.3
+Bugfix release
+- Added unit tests and updated documentation
+- Added QEAtom object. QEStructure is a list of QEAtoms
 - Added 'read' method to QEStructure to initialize structure from pw input, output,
   and various structure formats(pdb, xyz, cif, etc) 
 - Moved all structure parsing capabilities into separate parsing objects  
 - Refactored Structure and Lattice objects. See HISTORY for changes
-- changed ibrav=0 behaviour in QELattice - celldm(1) is not set automatically to 1 anymore
-- added export ofdispersions into gnuplot
+- changed ibrav=0 behavior in QELattice - celldm(1) is not set automatically to 1 anymore
+- added export of dispersions into gnuplot
 News in version 0.2.3
 - fixed bugs in parsers and calcs
-- prefix variable in Setting wil override all prefixes in tasks
+- prefix variable in Setting will override all prefixes in tasks
 - added projwfc task
 - class Converger can be initialized from a config file or config string,
   analogous to QETask
@@ -16,7 +20,7 @@ News in version 0.2.2:
 - section name of config.ini file can be passed to any task. Allowing to have
 - calcs can be initialized by task lists and as well as lists with section names
   from config.ini
-- Varables' names corresponding to files from Class "Setting" match ones
+- Variables' names corresponding to files from Class "Setting" match ones
   in QE config files.
   multiple sections for one task (pw scf, pw nscf etc)
   renamed variables:
@@ -39,7 +43,7 @@ News in version 0.2.2:
 - set('varName', varValue) and get('varName') are the only supported methods
   to work with class Setting.
 - if outdir is not specified in config.ini file, it will be initialized for
-  each task from correponding QE input file(if relevant)
+  each task from corresponding QE input file(if relevant)
 - task.syncSetting() needs to be run before output parsing if some of the
   output files are specified in QE input files only. task.syncSetting()
   is always executed on task.launch()
@@ -48,7 +52,7 @@ News in version 0.2.1:
 
 - fixed few bugs in parsers
 - added outDir variable (mandatory) in [Launcher] section. Each task will
-  synchronise its outDir through qecalc.qetask._syncSetting()
+  synchronize its outDir through qecalc.qetask._syncSetting()
 - added paraRemoteShell variable (default is nothing) in [Launcher] section for
   parallel remote shell script command (which will prefix mkdir or rm -rf for example).
   Relevant when there is no Network File System (e.g. scratch space)

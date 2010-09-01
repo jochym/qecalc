@@ -39,6 +39,11 @@ class QESInput(QEInput):
         
         if parse and (filename or config  or setting ):
             self.parse()        
+            
+            
+    def __str__(self):
+        """simple string representation"""    
+        return self.toString()            
     
     def parse(self):
         """

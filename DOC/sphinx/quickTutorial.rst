@@ -5,7 +5,7 @@ Organization
 ---------------------
 
 QECalc offers a set of Quantum Espresso calculators, designed for various
-purposes. Each Calc is a list of tasks. Each task is executed sequantially
+purposes. Each Calc is a list of tasks. Each task is executed sequentially
 after another on launch of a given Calc:
 
 .. figure:: ../overview_2.png
@@ -56,7 +56,7 @@ for each specific task during the execution). Some tasks are serial, some are
 parallel, para/serial variables specify launching parameters for these two classes
 of tasks. If serialPrefix is empty, a serial task will be launched on a head node.
 
-Task sections can also contain Quantum Espresso varialbes, corresponding to input/output
+Task sections can also contain Quantum Espresso variables, corresponding to input/output
 files which are usually  specified in QE config files. For example 'flvec' from matdyn.x config
 file  or 'fildyn' from ph.x input file. Any file variable, specified in a section
 of config.ini will override one in corresponding QE config file. If none is specified,
@@ -67,7 +67,7 @@ to be specified neither in matdyn config file nor in config.ini.
 if 'outdir' or 'prefix' is specified in config.ini, it will override any prefix or outdir specified
 in QE config input files of tasks containing these fields.
 
-One does not have to include all the sections. if a section is ommited, default
+One does not have to include all the sections. if a section is omitted, default
 values are used.
 
 How to pass the configuration::
@@ -106,16 +106,22 @@ Example of configuration file using Torque::
     paraTorqueParams: -l nodes=8:ppn=12 -l walltime=999:99:99 -N myjob -o stdout -e stderr
     serialTorqueParams: -l nodes=1:ppn=1 -l walltime=999:99:99 -N myjob -o stdout -e stderr
 
+    # outdir will override  outdir setting in all relevant QE input files
     outdir: /scratch/user/temp/
+    
+    # pseudo_dir will override  outdir setting in all relevant  QE input files
+    pseudo_dir: /user/projects/pslib
 
     [pw.x]
-    pwInput: scf.in
-    pwOutput: scf.out
+    pwInput: scf_man.in
+    pwOutput: scf_man.out
     """
     from qecalc.qetask.pwtask import PWTask
 
     pw = PWTask(configString = configString)
     pw.launch()
+    print pw.output.property('total energy')
+    print pw.output.property('fermi energy')    
 
 
 Example 1: MultiPhononCalc
@@ -123,7 +129,7 @@ Example 1: MultiPhononCalc
 
 MultiPhononCalc consists of [pw.x, ph.x, q2r.x, matdyn.x]
 list of tasks. And pw.x and ph.x tasks are 'merged' - they
-are submited as a single job (in order to share one set of outdirs when torque
+are submitted as a single job (in order to share one set of outdirs when torque
 is used)::
 
     from qecalc.multiphononcalc import MultiPhononCalc
@@ -161,14 +167,14 @@ these additional tasks::
     matdynInput:   matdyn.in
     matdynOutput:  matdyn.out
 
-The following example processes outputs only (assuming outputs are available)::
+The following example processes outputs only (assuming outputs are available 
+without running the simulation)::
 
-    mphon = MultiPhononCalc('config.ini')
+    mphon = MultiPhononCalc(filename = 'config.ini')
 
     for task in mphon.getAllTasks():
-        #add this line if need to resolve some of the output file names from QE input files (e.g. 'flvec'):
-        #task.syncSetting()
         task.output.parse()
+        
 
 Example 2: Converger
 ----------------------
@@ -219,3 +225,48 @@ a couple of loops using PWTask::
         pw.input.save()
         pw.launch()
         print 'Total Energy = ', pw.output.property('total energy')
+        
+        
+Example 4: Working with structures
+-----------------------------------
+
+::
+
+    
+    from qecalc.qetask.qeparser.pwinput import PWInput
+    
+    #initialize pwscf (pw.x) input object from an input file:
+    input = PWInput( 'pwscf.in' )
+    
+    print input    # print input.toString()
+    # by default, any change in structure automatically updates input:
+    import numpy
+    # update fractional coordinates and mass first atom in structure:    
+    input.structure[0].xyz = numpy.array([0.5, 0.5, 0.5])
+    input.structure[0].mass = 16.0
+    print input 
+
+    # another way:
+
+    from qecalc.qetask.qeparser.qestructure import QEStructure
+
+    stru = QEStructure()
+
+    # read structure
+    # possible formats are 'pwinput', 'pwoutput', 'bratoms', 'cif', 'discus', 
+    # 'pdb', 'pdffit', 'rawxyz', 'xcfg', 'xyz' (note: xyz does no have lattice info) 
+    stru.read(filename = 'PbTe.cif', format = 'cif')
+    
+    # write to string:
+    print stru.writeStr(format = 'pdb')
+    
+    # generate pwscf template from structure: 
+    print stru.writeStr(format = 'pwinput')
+    
+    stru.write(filename = 'scf.in', format = 'pwinput')
+    
+    for atom in stru:
+        print atom
+
+    print stru
+    

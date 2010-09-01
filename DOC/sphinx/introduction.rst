@@ -10,7 +10,7 @@ use its outputs for more advanced tasks. Some examples:
 * Various optimization and minimization problems
 * Plotting and data processing
 
-QECalc is a set of Quantum Espresso launchers and input/ouput parsers
+QECalc is a set of Quantum Espresso launchers and input/output parsers
 organized  under a single API.
 Its primary goal is to use its classes to streamline user's work flow,
 offer new functionality and provide the machinery  to build new  features using

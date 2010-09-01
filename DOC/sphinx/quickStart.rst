@@ -66,7 +66,7 @@ Before the run, check that all the pseudopotentials from the pw config file
 are available.  Also make sure Quantum Espresso is in your $PATH environment
 variable. One does not have to place the python scripts which use qecalc API
 into the working dir(where the input files are), but for the sake of simplicity,
-this manunual assumes everything is in one place.
+this manual assumes everything is in one place.
 
 Please, see examples directory as well as API documentation for more details.
 IPython is a nice tool to play with the examples.
