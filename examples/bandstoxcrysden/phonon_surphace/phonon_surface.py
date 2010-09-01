@@ -17,9 +17,6 @@ matdynOutput:  matdyn.out
 matdyn = MatdynTask(configString = configString)
 pw = PWTask(configString = configString)
 
-pw.input.parse()
-matdyn.input.parse()
-
 qmesh = [17,17,17]
 
 qpoints = kmesh.kMeshCart(qmesh,pw.input.structure.lattice.reciprocalBase())

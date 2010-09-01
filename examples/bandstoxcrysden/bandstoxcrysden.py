@@ -29,7 +29,6 @@ pwOutput: fermi.out
     """
 
     pw = PWTask(configString = configString)
-    pw.input.parse()
     pw.output.parse()
     
     kpoints = [17,17,17]

@@ -30,10 +30,9 @@ class Converger(Setting):
 
         Setting.__init__( self, filename, configString )
         self.history = []
-        # define calcs:
-        self.pwCalc = PWCalc(filename, configString)
-        self.pwCalc.pw.cleanOutDir = True
-        self.singlePhononCalc = SinglePhononCalc(filename, configString)
+
+        self._filename = filename
+        self._configString = configString
 
         if taskName == None:
             import ConfigParser
@@ -46,7 +45,7 @@ class Converger(Setting):
                             'step'      : None,
                             'multiply'  : None,
                         }
-
+        
             self.section(sectionName, configDic)
             self.tolerance = float(self.tolerance)
             self.nMaxSteps = int(self.nMaxSteps)
@@ -69,10 +68,10 @@ class Converger(Setting):
         # defines lookupTable: specifies capable Calc and property of interest
         # which can be looked up in output parsers
         self.lookupTable = {
-        'total energy' : (self.pwCalc, 'total energy'),
-        'fermi energy' : (self.pwCalc, 'fermi energy'),
-        'single phonon': (self.singlePhononCalc, 'single phonon'),
-        'geometry'     : (self.pwCalc, 'lattice parameters')
+        'total energy' : (PWCalc, 'total energy'),
+        'fermi energy' : (PWCalc, 'fermi energy'),
+        'single phonon': (SinglePhononCalc, 'single phonon'),
+        'geometry'     : (PWCalc, 'lattice parameters')
         }
         assert self.lookupTable.has_key(self.taskName), "Convergence \
         estimator's name is not known"
@@ -104,9 +103,9 @@ class Converger(Setting):
                startValue == None and multiply == None:
                 raise('Converger.converge: starting value and increment\
                                                          were not properly set')
-        calc = self.lookupTable[self.taskName][0]
-        # this implies all available calcs have pw task in them:
-        calc.pw.input.parse()
+                
+        self._initCalc()
+        calc = self.calc
 
         if what not in whatPossible:
             raise Exception('Do not know how to converge that value!')
@@ -147,6 +146,14 @@ class Converger(Setting):
         return value
 
 
+    def _initCalc(self):
+        
+        self.calc = self.lookupTable[self.taskName][0]( \
+                   filename = self._filename, configString = self._configString)        
+        
+        self.calc.pw.cleanOutDir = True
+        
+    
 
     def isConverged(self,runHistory):
         import math
