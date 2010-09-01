@@ -135,7 +135,8 @@ class Converger(Setting):
                 value = value + step
             # if the run includes geometry optimization - import optimized
             # structure othervise it will reimport existing structure:
-            calc.pw.input.structure.parseOutput(calc.pw.setting.get('pwOutput'))
+            calc.pw.input.structure.read(filename = \
+                           calc.pw.setting.get('pwOutput'), format = 'pwoutput')
             calc.pw.input.structure.save()
 
         print 'optimized ' + what + ' value : ', value, '\n'
