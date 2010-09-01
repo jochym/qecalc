@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: qecalc
-Version: 0.2.2
+Version: 0.3.0
 Summary: wrapper for Quantum Espresso
 Home-page: http://docs.danse.us/AbInitio/espresso/qecalc/index.html
 Author: Nikolay Markovskiy
@@ -10,7 +10,7 @@ Download-URL: http://danse.cacr.caltech.edu/packages/dev_danse_us/
 Description: UNKNOWN
 Keywords: quantum espresso
 Platform: UNKNOWN
-Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Development Status :: 3 - Alpha
 Classifier: Environment :: Console
 Classifier: Intended Audience :: Science/Research
 Classifier: Operating System :: POSIX

@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 # define distribution
 setup(
         name = "qecalc",
-        version = "0.2.3",
+        version = "0.3.0",
         #namespace_packages = ['matter'],
         packages = find_packages(exclude=['DOC','examples']),
         test_suite = 'examples',
@@ -32,7 +32,7 @@ setup(
         classifiers = [
             # List of possible values at
             # http://pypi.python.org/pypi?:action=list_classifiers
-            'Development Status :: 2 - Pre-Alpha',
+            'Development Status :: 3 - Alpha',
             'Environment :: Console',
             'Intended Audience :: Science/Research',
             #'Operating System :: MacOS',
