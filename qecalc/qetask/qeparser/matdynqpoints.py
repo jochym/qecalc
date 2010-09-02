@@ -41,7 +41,7 @@ class MatdynQpoints(object):
         string = str(qpoints.shape[0]) + '\n'
         for qpoint, coord in zip(self.coords, self.axis):
             string = string + \
-                   "%f    %f    %f    %f\n" % (qpoint[0], qpoint[1], qpoint[2], coord)
+                   "%# .8f %# .8f %# .8f %# .8f\n" % (qpoint[0], qpoint[1], qpoint[2], coord)
 
         self.qeInput.attach = string
 
@@ -85,8 +85,7 @@ class MatdynQpoints(object):
         self.coords = numpy.array(self.coords)
         self.axis = numpy.array(self.axis)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 22, 2009 12:47:27 PM$"

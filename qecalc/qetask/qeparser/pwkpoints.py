@@ -47,6 +47,37 @@ class PWKpoints(object):
         kpoints = numpy.array(kpoints)
         self.coords = kpoints
         self.shifts = shifts
+        
+        
+    def set(self, qpoints, weights = None, type = 'triba'):
+        """
+        Sets k-points from numpy.array of size (n,3)
+        Default values of array of weights are 1.0 
+        """
+        
+        typesPossible = ['triba', 'crystal']
+        if type not in typesPossible:            
+            raise Exception('Wrong type of k-point grid')
+        
+        qpoints = numpy.array(qpoints)
+        self.isAutomatic = False
+        self.qeInput.cards['k_points'].removeLines()
+        self.qeInput.cards['k_points'].setArg(type)
+        
+        self.coords = qpoints
+        self.grid = None
+        # weights == None for custom generated q-point grid
+        if weights == None:
+            weights = numpy.zeros(qpoints.shape[0])
+            weights = weights + 1.0
+        self.weights = weights
+        string = str(qpoints.shape[0]) + '\n'
+        for qpoint, coord in zip(self.coords, self.weights):
+            string = string + \
+                   "%# .8f %# .8f %# .8f %# .8f\n" % (qpoint[0], qpoint[1], qpoint[2], coord)
+        
+        self.qeInput.cards['k_points'].addLine(string)
+
 
     def setAutomatic(self, kpoints, shifts = None):
         """Takes two lists of values"""
@@ -75,8 +106,7 @@ class PWKpoints(object):
             string = string + str(s) + " "
         self.qeInput.cards['k_points'].addLine(string)
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 20, 2009 12:59:23 PM$"

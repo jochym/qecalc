@@ -241,7 +241,7 @@ Example 4: Working with structures
     print input    # print input.toString()
     # by default, any change in structure automatically updates input:
     import numpy
-    # update fractional coordinates and mass first atom in structure:    
+    # update fractional coordinates and mass of first atom in structure:    
     input.structure[0].xyz = numpy.array([0.5, 0.5, 0.5])
     input.structure[0].mass = 16.0
     print input 

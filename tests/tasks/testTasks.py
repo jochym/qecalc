@@ -85,6 +85,19 @@ class TestStructureMethods(unittest.TestCase):
         matdyn = self.task['matdyn']
         matdyn.output.parse()
         self.assertEqual( 206.542172, matdyn.output.property('multi phonon')[1][34][2])
+        
+
+    def test_kpoints(self):
+        pw = self.task['pw']
+        pw.setting.set('pwInput', 'data/al_pw.in')        
+        pw.input.parse()          
+        from qeutils import kmesh
+        qmesh = [2,2,2]
+        qpoints = kmesh.kMeshCart(qmesh,pw.input.structure.lattice.reciprocalBase())
+        pw.input.kpoints.set(qpoints)
+        
+        self.assertEqual( (8, 3), pw.input.kpoints.coords.shape)                
+        
                 
 if __name__ == '__main__':
     unittest.main()               
