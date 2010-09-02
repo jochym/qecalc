@@ -39,17 +39,29 @@ class PWKpoints(object):
                 kpoints.append([float(k) for k in line.split()])
         
         if self.isAutomatic:
-            shifts = numpy.array(shifts)
+            shifts = numpy.array(shifts)            
         else:
             # first line was number of kpoints
             kpoints.pop(0)
             shifts = None
         kpoints = numpy.array(kpoints)
-        self.coords = kpoints
-        self.shifts = shifts
+        if self.isAutomatic:
+            self.coords = None
+            self.grid = kpoints
+            self.shifts = shifts
+            self.weights = None
+        else:
+            if kpoints.shape[1] == 4:
+                self.coords = kpoints[:,:3]
+                self.weights = kpoints[:,3].flatten()
+            else:
+                self.coords = kpoints
+                self.weights = numpy.zeros(kpoints.shape[0]) + 1.0 
+            
+            self.shifts = None
         
         
-    def set(self, qpoints, weights = None, type = 'triba'):
+    def set(self, points, weights = None, type = 'triba'):
         """
         Sets k-points from numpy.array of size (n,3)
         Default values of array of weights are 1.0 
@@ -59,19 +71,19 @@ class PWKpoints(object):
         if type not in typesPossible:            
             raise Exception('Wrong type of k-point grid')
         
-        qpoints = numpy.array(qpoints)
+        points = numpy.array(points)
         self.isAutomatic = False
         self.qeInput.cards['k_points'].removeLines()
         self.qeInput.cards['k_points'].setArg(type)
         
-        self.coords = qpoints
+        self.coords = points
         self.grid = None
         # weights == None for custom generated q-point grid
         if weights == None:
-            weights = numpy.zeros(qpoints.shape[0])
+            weights = numpy.zeros(points.shape[0])
             weights = weights + 1.0
         self.weights = weights
-        string = str(qpoints.shape[0]) + '\n'
+        string = str(points.shape[0]) + '\n'
         for qpoint, coord in zip(self.coords, self.weights):
             string = string + \
                    "%# .8f %# .8f %# .8f %# .8f\n" % (qpoint[0], qpoint[1], qpoint[2], coord)
@@ -79,28 +91,28 @@ class PWKpoints(object):
         self.qeInput.cards['k_points'].addLine(string)
 
 
-    def setAutomatic(self, kpoints, shifts = None):
+    def setAutomatic(self, points, shifts = None):
         """Takes two lists of values"""
         self.isAutomatic = True
         if shifts == None:
-            if len(kpoints) == 3:
+            if len(points) == 3:
                 shifts = numpy.array([int(0) ,int(0), int(0)])
-            if len(kpoints) == 6:
-                shifts = kpoints[3:]
-                kpoints = kpoints[:3]
+            if len(points) == 6:
+                shifts = points[3:]
+                points = points[:3]
         else:
-            if len(shifts) == 3 and len(kpoints) == 3:
+            if len(shifts) == 3 and len(points) == 3:
                 shifts = shifts
-                kpoints = kpoints
+                points = points
             else:
                 raise Exception('Wrong number of kpoints and/or shifts')
 
-        self.kpoints = numpy.array(kpoints)
+        self.grid = numpy.array(points)
         self.shifts = numpy.array(shifts)
         self.qeInput.cards['k_points'].removeLines()
         self.qeInput.cards['k_points'].setArg('AUTOMATIC')
         string = ""
-        for k in self.kpoints:
+        for k in self.grid:
             string = string + str(k) + " "
         for s in self.shifts:
             string = string + str(s) + " "

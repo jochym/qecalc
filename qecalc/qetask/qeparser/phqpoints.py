@@ -22,17 +22,17 @@ class PHQpoints(object):
         self.grid = None
         self.coords = None
 
-    def set(self, qpoint):
-        qpoint = numpy.array(qpoint)
+    def set(self, point):
+        point = numpy.array(point)
         self.isAutomatic = False
-        self.coords = qpoint
+        self.coords = point
         self.grid = None
         self.qeInput.namelist('inputph').remove('nq1')
         self.qeInput.namelist('inputph').remove('nq2')
         self.qeInput.namelist('inputph').remove('nq3')
         self.qeInput.namelist('inputph').remove('ldisp')
         self.qeInput.attach = \
-                          "%f    %f    %f\n" % (qpoint[0], qpoint[1], qpoint[2])
+                          "%f    %f    %f\n" % (point[0], point[1], point[2])
 
     def setAutomatic(self, grid):
         """
@@ -70,8 +70,7 @@ class PHQpoints(object):
         self.coords = numpy.array(self.coords)
 
 
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Dec 8, 2009 12:22:39 PM$"

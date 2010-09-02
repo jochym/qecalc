@@ -22,8 +22,8 @@ class MatdynQpoints(object):
         self.coords = None
         self.axis = None
 
-    def set(self, qpoints, axis = None):
-        qpoints = numpy.array(qpoints)
+    def set(self, points, axis = None):
+        points = numpy.array(points)
         self.isAutomatic = False
         self.qeInput.namelist('input').remove('nk1')
         self.qeInput.namelist('input').remove('nk2')
@@ -32,13 +32,13 @@ class MatdynQpoints(object):
         self.qeInput.namelist('input').remove('dos')
         self.qeInput.namelist('input').remove('ndos')
         self.qeInput.namelist('input').remove('deltaE')
-        self.coords = qpoints
+        self.coords = points
         self.grid = None
         # axis == None for custom generated q-point grid
         if axis == None:
-            axis = numpy.zeros(qpoints.shape[0])
+            axis = numpy.zeros(points.shape[0])
         self.axis = axis
-        string = str(qpoints.shape[0]) + '\n'
+        string = str(points.shape[0]) + '\n'
         for qpoint, coord in zip(self.coords, self.axis):
             string = string + \
                    "%# .8f %# .8f %# .8f %# .8f\n" % (qpoint[0], qpoint[1], qpoint[2], coord)
