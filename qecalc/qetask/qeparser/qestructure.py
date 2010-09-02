@@ -353,6 +353,7 @@ l
         if self._qeInput == None:
             from qecalc.qetask.qeparser.pwinput import PWInput         
             self._qeInput = PWInput()
+            self._qeInput.structure = self
             #self._qeInput.parse()
         
         if format in parser_index:             
@@ -385,8 +386,13 @@ l
         can be inspected for information related to particular format.
         """        
         from  qecalc.qetask.qeparser.qestructureparser import parser_index
-        from qecalc.qetask.qeparser.pwinput import PWInput
+        #from qecalc.qetask.qeparser.pwinput import PWInput
         
+        
+        if self._qeInput == None:
+            from qecalc.qetask.qeparser.pwinput import PWInput         
+            self._qeInput = PWInput()
+            self._qeInput.structure = self        
         #if self._qeInput == None:            
         #    self._qeInput = PWInput()            
             #self._qeInput.parse()
@@ -422,7 +428,7 @@ l
         No return value.
         """        
         if format == "pwinput":
-            self._qeInput.update( qeInput = qeInput, forceUpdate = True )
+            self._qeInput.update( forceUpdate = True )
             if filename == None:
                 filename = self._qeInput.filename
             input = QEInput(config = self._qeInput.toString(), type='pw')
@@ -442,6 +448,7 @@ l
         """
         
         if format == 'pwinput':
+            self._qeInput.update( forceUpdate = True )
             return self.toString()
         else:
             return self.diffpy().writeStr(format = format)        
@@ -518,8 +525,9 @@ l
         # Filter out duplicate atoms.  Use slice assignment so that
         # reducedStructure is not replaced with a list.
         self.lattice = qeLattice
-        self[:] = [a for a in reducedStructure if not a in duplicates]
+        self[:] = [a for a in reducedStructure if not a in duplicates]        
         
+        self._qeInput.structure = self
         return
 
     def load(self, source, **args):

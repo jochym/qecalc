@@ -529,31 +529,11 @@ Al  26.9800 Al.pz-vbc.UPF
         filename = os.path.join(testdata_dir, 'PbTe.cif')
         stru.read(filename = filename, format = 'cif')
         
-        answer ="""&CONTROL
-    calculation = 'scf',
-    restart_mode = 'from_scratch',
-    tstress = .true.,
-    tprnfor = .true.,
-    prefix = 'mgalb4',
-    pseudo_dir = '/home/user/pslib',
-    outdir = '/scratch/user',
-/
-&SYSTEM
+        answer ="""&SYSTEM
     ibrav = 0,
-    nbnd = 21,
-    nspin = 1,
-    occupations = 'smearing',
-    degauss = 0.025,
-    smearing = 'methfessel-paxton',
-    ecutwfc = 64.0,
-    ecutrho = 256.0,
     celldm(1) = 1.889725989,
     ntyp = 2,
     nat = 8,
-/
-&ELECTRONS
-    conv_thr = 1.0d-10,
-    mixing_beta = 0.4,
 /
 ATOMIC_SPECIES
  Pb2+ 0.0000
@@ -567,8 +547,6 @@ ATOMIC_POSITIONS (crystal)
  Te      0.00000000  0.50000000  0.50000000
  Te      0.50000000  0.00000000  0.50000000
  Te      0.50000000  0.50000000  0.00000000
-K_POINTS (automatic)
- 32 32 16 0 0 0
 CELL_PARAMETERS (cubic)
  6.46100000  0.00000000  0.00000000
  0.00000000  6.46100000  0.00000000

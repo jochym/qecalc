@@ -68,6 +68,7 @@ class PWInput(QESInput):
         lattice = self._structure.lattice
         structure = self._structure   
 
+
         #************************* updateLattice:*******************************
         #if 'system' not in qeInput.namelists:
         #    qeInput.createNamelist('system')        
@@ -174,7 +175,7 @@ class PWInput(QESInput):
         
         if len(qeInput.card('atomic_species').lines()) == 0:
             qeInput.removeCard('atomic_species')                
-
+        
 
     def outDir(self):
         self.parse()
