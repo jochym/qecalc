@@ -281,7 +281,7 @@ settings!\n" + "Command string: " + self.cmdLine())
                 self.setting.get(output) + self._devnul
                 
                 
-    def _setSetiingInputOutput(self, configDic, filename = None, configString = None, sectionName = None):
+    def _setSettingInputOutput(self, configDic, filename = None, configString = None, sectionName = None):
         """
         Helper method for readSetting()
         """

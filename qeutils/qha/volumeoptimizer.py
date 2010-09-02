@@ -76,14 +76,6 @@ class VolumeOptimizer:
         print output                
         import pickle       
         pickle.dump( output, open(self.pickleName, 'wb') )
-        
-        self._output = output
-        
-        return self._output
-
-    
-    def output(self):        
-        return self._output
 
 
     def _volOpt(self, volumeExpansion):
@@ -116,15 +108,19 @@ class VolumeOptimizer:
             energy = brentOut[1]            
             # relax structure at optimized parameters to get optimized atomic positions
             relax_energy = self._relax( a = numpy.sqrt(volume/c), c = c )
-            print "Double check: Brent energy = %f, Relax energy = %f"%(energy,\
-                                                                 relax_energy) 
             
         if ibrav > 0 and ibrav < 4:
             aExpansion = (1.+volumeExpansion/100.)**(1./3.)
             a = a0 * (1.+volumeExpansion/100.)**(1./3.)
-            energy = self._relax(a = a)
-                  
-                          
+            volume = a0*a0*c0
+            volume = volume + volume*volumeExpansion/100.
+            prcntA = 0.2 
+            brentOut = brent(self._getCubicEnergy, (volume,), (a-a*prcntA/100, \
+                                  a+a*prcntA/100), tol = 1.e-7, full_output = 1)
+            energy = brentOut[1]
+            
+        print "Double check: Brent energy = %f, Relax energy = %f"%(energy, relax_energy)       
+        
         os.system('cp ' + self.pw.setting.get('pwOutput') + ' ' +  \
                              str(volumeExpansion) + self.pw.setting.get('pwOutput'))
         os.system('cp ' + self.pw.setting.get('pwInput') + ' ' +  \
@@ -139,7 +135,14 @@ class VolumeOptimizer:
             Volume value should be directly related to lattice constants:
             E.g.: Vhex = a^2*c omitting all the constant factors """
         volume = args[0]
-        return self._relax(a = numpy.sqrt(volume/c), c = c)      
+        return self._relax(a = numpy.sqrt(volume/c), c = c)
+    
+    
+    def _getCubicEnergy(self, a, *args):
+        """ 
+        Total energy launcher for scipy "brent" routine for cubic lattice
+        """
+        return self._relax(a = a)
     
         
     def _relax(self, ibrav = None, a = None, b = None, c = None, \
@@ -154,12 +157,12 @@ class VolumeOptimizer:
                                   c = c, cBC = cosBC, cAC = cosAC, cAB = cosAB)
         self.pw.input.structure.save()
         self.pw.launch()
-        self.pw.input.structure.parseOutput(self.pw.setting.get('pwOutput'))
-        self.pw.input.structure.save()
+        self.pw.input.structure.read(filename = self.pw.setting.get('pwOutput'), format='pwoutput')
+        self.pw.input.save()
         return self.pw.output.property('total energy')[0] 
 
 
 if __name__ == '__main__':
 
-    volPercRange = [ 0.4 ] #, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.0]   
+    volPercRange = [ 2.0, 2.4, 2.8, 3.2, 3.6, 4.0]   
     VolumeOptimizer(pwTask = PWTask('config.ini')).launch( volPercRange = volPercRange )

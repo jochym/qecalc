@@ -20,7 +20,6 @@ from qeutils.phdos import PhononDOS
 if __name__ == "__main__":
     matdyn = MatdynTask(configString = "")
     pw = PWTask(configString = "")
-    pw.syncSetting()
     dos = PhononDOS(matdynTask = matdyn, structure = pw.input.structure)
 
     # grid has to be huge since a simple histogramming will be used
@@ -29,13 +28,9 @@ if __name__ == "__main__":
     # generate qpoints and launch matdyn task
     dos.launch(nqpoints = qgrid, partialDOS = True )
 
-    # this line is required if matdyn.modes exisits from previoius run and
-    # dos.launch() is commented out
-    #dos.loadPhonons()
-
     #dos.DOS()
     # partDOS will calculate DOS for each atomic site. It will also generate
-    # total DOS and DOS by ellement type
+    # total DOS and DOS by element type
     dos.partDOS()
 
     # save all available DOSes to disk

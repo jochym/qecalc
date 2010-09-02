@@ -58,8 +58,8 @@ class MatdynTask(QETask):
 
     def syncSetting(self):
         """
-        When this method is called on launch(), the input file is already
-        parsed and will be saved before the run...
+        Parse input, sync with class setting for path/file names overrides 
+        (like outdir etc)
         """
         self.input.parse()
         
@@ -74,8 +74,7 @@ class MatdynTask(QETask):
 
 
                     
-if __name__ == "__main__":
-    print "Hello World";
+if __name__ == "__main__": pass
 
 __author__="Nikolay Markovskiy"
 __date__ ="$Oct 19, 2009 5:19:13 PM$"

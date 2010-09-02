@@ -25,8 +25,6 @@ outdir: temp/
 
 if __name__ == "__main__":
     pw = PWTask(configString = configString)
-    #parse inputs and sync with Settings:
-    pw.syncSetting()
     lat_params = [7.5, 7.6, 7.7]
     for a in lat_params:
         # whole lattice and structure will be auto updated on change in 'a' according
