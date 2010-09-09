@@ -14,19 +14,20 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import numpy
 import volufit
-#from qephon import QEPhon, QEPhonQHA
 
-from qecalc.multiphononcalc import MultiPhononCalc
+from qecalc.qetask import PWTask
+from qecalc.qetask import MatdynTask
+from qeutils.phdispersion import PHDispersion
 
-# This class should be initialized with matdyn.modes from different
-# volume expansions and then it is fed to QHA program by Eyvaz Isaev
-# to obtain total DOSes
-# a,b,c,energy - fitting objects. fitted value is accessible through fittedValue
 class VoluPhon():
     def __init__(self, prcntVolume, filename = None ):
-        #will  need this unless QE has improved
-        #self.mphonQHA = QEPhonQHA(fname)
-        self.mphon = MultiPhononCalc(filename)
+        """
+        This class requires a set of  "n_matdyn.modes" files 
+        corresponding to different volume expansions 
+        prcntVolume - array with 
+        """
+        self.pw = PWTask(filename = filename)
+        self.matdyn = MatdynTask(filename = filename)
         self.__prcntVolume = prcntVolume
 
 
@@ -44,31 +45,33 @@ class VoluPhon():
 
     def setPhonons(self, indexRange, fitter):
         """Will read freqs from x_matdyn.modes files and fit the freqs"""
-        matdynModesName = self.mphon.matdyn.setting.get('flvec')
-        self.mphon.matdyn.setting.set('flvec', str(indexRange[0]) + '_' + matdynModesName)
-        self.mphon.matdyn.output.parse()
-        Pol, Omega, qPoints = self.mphon.matdyn.output.property('multi phonon')
+        matdynModesName = self.matdyn.setting.get('flvec')
+        self.matdyn.setting.set('flvec', str(indexRange[0]) + '_' + matdynModesName)
+        self.matdyn.output.parse()
+        Pol, Omega, qPoints = self.matdyn.output.property('multi phonon')
         volOmega = numpy.zeros(shape=(len(indexRange), numpy.shape(Omega)[0], \
                                                       numpy.shape(Omega)[1]  ) )
         volOmega[0] = Omega
         for i in range(1,len(indexRange)):
-            self.mphon.matdyn.setting.set('flvec', str(indexRange[i]) + '_' + matdynModesName)
-            self.mphon.matdyn.output.parse()
-            Pol, Omega, qPoints = self.mphon.matdyn.output.property('multi phonon')
+            self.matdyn.setting.set('flvec', str(indexRange[i]) + '_' + matdynModesName)
+            self.matdyn.output.parse()
+            Pol, Omega, qPoints = self.matdyn.output.property('multi phonon')
             volOmega[i] = Omega
-        self.mphon.matdyn.setting.set('flvec', matdynModesName)
+        self.matdyn.setting.set('flvec', matdynModesName)
         self.freqs = volufit.FreqFit(self.__prcntVolume, volOmega,fitter)
 
 
-    def gammaDispersion(self, *pathNPoints):
+    def gammaDispersion(self, *pathNPoints):        
+        #self.pw.input.parse()
+        #self.matdyn.input.parse()
+        self.dispersion = PHDispersion( self.pw.input.structure.lattice, self.matdyn)
         if self.freqs.fitter.type != 'polynom':
             raise Exception('This method is only relevant for polynomial fit')
-        self.mphon.pw.input.parse()
-        self.mphon.matdyn.input.parse()
-        self.mphon.dispersion.setPath(*pathNPoints)
-        self.mphon.dispersion.setValues(-self.freqs.coeff()[:,:,-1])
-        self.mphon.dispersion.save('gamma_disp')
-        self.mphon.dispersion.plot()
+        self.dispersion = PHDispersion( self.pw.input.structure.lattice, self.matdyn)
+        self.dispersion.setPath(*pathNPoints)
+        self.dispersion.setValues(-self.freqs.coeff()[:,:,-1])
+        self.dispersion.save('gamma_disp')
+        self.dispersion.plot()
 
 
     def prcntVolume (self):
@@ -78,10 +81,8 @@ class VoluPhon():
 if __name__ == "__main__":
     indexRange = range(0,5,2)
     prcntVol = array(indexRange)/1000.0
-    voluPhon = VoluPhon('config.ini', prcntVol)
+    voluPhon = VoluPhon(prcntVolume = prcntVol, filename = 'config.ini')
     voluPhon.setPhonons(indexRange)
     voluPhon.gammaDispersion('Gamma','K', 'M', 'Gamma', 'A', 'H', 'L', 'A', \
                               100, 100, 100, 100, 100, 100, 100)
 
-__author__="markovsk"
-__date__ ="$Sep 16, 2009 2:04:08 PM$"

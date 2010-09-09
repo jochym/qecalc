@@ -1,3 +1,6 @@
+2010, September 2
+Unified interfaces of kpoint grids in MatdynInput, PWInput, CPInput and PHInput
+
 2010, August 5
 atomicSpecies is read only property. Should work with QEAtom instances. 
 Removed QELattice.save(filename) -> QEStructure.save(filename) should be 
