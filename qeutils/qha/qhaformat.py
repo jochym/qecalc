@@ -17,7 +17,7 @@ class QHAFormat():
         
         self._structures = []
         
-        for config in self_data['config']:
+        for config in self._data['config']:
             stru = QEStructure()
             stru.readStr(config)
             self._structures.append( stru )
