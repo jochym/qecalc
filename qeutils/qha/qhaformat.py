@@ -13,7 +13,7 @@ class QHAFormat():
         
         self._data =  pickle.load( open(self._filename, 'r') )
         
-        from qecalc.qetask.qeparser import QEStructure
+        from qecalc.qetask.qeparser.qestructure import QEStructure
         
         self._structures = []
         
