@@ -12,7 +12,7 @@
 #
 
 PROJECT = qecalc
-PACKAGES = eqcalc
+PACKAGES = qecalc
 
 # directory structure
 

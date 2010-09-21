@@ -10,9 +10,8 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PROJECT = vnfb
-PACKAGE = qeutils/qeparser/inputs
-
+PROJECT = qecalc
+PACKAGE = qetask/qeparser/inputs
 
 #--------------------------------------------------------------------------
 #
