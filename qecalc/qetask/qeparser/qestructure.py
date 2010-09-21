@@ -88,9 +88,15 @@ class QEStructure( Structure ):
         self.lattice = QELattice()
         self.lattice._qeInput = self._qeInput
            
-        if lattice != None:           
+        if lattice != None:
+
+            if self.lattice._qeInput != None:            
+                self._qeInput = self.lattice._qeInput
+            else:
+               self.lattice._qeInput = self._qeInput              
+                       
             self.lattice = QELattice( lattice = lattice )
-            self._qeInput = self.lattice._qeInput           
+                      
            
         # CP and PW inputs are compatible
         from pwinput import PWInput
