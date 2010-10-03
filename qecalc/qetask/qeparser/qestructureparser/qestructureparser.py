@@ -14,6 +14,7 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from qecalc.qetask.qeparser.qestructureparser import *
+from qecalc.qetask.qeparser.orderedDict import OrderedDict
 
 class QEStructureParser():
     def __init__(self, qeInput):
@@ -45,7 +46,27 @@ class QEStructureParser():
         # make qeInput consistent with the current instance of the structure
         stru._qeInput.structure = stru        
                 
-        stru.lattice = self.__getLattice(self._qeInput)               
+        stru.lattice = self.__getLattice(self._qeInput)     
+        
+        noncolin = False
+        if 'noncolin' in stru._qeInput.namelists['system'].paramlist():
+            noncolin =  stru._qeInput.namelist('system').get('noncolin').lower()
+            if noncolin == '.true.':
+                noncolin = True
+            else:
+                noncolin = False  
+        
+        lda_plus_u = False
+        if 'lda_plus_u' in stru._qeInput.namelists['system'].paramlist():
+            lda_plus_u =  stru._qeInput.namelist('system').get('lda_plus_u').lower()            
+            if lda_plus_u == '.true.':
+                lda_plus_u = True
+            else:
+                lda_plus_u = False
+                
+        nspin = 1
+        if 'nspin' in stru._qeInput.namelists['system'].paramlist():
+            nspin =  int(stru._qeInput.namelist('system').get('nspin').lower())                               
         
         if 'atomic_positions' in stru.lattice._qeInput.cards:        
             atomicLines = stru.lattice._qeInput.card('atomic_positions').lines()
@@ -69,7 +90,7 @@ class QEStructureParser():
                     stru.addNewAtom(atype = atomSymbol, xyz = numpy.array(coords[0:3]), \
                                     optConstraint = numpy.array(constraint, dtype = int))
         # parse mass ATOMIC_SPECIES section:
-        atomicSpecies = {}
+        atomicSpecies = OrderedDict()
         # default values:
         for a in stru:
             atomicSpecies[a.element] = (0, '')
@@ -95,7 +116,20 @@ class QEStructureParser():
             a.potential = ps
         self._qeInput.autoUpdate = autoUpdate                
         return stru
-                        
+        
+        
+    def __getNamelistParams(self, input, namelist, param):
+        """
+        Extracts data from parameters with parentheses
+        namelist - name of namelist
+        param - parameter name without parentheses        
+        """
+        paraDic = {}
+        for par in input.namelists[namelist].paramlist():
+            if param in par and '(' in par:
+                index = int(par.strip(')')[0].strip('(')[1])
+                paraDic[index] = input.namelist(namelist).get(par)
+        return paraDic
 
     def __getLattice(self, qeInput ):
 

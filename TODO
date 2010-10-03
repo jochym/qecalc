@@ -1,8 +1,3 @@
 [] structure.updatePWInput() does not seem to work properly
-[] filename in class input has to be syncronized with Setting
-[] introduce default values for all possible variables in class Setting
 [] finish merger mapping in calcs
-[] parser matdyn withUnits stoped working (works without)
-[] job manager support
-
-[] Tasks should parse inputs if they are provided
+[] add support of magnetization and noncollinear calculations
