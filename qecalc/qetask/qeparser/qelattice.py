@@ -13,8 +13,11 @@
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from diffpy.Structure import Structure
-from diffpy.Structure.lattice import Lattice, cosd    
+try:
+    #from diffpy.Structure import Structure
+    from diffpy.Structure.lattice import Lattice, cosd
+except ImportError:
+    from matter.Lattice import cosd, Lattice
 
 from math import sqrt, degrees
 import numpy
