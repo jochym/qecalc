@@ -19,8 +19,12 @@ try:
     from diffpy.Structure.atom import Atom
     from diffpy.Structure.lattice  import cosd, Lattice
 except ImportError:
-    from matter import Structure, Atom, Lattice
-    from matter.Lattice import cosd
+    #from matter import Structure, Atom, Lattice
+    #from matter.Lattice import cosd
+    from matter.Structure import Structure
+    from matter.Atom import Atom
+    from matter.Lattice import cosd, Lattice
+    
 
 from qecalc.qetask.qeparser.qestructure import  QEStructure, AtomicSpecies
 from qecalc.qetask.qeparser.qestructure import QELattice

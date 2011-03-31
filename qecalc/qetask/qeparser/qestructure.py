@@ -15,11 +15,15 @@
 
 from qeatom import QEAtom
 
-from diffpy.Structure.structure import Structure
-from diffpy.Structure.lattice import cosd, Lattice
-from diffpy.Structure.SymmetryUtilities import equalPositions
-from diffpy.Structure.Parsers import inputFormats
-from diffpy.Structure.Parsers import outputFormats
+try:
+    from diffpy.Structure.structure import Structure
+    from diffpy.Structure.lattice import cosd, Lattice
+    from diffpy.Structure.SymmetryUtilities import equalPositions
+except ImportError:
+    from matter.Structure import Structure
+    from matter.Lattice import cosd, Lattice
+    from matter.SymmetryUtilities import equalPositions
+
 
 from qelattice import QELattice
 import numpy
