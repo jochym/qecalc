@@ -45,7 +45,7 @@ def kMeshCart(nkpt, recipLatticeVectors,  boundsx = None, boundsy = None, bounds
         # convert into cartesian coordinates in units of inv lattice vector a
         kpts_cart[k,:] = numpy.dot( kpts[k,:], recipLatticeVectors)
 #        kpts_cart[k,:] = self.structure.lattice.recipCartesian(kpts[k,:])
-#            self.structure.lattice.diffpy().cartesian(kpt)/ \
+#            self.structure.lattice.matter().cartesian(kpt)/ \
 #                        self.structure.lattice.a
 
     return kpts_cart
@@ -102,7 +102,7 @@ def packBands(kpoints, Bands):
 #        for k in range(kpts.shape[0]):
 #            # convert into cartesian coordinates in units of inv lattice vector a
 #            kpts_cart[k,:] = self.structure.lattice.recipCartesian(kpts[k,:])
-##            self.structure.lattice.diffpy().cartesian(kpt)/ \
+##            self.structure.lattice.matter().cartesian(kpt)/ \
 ##                        self.structure.lattice.a
 #
 #        return kpts_cart
@@ -110,5 +110,5 @@ def packBands(kpoints, Bands):
 #    def recipCartesian(self, kPoint):
 #        """Conversts vector on fractional coordinates in reciprocal space into
 #           a vector in cartesian coordinates"""
-#        recip_base = self.diffpy().reciprocal().base*self._a
+#        recip_base = self.matter().reciprocal().base*self._a
 #        return numpy.dot( kPoint, recip_base)

@@ -82,36 +82,36 @@ class QEStructureParser():
                         constraint = [int(c) for c in words[4:7]]
                     atomSymbol = words[0]
                     if stru.atomicPositionsType == 'alat':
-                        coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*stru.lattice.a)
+                        coords = stru.lattice.matter().fractional(numpy.array(coords[0:3])*stru.lattice.a)
                     if stru.atomicPositionsType == 'crystal':
                         coords = numpy.array(coords[0:3])
                     if stru.atomicPositionsType == 'bohr' or stru.atomicPositionsType == 'angstrom':
-                        coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3]))
+                        coords = stru.lattice.matter().fractional(numpy.array(coords[0:3]))
                     stru.addNewAtom(atype = atomSymbol, xyz = numpy.array(coords[0:3]), \
                                     optConstraint = numpy.array(constraint, dtype = int))
         # parse mass ATOMIC_SPECIES section:
         atomicSpecies = OrderedDict()
         # default values:
         for a in stru:
-            atomicSpecies[a.element] = (0, '')
+            atomicSpecies[a.symbol] = (0, '')
         if 'atomic_species' in stru.lattice._qeInput.cards:
             atomicSpeciesLines = stru.lattice._qeInput.card('atomic_species').lines()
             for line in atomicSpeciesLines:
                 if '!' not in line:
                     if line.strip() != '':                     
                         atomicSpeciesWords = line.split()
-                        element = atomicSpeciesWords[0]
+                        symbol = atomicSpeciesWords[0]
                         mass = 0
                         ps = ''
                         if len(atomicSpeciesWords) > 1 :
                             mass = float(atomicSpeciesWords[1])
                         if len(atomicSpeciesWords) > 2:
                             ps = atomicSpeciesWords[2]
-                        atomicSpecies[element] =  (float(mass), ps)
+                        atomicSpecies[symbol] =  (float(mass), ps)
         
         for a in stru:
-            mass = atomicSpecies[a.element][0]
-            ps  = atomicSpecies[a.element][1]
+            mass = atomicSpecies[a.symbol][0]
+            ps  = atomicSpecies[a.symbol][1]
             a.mass = mass
             a.potential = ps
         self._qeInput.autoUpdate = autoUpdate                

@@ -106,7 +106,7 @@ class PhononDOS(QEDOS):
         nPoints = int((maxOmega - minOmega)/deltaOmega)
         histPartOmega = numpy.zeros(nPoints)
         norm = 0.0
-        for iAtom, atom in enumerate(self.structure.diffpy()):
+        for iAtom, atom in enumerate(self.structure.matter()):
             if atomSymbol == atom.element:
                 for cell_freqs, vectors in zip(self._freqs, self._modes):
                     for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
@@ -127,14 +127,14 @@ class PhononDOS(QEDOS):
                                 self.setRange(minOmega, maxOmega, deltaOmega)
         nPoints = int((maxOmega - minOmega)/deltaOmega)
         histPartOmega = numpy.zeros(nPoints)
-        labels = self.structure.diffpy().getLabels()
+        labels = self.structure.matter().getLabels()
         norm = 0.0
 
         if self.partdos == {}:
             self.partdos = OrderedDict()
-            for i in range( len(self.structure.diffpy()) ):
+            for i in range( len(self.structure.matter()) ):
                 self.partdos[labels[i]] = []
-        atom = self.structure.diffpy()[iAtom]
+        atom = self.structure.matter()[iAtom]
         for cell_freqs, vectors in zip(self._freqs, self._modes):
             for omega, vector in zip(cell_freqs, vectors[:,iAtom,:]):
                 idx = int( (abs(omega) - minOmega)/deltaOmega )
@@ -168,7 +168,7 @@ class PhononDOS(QEDOS):
             return self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
 
         if atomSymbol != None:
-            for iAtom, atom in enumerate(self.structure.diffpy()):
+            for iAtom, atom in enumerate(self.structure.matter()):
                 if atomSymbol == atom.element:
                     axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, \
                                                                    deltaOmega)
@@ -177,9 +177,9 @@ class PhononDOS(QEDOS):
         # will return OrderedDict of histograms:
         self.dos = numpy.zeros(nPoints)
         self.partdosElem = OrderedDict()
-        for atom in self.structure.diffpy():
+        for atom in self.structure.matter():
             self.partdosElem[atom.element] = numpy.zeros(nPoints)
-        for iAtom, atom in enumerate(self.structure.diffpy()):
+        for iAtom, atom in enumerate(self.structure.matter()):
             axis, hist = self.partDOSAtom(iAtom, minOmega, maxOmega, deltaOmega)
             self.dos = self.dos + hist
             self.partdosElem[atom.element] = self.partdosElem[atom.element] + \
