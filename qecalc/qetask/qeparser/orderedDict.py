@@ -24,13 +24,17 @@ class OrderedDict(DictMixin):
             self._merge_keys(kwdata.iterkeys())
             self.update(kwdata)
         
+        
+        
     def __setitem__(self, key, value):
         if key not in self._data:
             self._keys.append(key)
         self._data[key] = value
         
+        
     def __getitem__(self, key):
         return self._data[key]
+    
     
     def __delitem__(self, key):
         del self._data[key]
@@ -42,12 +46,14 @@ class OrderedDict(DictMixin):
         
     def keys(self):
         return list(self._keys)
-        
+    
+    
     def copy(self):
         copyDict = odict()
         copyDict._data = self._data.copy()
         copyDict._keys = self._keys[:]
         return copyDict
+
 
     def __repr__(self):
         result = []
@@ -60,6 +66,7 @@ class OrderedDict(DictMixin):
         newkeys = {}
         self._keys = [newkeys.setdefault(x, x) for x in self._keys
             if x not in newkeys]
+
 
     def update(self, data):
         if data is not None: 

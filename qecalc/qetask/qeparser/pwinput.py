@@ -30,7 +30,9 @@ class PWInput(QESInput):
         self.autoUpdate = True
 
         QESInput.__init__(self,filename, config, type = type, setting = setting,\
-                                                                  parse = parse)   
+                                                                  parse = parse) 
+            
+              
     def parse(self):
         """ Parses the configuration file and stores the values in qe dictionary
             Initializes structure as well"""
@@ -41,11 +43,14 @@ class PWInput(QESInput):
 
     def _get_structure(self):
         return self._structure
+            
     def _set_structure(self, structure):
         self._structure = structure
         self._structure._qeInput = self._structure.lattice._qeInput = self
+            
     structure = property(_get_structure, _set_structure)
-    
+
+
     def update(self, qeInput = None, forceUpdate = False):
         """
         Loads current mathematical representation of Structure and Lattice 
@@ -62,6 +67,7 @@ class PWInput(QESInput):
             return
         lattice = self._structure.lattice
         structure = self._structure   
+
 
         #************************* updateLattice:*******************************
         #if 'system' not in qeInput.namelists:
@@ -116,7 +122,7 @@ class PWInput(QESInput):
                     card.setArg(cardArg)
                     card.removeLines()
                     for i in range(3):
-                        v = lattice.matter().base[i,:]/float(lattice._a)
+                        v = lattice.diffpy().base[i,:]/float(lattice._a)
                         card.addLine(\
                                        lattice.formatString%(v[0], v[1], v[2]))
         
@@ -142,18 +148,18 @@ class PWInput(QESInput):
         for atom in structure:
             constraint = atom.optConstraint
             if structure.atomicPositionsType == 'alat':
-                coords = structure.lattice.matter().cartesian(atom.xyz)/structure.lattice.a
+                coords = structure.lattice.diffpy().cartesian(atom.xyz)/structure.lattice.a
                 coords = structure.formatString%(coords[0], coords[1], coords[2])
             else:
                 if structure.atomicPositionsType == 'crystal':
                     coords = structure.formatString%(atom.xyz[0], atom.xyz[1], atom.xyz[2])
                 else:
                     if structure.atomicPositionsType == 'bohr' or structure.atomicPositionsType == 'angstrom':
-                        coords = structure.lattice.matter().cartesian(atom.xyz)
+                        coords = structure.lattice.diffpy().cartesian(atom.xyz)
                         coords = structure.formatString%(coords[0], coords[1], coords[2])
                     else:
-                        raise NotImplementedError
-            line = '%-3s' % atom.symbol + '    ' + coords + '  ' + str(constraint)[1:-1]
+                        raise NonImplementedError
+            line = '%-3s'%structure._element(atom) + '    ' + coords + '  ' + str(constraint)[1:-1]
             qeInput.card('atomic_positions').addLine(line)
         
         if len(qeInput.card('atomic_positions').lines()) == 0:
@@ -170,6 +176,7 @@ class PWInput(QESInput):
         if len(qeInput.card('atomic_species').lines()) == 0:
             qeInput.removeCard('atomic_species')                
         
+
     def outDir(self):
         self.parse()
         return self.namelist('control').get('outdir', quotes = False)

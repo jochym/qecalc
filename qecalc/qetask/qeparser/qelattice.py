@@ -1,16 +1,31 @@
 #!/usr/bin/env python
-#try:
-#    from diffpy.Structure.lattice import Lattice, cosd
-#except ImportError:
-#    from matter.Lattice import cosd, Lattice
-from matter.Lattice import cosd, Lattice
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# QEcalc              by DANSE Inelastic group
+#                     Nikolay Markovskiy
+#                     California Institute of Technology
+#                     (C) 2009  All Rights Reserved
+#
+# File coded by:      Nikolay Markovskiy
+#
+# See AUTHORS.txt for a list of people who contributed.
+# See LICENSE.txt for license information.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+try:
+    from diffpy.Structure.lattice import Lattice, cosd
+except ImportError:
+    from matter.Lattice import cosd, Lattice
+
 from math import sqrt, degrees
 import numpy
 from qeinput import QEInput
 
+
 class QELattice(object):
     """Class QELattice for working with crystal lattices in QE notation
-       Uses matter.Lattice class for storage
+       Uses diffpy.Lattice class for storage
        
        Following properties are dynamically linked to other properties  
        (E.g. lattice vectors) and QEInput(if QEInput.autoUpdate = True(default)):
@@ -34,16 +49,20 @@ class QELattice(object):
       setLattice()            -- will set everything at once
     """
 
+
     def __init__(self, ibrav = 1,a = 1. ,b = 1.,c = 1.,
             cBC = 0.,cAC = 0. ,cAB = 0., base = None, lattice = None, qeInput = None ):
         self.formatString = '%# .8f %# .8f %# .8f'
         self._qeInput = qeInput
         #self._qeInput = None
         self._type = 'celldm'
-        # Lattice container class, used for lattice operations
+        
+        # diffpyStructure container class, used for lattice operations
         self.__primitiveLattice = Lattice()
+        
         # Lattice vectors in bohr or angstrom:
         self._base = None
+
         # initialize the lattice if there is enough information 
         if ibrav > 0 and base != None:
             self.setLatticeFromQEVectors(ibrav, base)
@@ -64,6 +83,7 @@ class QELattice(object):
             self._qeInput = PWInput()
             self._qeInput.readString( lattice._qeInput.toString() )
 
+
     def __str__(self):
         """simple string representation"""
         st = ''
@@ -74,11 +94,14 @@ class QELattice(object):
                                        self._c, self._cBC, self._cAC, self._cAB)
             qeBase = numpy.array(qeBaseTuple[1], dtype = float)*qeBaseTuple[0]
             st = st + '"' + qeBaseTuple[2] + '" cell:\n'
+        
         for i in range(3):
             v = self.__primitiveLattice.base[i,:]
             st = st + self.formatString%(v[0], v[1], v[2])
             st = st + '\n'
+      
         return st    
+                
             
     def cartesian(self, u):
         """return cartesian coordinates of a lattice vector"""
@@ -86,7 +109,7 @@ class QELattice(object):
     
     def fractional(self, rc):
         """return fractional coordinates of a cartesian vector"""
-        return self.__primitiveLattice.fractional(rc)
+        return self.__primitiveLattice.fractional(u)
 
     def dot(self, u, v):
         """return dot product of 2 lattice vectors"""
@@ -99,30 +122,32 @@ class QELattice(object):
     def dist(self, u, v):
         """Return distance of 2 points in lattice coordinates.
         """
-        return self.__primitiveLattice.dist(u, v)
+        return __primitiveLattice.dist(u, v)
 
     def angle(self, u, v):
         """Return angle(u, v) --> angle of 2 lattice vectors in degrees.
         """
-        return self.__primitiveLattice.angle(u, v)
+        return __primitiveLattice.angle(u, v)
 
     def recipCartesian(self, kPoint):
         """Conversts a vector in fractional coordinates in reciprocal space into
            a vector in cartesian coordinates"""
-        recip_base = self.matter().reciprocal().base*self._a
+        recip_base = self.diffpy().reciprocal().base*self._a
         return numpy.dot( kPoint, recip_base)
 
     def reciprocalBase(self):
         """
         Get reciprocal lattice vectors in units of 2*pi/a
         """
-        return self.matter().reciprocal().base*self._a
+        return self.diffpy().reciprocal().base*self._a
+
 
     def latticeParams(self):
         """Returns tuple of six lattice parameters:
             a, b, c, cos(BC), cos(AC), cos(AB)
         """
         return [self._a, self._b,self._c, self._cBC, self._cAC, self._cAB]        
+        
         
     def setLattice(self, ibrav, a = None, b = None, c = None,
                    cBC = None, cAC = None, cAB = None, base = None, updateInput = True):
@@ -132,12 +157,12 @@ class QELattice(object):
 #        if [ibrav, a,b,c,cBC,cAC,cAB, base] == 8*[None]:
 #            return None
         if ibrav == None:
-            raise NotImplementedError('ibrav should be specified')
+            raise NonImplementedError('ibrav should be specified')
         self._ibrav = ibrav
         if self._ibrav == 0:
 #            print 'Found "generic" cell:'
             if base == None:
-                raise NotImplementedError('base must be specified')
+                raise NonImplementedError('base must be specified')
             if a == None:
 				raise # a and the base must be provided for ibrav = 0
             qeBase = numpy.array(base, dtype = float)#*self._a/a
@@ -229,11 +254,13 @@ class QELattice(object):
             #self.updatePWInput()
             self._qeInput.update( forceUpdate = True )       
 
-    def matter(self):
-        '''Returns matter.Lattice object. Do not use it for reading  QE
+
+    def diffpy(self):
+        '''Returns diffpy.Lattice object. Do not use it for reading  QE
         (standard cell) lattice parameters. Use latticeParams, or a, b, c , ...
         instead'''
         return self.__primitiveLattice
+
 
     def updatePWInput(self, qeInput = None):
         """
@@ -241,6 +268,7 @@ class QELattice(object):
         """
         self._qeInput.update( forceUpdate = True )
     
+
     def setLatticeFromQEVectors(self, ibrav, vectors):
         """ Will extract conventional lattice parameters from primitive vectors.
             'vectors' - is a list with primitive vectors (in QE notation),
@@ -257,49 +285,62 @@ class QELattice(object):
         # sc simple cubic:
         if ibrav == 1:
             a = v[0,0]
+
         if ibrav == 2:
             a = b = c = sqrt( 2.0*dot(v[0,:],v[0,:]) )
+
         if ibrav == 3:
             a = b = c = 2.0*sqrt( dot(v[0,:],v[0,:])/3.0)
+
         if ibrav == 4:
             a = b = sqrt( dot(v[0,:],v[0,:]))
             c = sqrt( dot(v[2,:],v[2,:]))
             cAB = cosd(120.0)
+
         if ibrav == 5:
             a = b = c = sqrt( dot(v[0,:],v[0,:]))
             cBC = cAC = cAB = dot(v[0,:],v[2,:])/a**2
+
         if ibrav == 6:
             a = b = sqrt( dot(v[0,:],v[0,:]))
             c = sqrt( dot(v[2,:],v[2,:]))
+
         if ibrav == 7:
             a = b = v[1,0] - v[2,0]
             c = v[1,2] + v[2,2]
+
         if ibrav == 8:
             a = v[0,0]
             b = v[1,1]
             c = v[2,2]
+
         if ibrav == 9:
             a = v[0,0] - v[1,0]
             b = v[0,1] + v[1,1]
             c = v[2,2]
+
         if ibrav == 10:
             a = v[2,0] - v[0,0] - v[1,0]
             b = v[2,1] - v[0,1] + v[1,1]
             c = v[0,2] - v[1,2] + v[2,2]
+
         if ibrav == 11:
             a = v[0,0] - v[1,0]
             b = v[1,1] - v[2,1]
             c = v[0,2] - v[2,2]
+
         if ibrav == 12:
             a = v[0,0]
             b = sqrt( dot(v[1,:],v[1,:]))
             cAB = v[1,0]/b
             c = v[2,2]
+
         if ibrav == 13:
             a = v[0,0] + v[2,0]
             b = sqrt( dot(v[1,:],v[1,:]))
             c = v[2,2] - v[0,2]
             cAB = v[1,0]/b
+
         if ibrav == 14:
             a = v[0,0]
             b = sqrt( dot(v[1,:],v[1,:]))
@@ -309,61 +350,84 @@ class QELattice(object):
             cBC = v[2,1]*sqrt(1.0 - cAB**2)/c + cAC*cAB        
         self.setLattice(ibrav, a, b, c, cBC, cAC, cAB)
 
+
     ####################################################################
     # property handlers
     ####################################################################
+
     # lattice parameters
-#   def _get_a0(self):
-#       if self._a0 != None:
-#           return self._a0
-#       else:
-#           return self._a
-#   a0 = property(_get_a0, doc ="old lattice parameter a0")
+
+
+ #   def _get_a0(self):
+ #       if self._a0 != None:
+ #           return self._a0
+ #       else:
+ #           return self._a
+ #   a0 = property(_get_a0, doc ="old lattice parameter a0")
 
     def _get_a(self):
         return self._a
+
     def _set_a(self, value):
         #self._a = value
         self.setLattice(ibrav = self._ibrav, a = float(value), base = self._base/self._a*value)
+
     a = property(_get_a, _set_a, doc ="lattice parameter a")
+
 
     def _get_b(self):
         return self._b
+
     def _set_b(self, value):
         #self._b = value
         self.setLattice(ibrav = self._ibrav, b = float(value))
+
     b = property(_get_b, _set_b, doc ="""lattice parameter b""")
+
 
     def _get_c(self):
         return self._c
+
     def _set_c(self, value):
         #self._c = value
         self.setLattice(ibrav = self._ibrav, c = float(value))
+
     c = property(_get_c, _set_c, doc ="""lattice parameter c""")
+
 
     def _get_cBC(self):
         return self._cBC
+
     def _set_cBC(self, value):
         #self._cBC = value
         self.setLattice(ibrav = self._ibrav, cBC = float(value))
+
     cBC = property(_get_cBC, _set_cBC, doc ="""lattice parameter cBC""")
+
 
     def _get_cAC(self):
         return self._cAC
+
     def _set_cAC(self, value):
         #self._cAC = value
         self.setLattice(ibrav = self._ibrav, cAC = float(value))
+
     cAC = property(_get_cAC, _set_cAC, doc ="""lattice parameter cAC""")
+
 
     def _get_cAB(self):
         return self._cAB
+
     def _set_cAB(self, value):
         #self._cAB = value
         self.setLattice(ibrav = self._ibrav, cAB = float(value))
+
     cAB = property(_get_cAB, _set_cAB, doc ="""lattice parameter cAB""")
+
 
     def _get_ibrav(self):
         return self._ibrav
+
     def _set_ibrav(self, value):
         if value < 0: value = 0
         ibravOld = self._ibrav
@@ -384,12 +448,15 @@ class QELattice(object):
             qebase = base[0]*numpy.array(base[1])
             self.setLatticeFromQEVectors(self._ibrav, qebase)
 #            self.setLattice(self._ibrav)
+
     ibrav = property(_get_ibrav, _set_ibrav, doc ="""Lattice symmetry parameter
 ibrav. Changing it will update the lattice, but leave atomic fractional 
 coordinates unchanged""")
 
+
     def _get_type(self):
         return self._type
+
     def _set_type(self, value):
         if 'generic' in value:
             self._type = value
@@ -401,12 +468,14 @@ coordinates unchanged""")
                 pass
             else:
                 self._type = value
+
     type = property(_get_type, _set_type, doc ="""QE lattice type: 'celldm',
     'traditional' or 'generic cubic', 'generic hexagonal'(implies ibrav = 0""")
     
     
     def _get_base(self):
-        return self._base    
+        return self._base
+    
     base = property(_get_base, doc ="""QE base array""")
 
     def _getQEBaseFromParCos( self, ibrav = 1, a = 1., b = 1., c = 1.,
@@ -484,9 +553,11 @@ coordinates unchanged""")
                     [b*cAB, b*sqrt(1.0 - cAB**2), 0],
                     [c*cAC, c*( cBC-cAC*cAB )/sqrt(1.-cAB**2), c*sqrt( 1. + 
                     2.*cBC*cAC*cAB - cBC**2 - cAC**2 - cAB**2)/sqrt(1.-cAB**2)]],
-                    'Triclinic')          
+                    'Triclinic')
+                    
         }
         return QEBase[ibrav]
     
+
 if __name__ == '__main__':
     pass ;

@@ -44,7 +44,7 @@ if __name__ == '__main__':
     #Write/update structure into PW config file, if the file does not exist,
     # a new one will be created
     print '\nPrinting structure:'
-    print calc.pw.input.structure.matter()
+    print calc.pw.input.structure.diffpy()
     print calc.pw.input.structure.toString()
 
     calc.pw.input.structure.save('./scf_3.in')

@@ -1,6 +1,20 @@
 #!/usr/bin/env python
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+# QEcalc              by DANSE Inelastic group
+#                     Nikolay Markovskiy
+#                     California Institute of Technology
+#                     (C) 2010  All Rights Reserved
+#
+# File refactored  by:      Nikolay Markovskiy
+#      based on Atom.py from diffpyStructure package coded by Pavol Juhas
+# See AUTHORS.txt for a list of people who contributed.
+# See LICENSE.txt for license information.
+#
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """class QEAtom for storing properties of a single atom"""
 import numpy
+
 from qelattice import QELattice
 
 class CartesianCoordinatesArray(numpy.ndarray):
@@ -30,23 +44,36 @@ class CartesianCoordinatesArray(numpy.ndarray):
         """
         numpy.ndarray.__setitem__(self, idx, value)
         self.xyz[:] = self.lattice.fractional(self)
+        return
+
+# End of CartesianCoordinatesArray
+
 
 class QEAtom(object):
     """Atom --> class for storing atom information
+
     Data members:
-        atype     -- type of the atom
+        element     -- type of the atom
+        
         xyz         -- fractional coordinates
+        
         name        -- atom label
+        
         xyz_cartn   -- absolute Cartesian coordinates, property synced with xyz
+        
         lattice     -- coordinate system for fractional coordinates,
                        an instance of Lattice or None for Cartesian system
+                       
+
     """
+
 
     def __init__(self, atype=None, xyz=None, mass = None,  \
                  potential = None, lattice=None, optConstraint = None, name=None):
         """Create atom of a specified type at given lattice coordinates.
         Atom(a) creates a copy of Atom instance a.
-        atype         -- symbol string or Atom instance
+
+        atype         -- element symbol string or Atom instance
         xyz           -- fractional(crystal) coordinates
         name          -- atom label
         mass          -- atom mass
@@ -56,7 +83,7 @@ class QEAtom(object):
                          for QE geometry optimization (0 or 1)
         """
         # declare data members
-        self.symbol = None
+        self.element = None
         self._xyz = numpy.zeros(3, dtype=float)
         self.name = ''
         self._mass = 0
@@ -70,7 +97,7 @@ class QEAtom(object):
             atype_dup = atype.__copy__()
             self.__dict__.update(atype_dup.__dict__)
         else:
-            self.symbol = atype
+            self.element = atype
         # take care of remaining arguments
         if xyz is not None:             self._xyz[:] = xyz
         if name is not None:            self.name = name
@@ -86,13 +113,13 @@ class QEAtom(object):
         """simple string representation"""
         xyz = self.xyz
         s = "%-4s %8.6f %8.6f %8.6f %8.6f %s" % \
-                (self.symbol, xyz[0], xyz[1], xyz[2], self.mass, self.potential)
+                (self.element, xyz[0], xyz[1], xyz[2], self.mass, self.potential)
         return s
 
     def __copy__(self):
         """Return a copy of this instance.
         """
-        adup = QEAtom(self.symbol)
+        adup = QEAtom(self.element)
         adup.__dict__.update(self.__dict__)
         # create copies for what should be copied
         adup.xyz = numpy.array(self.xyz)

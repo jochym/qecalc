@@ -77,7 +77,7 @@ class P_pwoutput(QEStructureParser):
                     atomSymbol = words[1]
                     coords = [float(w) for w in words[6:9]]
                     constraint = []
-                    coords = stru.lattice.matter().fractional(numpy.array(coords[0:3])*a_0)
+                    coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]), \
                          optConstraint = numpy.array(constraint, dtype = int))
 
@@ -87,9 +87,9 @@ class P_pwoutput(QEStructureParser):
             atomicSpecies[a] = ( m, p)
             
         for a in stru:
-            if a.symbol in atomicSpecies:
-                a.mass = atomicSpecies[a.symbol][0]
-                a.potential  = atomicSpecies[a.symbol][1]            
+            if a.element in atomicSpecies:
+                a.mass = atomicSpecies[a.element][0]
+                a.potential  = atomicSpecies[a.element][1]            
         #Parse end:
         # Find all geometry optimization steps
 
@@ -127,13 +127,13 @@ class P_pwoutput(QEStructureParser):
                     constraint = []
                     if len(words) > 4:
                         constraint = [int(c) for c in words[4:7]]
-                    coords = stru.lattice.matter().fractional(numpy.array(coords[0:3])*a_0)
+                    coords = stru.lattice.diffpy().fractional(numpy.array(coords[0:3])*a_0)
                     stru.addNewAtom(atomSymbol, xyz = numpy.array(coords[0:3]),\
                           optConstraint = numpy.array(constraint, dtype = int))  
         for a in stru:
-            if a.symbol in atomicSpecies:
-                a.mass = atomicSpecies[a.symbol][0]
-                a.potential  = atomicSpecies[a.symbol][1]  
+            if a.element in atomicSpecies:
+                a.mass = atomicSpecies[a.element][0]
+                a.potential  = atomicSpecies[a.element][1]  
         self._qeInput.autoUpdate = autoUpdate
         self._qeInput.update( forceUpdate = True )                     
         return stru
